@@ -1,0 +1,10 @@
+type: tdc
+name: PPBR_AZ
+task: regression
+modality: property
+info:
+  split: random
+  smiles_col: Drug
+  label_col: Y
+  id_col: id
+out: runs/tdc

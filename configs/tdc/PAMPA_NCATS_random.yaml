@@ -1,0 +1,10 @@
+type: tdc
+name: PAMPA_NCATS
+task: classification
+modality: property
+info:
+  split: random
+  smiles_col: Drug
+  label_col: Y
+  id_col: id
+out: runs/tdc

@@ -1,0 +1,5 @@
+type: polaris
+name: polaris/adme-fang-rppb-1
+modality: property
+task: regression
+out: runs/polaris

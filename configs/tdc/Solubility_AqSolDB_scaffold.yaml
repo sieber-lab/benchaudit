@@ -1,0 +1,10 @@
+type: tdc
+name: Solubility_AqSolDB
+task: regression
+modality: property
+info:
+  split: scaffold
+  smiles_col: Drug
+  label_col: Y
+  id_col: id
+out: runs/tdc
