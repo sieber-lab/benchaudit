@@ -1,0 +1,14 @@
+type: dti
+name: BindingDB_scaffold_cls
+task: classification
+modality: dti
+paths:
+  train: data/BindingDB/scaffold/train.csv
+  valid: data/BindingDB/scaffold/valid.csv
+  test: data/BindingDB/scaffold/test.csv
+info:
+  smiles_col: Ligand
+  sequence_col: Protein
+  label_col: classification_label
+  keep_invalid: True
+out: runs/dti

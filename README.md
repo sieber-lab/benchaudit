@@ -6,6 +6,6 @@
 - No additional configuration is required; the analyzer invokes `psa.stretcher` directly once both pieces are present.
 
 ## DTI Configuration Hints
-- Set `modality: dti` in your YAML config to enable the DTI analyzer.
+- Set `type: dti` (or keep `type: tabular`) plus `modality: dti` in your YAML config to enable the DTI loader/analyzer pair.
 - Provide sequence metadata under `info`, e.g. `sequence_col` for the amino-acid column and (optionally) `target_id_col` for target identifiers.
 - For tabular DTI data, keep `info.keep_invalid: True` (default) so SMILES cleaning preserves row alignment with sequence fields.

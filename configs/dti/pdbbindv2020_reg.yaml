@@ -1,0 +1,15 @@
+type: dti
+name: PDBBindv2020_reg
+task: regression
+modality: dti
+paths:
+  train: data/PDBBindv2020/train.csv
+  valid: data/PDBBindv2020/valid.csv
+  test: data/PDBBindv2020/test.csv
+info:
+  smiles_col: Ligand
+  sequence_col: Protein
+  label_col: regression_label
+  id_col: ID
+  keep_invalid: True
+out: runs/dti

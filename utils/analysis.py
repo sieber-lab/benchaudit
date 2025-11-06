@@ -9,7 +9,13 @@ import pandas as pd
 from rdkit import DataStructs
 from rdkit.Chem import AllChem, rdMolDescriptors
 from rdkit import Chem
-from Levenshtein import ratio as _levenshtein
+try:
+    from Levenshtein import ratio as _levenshtein  # type: ignore
+except ImportError:  # pragma: no cover - fallback when python-Levenshtein is absent
+    from difflib import SequenceMatcher
+
+    def _levenshtein(a: str, b: str) -> float:
+        return SequenceMatcher(None, a, b).ratio()
 from rdkit.Chem.Scaffolds.MurckoScaffold import (
     MakeScaffoldGeneric as _GraphFramework,
     GetScaffoldForMol as _GetScaffoldForMol,

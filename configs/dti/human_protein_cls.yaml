@@ -1,0 +1,14 @@
+type: dti
+name: Human_protein_cls
+task: classification
+modality: dti
+paths:
+  train: data/Human/protein/train.csv
+  valid: data/Human/protein/valid.csv
+  test: data/Human/protein/test.csv
+info:
+  smiles_col: Ligand
+  sequence_col: Protein
+  label_col: classification_label
+  keep_invalid: True
+out: runs/dti

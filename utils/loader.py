@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Dict, Any, List
+from typing import Dict, Any, List, Optional
 import importlib
 from pathlib import Path
 import pandas as pd
@@ -82,6 +82,27 @@ class TDCLoader(BaseLoader):
     
 
 class TabularLoader(BaseLoader):
+    DEFAULT_SMILES_COLS = ["smiles", "SMILES", "drug", "Drug"]
+    DEFAULT_LABEL_COLS = ["label_raw", "label", "Label", "y", "Y"]
+    DEFAULT_ID_COLS = ["id", "ID", "compound_id", "compoundID"]
+    DEFAULT_SEQUENCE_COLS = [
+        "sequence_aa",
+        "sequence",
+        "Sequence",
+        "protein_sequence",
+        "ProteinSequence",
+        "target_sequence",
+        "TargetSequence",
+        "AASequence",
+    ]
+    DEFAULT_TARGET_ID_COLS = [
+        "target_id",
+        "target",
+        "TargetID",
+        "protein_id",
+        "ProteinID",
+    ]
+
     def _read_like(self, path: Path) -> pd.DataFrame:
         s = path.suffix.lower()
         if s in {".csv", ".tsv"}:
@@ -90,19 +111,42 @@ class TabularLoader(BaseLoader):
             return pd.read_parquet(path)
         raise ValueError(f"unsupported file: {path}")
 
+    def _resolve_column(self, df: pd.DataFrame, key: str, candidates: List[str]) -> Optional[str]:
+        info_val = self.info.get(key)
+        if info_val and info_val in df.columns:
+            return info_val
+        lower_map = {col.lower(): col for col in df.columns}
+        for cand in candidates:
+            if cand in df.columns:
+                return cand
+            cli = cand.lower()
+            if cli in lower_map:
+                return lower_map[cli]
+        return None
+
     def _standardize_cols(self, df: pd.DataFrame) -> pd.DataFrame:
-        info = self.info
-        if info.get("smiles_col") in df.columns:
-            df = df.rename(columns={info["smiles_col"]: "smiles"})
-        if info.get("label_col") in df.columns:
-            df = df.rename(columns={info["label_col"]: "label_raw"})
-        if info.get("id_col") in df.columns:
-            df = df.rename(columns={info["id_col"]: "id"})
-        seq_col = info.get("sequence_col")
-        if seq_col and seq_col in df.columns:
+        smiles_col = self._resolve_column(df, "smiles_col", self.DEFAULT_SMILES_COLS)
+        if smiles_col and smiles_col != "smiles":
+            df = df.rename(columns={smiles_col: "smiles"})
+        if "smiles" not in df.columns:
+            raise KeyError("Could not determine SMILES column. Set info.smiles_col in the config.")
+
+        label_col = self._resolve_column(df, "label_col", self.DEFAULT_LABEL_COLS)
+        if label_col and label_col != "label_raw":
+            df = df.rename(columns={label_col: "label_raw"})
+        if "label_raw" not in df.columns:
+            raise KeyError("Could not determine label column. Set info.label_col in the config.")
+
+        id_col = self._resolve_column(df, "id_col", self.DEFAULT_ID_COLS)
+        if id_col and id_col != "id":
+            df = df.rename(columns={id_col: "id"})
+
+        seq_col = self._resolve_column(df, "sequence_col", self.DEFAULT_SEQUENCE_COLS)
+        if seq_col and seq_col != "sequence_aa":
             df = df.rename(columns={seq_col: "sequence_aa"})
-        target_col = info.get("target_id_col")
-        if target_col and target_col in df.columns:
+
+        target_col = self._resolve_column(df, "target_id_col", self.DEFAULT_TARGET_ID_COLS)
+        if target_col and target_col != "target_id":
             df = df.rename(columns={target_col: "target_id"})
         return df
 
@@ -187,3 +231,23 @@ class PolarisLoader(BaseLoader):
             return df
 
         return {"train": _to_df(train), "test": _to_df(test)}
+
+
+class DTILoader(TabularLoader):
+    """DTI loader built on TabularLoader with sensible defaults."""
+
+    def __init__(self, cfg: Dict[str, Any]):
+        super().__init__(cfg)
+        if "keep_invalid" not in self.info:
+            # Keep invalid molecules so that auxiliary columns (sequence/target) remain aligned.
+            self.info["keep_invalid"] = True
+
+    def _standardize_cols(self, df: pd.DataFrame) -> pd.DataFrame:
+        df = super()._standardize_cols(df)
+        if "sequence_aa" not in df.columns:
+            raise KeyError(
+                "DTI loader requires an amino-acid sequence column. "
+                "Set info.sequence_col or name the column one of "
+                f"{self.DEFAULT_SEQUENCE_COLS}."
+            )
+        return df

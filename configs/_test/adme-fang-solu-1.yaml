@@ -1,5 +1,5 @@
 type: polaris
-name: novartis/adme-novartis-cyp3a4-reg
+name: polaris/adme-fang-solu-1
 modality: property
 task: regression
 out: runs/polaris
