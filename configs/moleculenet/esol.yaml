@@ -1,0 +1,12 @@
+type: tabular
+name: MoleculeNet/ESOL
+task: regression
+modality: property
+path: data/MoleculeNet/ESOL.csv
+info:
+  split_col: split
+  smiles_col: smiles
+  label_col: "measured log solubility in mols per litre"
+  id_col: "Compound ID"
+  keep_invalid: True
+out: runs/moleculenet

@@ -1,0 +1,5 @@
+smiles,task1,task2,split
+CCO,1,0,train
+CCC,0,1,train
+CCN,1,0,valid
+CCO,0,1,test

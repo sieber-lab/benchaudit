@@ -1,5 +1,5 @@
 from __future__ import annotations
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List, Optional, Sequence
 import importlib
 from pathlib import Path
 import pandas as pd
@@ -9,6 +9,42 @@ try:
     import polaris as po
 except ImportError:  # pragma: no cover - optional dependency
     po = None
+
+
+def _coerce_label_value(value):
+    """Convert label entries to Python scalars (int/float/None) when possible."""
+    if isinstance(value, (list, tuple, np.ndarray)):
+        # Flatten first level if nested collections sneaked in
+        return [_coerce_label_value(v) for v in value]
+    if value is None:
+        return None
+    if isinstance(value, (np.generic,)):
+        value = value.item()
+    if isinstance(value, str):
+        s = value.strip()
+        if s == "" or s.lower() in {"nan", "na", "null"}:
+            return None
+        try:
+            # Prefer ints when they fit exactly
+            iv = int(s)
+            fv = float(s)
+            if abs(fv - iv) < 1e-12:
+                return iv
+            return fv
+        except ValueError:
+            try:
+                fv = float(s)
+                if fv.is_integer():
+                    return int(fv)
+                return fv
+            except ValueError:
+                return s
+    try:
+        if pd.isna(value):
+            return None
+    except TypeError:
+        pass
+    return value
 
 
 class BaseLoader:
@@ -131,11 +167,30 @@ class TabularLoader(BaseLoader):
         if "smiles" not in df.columns:
             raise KeyError("Could not determine SMILES column. Set info.smiles_col in the config.")
 
-        label_col = self._resolve_column(df, "label_col", self.DEFAULT_LABEL_COLS)
-        if label_col and label_col != "label_raw":
-            df = df.rename(columns={label_col: "label_raw"})
-        if "label_raw" not in df.columns:
-            raise KeyError("Could not determine label column. Set info.label_col in the config.")
+        label_cols_cfg = self.info.get("label_cols")
+        normalized_label_cols: Optional[List[str]] = None
+        if label_cols_cfg:
+            if isinstance(label_cols_cfg, str):
+                normalized_label_cols = [label_cols_cfg]
+            elif isinstance(label_cols_cfg, Sequence):
+                normalized_label_cols = [str(c) for c in label_cols_cfg]
+            else:
+                raise TypeError("info.label_cols must be a string or a list of strings")
+            missing = [c for c in normalized_label_cols if c not in df.columns]
+            if missing:
+                raise KeyError(f"Missing label columns {missing} in dataframe.")
+            self.info["label_cols"] = normalized_label_cols
+            df["label_raw"] = df[normalized_label_cols].apply(
+                lambda row: [_coerce_label_value(row[col]) for col in normalized_label_cols],
+                axis=1,
+            )
+        else:
+            label_col = self._resolve_column(df, "label_col", self.DEFAULT_LABEL_COLS)
+            if label_col and label_col != "label_raw":
+                df = df.rename(columns={label_col: "label_raw"})
+            if "label_raw" not in df.columns:
+                raise KeyError("Could not determine label column. Set info.label_col in the config.")
+            df["label_raw"] = df["label_raw"].apply(_coerce_label_value)
 
         id_col = self._resolve_column(df, "id_col", self.DEFAULT_ID_COLS)
         if id_col and id_col != "id":

@@ -28,13 +28,156 @@ except ImportError:  # pragma: no cover - optional dependency
 
 
 def _to_python_scalar(val: Any) -> Any:
+    if isinstance(val, (list, tuple, np.ndarray, pd.Series)):
+        return [_to_python_scalar(v) for v in list(val)]
     if isinstance(val, (np.generic,)):
         return val.item()
     if isinstance(val, (pd.Timestamp,)):
         return val.to_pydatetime()
-    if pd.isna(val):
-        return None
+    try:
+        if pd.isna(val):
+            return None
+    except TypeError:
+        pass
     return val
+
+
+def _is_sequence_label(value: Any) -> bool:
+    return isinstance(value, (list, tuple, np.ndarray, pd.Series))
+
+
+def _normalize_label_list(value: Any) -> List[Any]:
+    if isinstance(value, pd.Series):
+        value = value.tolist()
+    if isinstance(value, np.ndarray):
+        value = value.tolist()
+    if isinstance(value, (list, tuple)):
+        seq = list(value)
+    else:
+        seq = [value]
+    out: List[Any] = []
+    for item in seq:
+        if isinstance(item, (list, tuple, np.ndarray, pd.Series)):
+            out.extend(_normalize_label_list(item))
+            continue
+        if item is None:
+            out.append(None)
+            continue
+        if isinstance(item, (np.generic,)):
+            item = item.item()
+        if isinstance(item, str):
+            s = item.strip()
+            if s == "" or s.lower() in {"nan", "na", "null"}:
+                out.append(None)
+                continue
+            try:
+                fv = float(s)
+                if fv.is_integer():
+                    out.append(int(fv))
+                else:
+                    out.append(fv)
+                continue
+            except ValueError:
+                out.append(s)
+                continue
+        try:
+            if pd.isna(item):
+                out.append(None)
+                continue
+        except TypeError:
+            pass
+        out.append(item)
+    return out
+
+
+def _label_to_tuple(value: Any) -> Tuple[Any, ...]:
+    return tuple(_normalize_label_list(value))
+
+
+def _series_has_sequence_labels(series: pd.Series) -> bool:
+    if series.empty:
+        return False
+    return series.apply(_is_sequence_label).any()
+
+
+def _label_series_to_matrix(series: pd.Series) -> np.ndarray:
+    if series.empty:
+        return np.zeros((0, 0), dtype=float)
+    rows = [_normalize_label_list(v) for v in series.tolist()]
+    max_len = max((len(row) for row in rows), default=0)
+    if max_len == 0:
+        return np.zeros((len(rows), 0), dtype=float)
+    arr = np.full((len(rows), max_len), np.nan, dtype=float)
+    for i, row in enumerate(rows):
+        for j, val in enumerate(row):
+            if val is None:
+                arr[i, j] = np.nan
+            else:
+                try:
+                    arr[i, j] = float(val)
+                except (TypeError, ValueError):
+                    arr[i, j] = np.nan
+    return arr
+
+
+def _classification_delta(a: Tuple[Any, ...], b: Tuple[Any, ...]) -> List[Optional[float]]:
+    length = max(len(a), len(b))
+    out: List[Optional[float]] = []
+    for idx in range(length):
+        va = a[idx] if idx < len(a) else None
+        vb = b[idx] if idx < len(b) else None
+        if va is None or vb is None:
+            out.append(None)
+            continue
+        try:
+            out.append(int(va) - int(vb))
+        except (TypeError, ValueError):
+            try:
+                out.append(float(va) - float(vb))
+            except (TypeError, ValueError):
+                out.append(None)
+    return out
+
+
+def _regression_delta(a: Any, b: Any) -> List[Optional[float]]:
+    seq_a = _normalize_label_list(a)
+    seq_b = _normalize_label_list(b)
+    length = max(len(seq_a), len(seq_b))
+    out: List[Optional[float]] = []
+    for idx in range(length):
+        va = seq_a[idx] if idx < len(seq_a) else None
+        vb = seq_b[idx] if idx < len(seq_b) else None
+        if va is None or vb is None:
+            out.append(None)
+            continue
+        try:
+            out.append(float(va) - float(vb))
+        except (TypeError, ValueError):
+            out.append(None)
+    return out
+
+
+def _delta_exceeds_threshold(delta: List[Optional[float]], sigma) -> bool:
+    if not delta:
+        return False
+    if isinstance(sigma, (list, tuple, np.ndarray)):
+        sigmas = list(sigma)
+    else:
+        sigmas = [sigma] * len(delta)
+    if not sigmas:
+        return False
+    for idx, d in enumerate(delta):
+        if d is None:
+            continue
+        thr = sigmas[idx] if idx < len(sigmas) else sigmas[-1]
+        if thr is None or thr == 0:
+            continue
+        try:
+            if abs(float(d)) >= float(thr):
+                return True
+        except (TypeError, ValueError):
+            continue
+    return False
 
 
 @dataclass
@@ -63,6 +206,8 @@ class AnalyzerConfig:
         If input dataframes do NOT already have 'label_raw', rename this column to 'label_raw'.
     id_col : Optional[str]
         If provided and present, use/rename as 'id'. Otherwise sequential ids will be assigned per split.
+    label_cols : Optional[List[str]]
+        Optional list of multi-task label column names. When present, labels are treated as lists.
     sequence_col : Optional[str]
         Optional column name for amino-acid sequences (renamed to 'sequence_aa' when present).
     target_id_col : Optional[str]
@@ -77,6 +222,7 @@ class AnalyzerConfig:
     smiles_col: Optional[str] = None
     label_col: Optional[str] = None
     id_col: Optional[str] = None
+    label_cols: Optional[List[str]] = None
     sequence_col: Optional[str] = None
     target_id_col: Optional[str] = None
 
@@ -247,23 +393,14 @@ class StretcherAlignment:
 class PSAStretcherAligner:
     """Thin wrapper around psa.stretcher with caching."""
 
-    def __init__(
-        self,
-        moltype: str = "prot",
-        gapopen: float = 10.0,
-        gapextend: float = 0.5,
-        matrix: str = "EBLOSUM62",
-    ):
+    def __init__(self):
         if psa is None:
             raise ImportError(
                 "pairwise-sequence-alignment is required. "
                 "Install EMBOSS (`sudo apt install emboss`) and the Python wrapper "
                 "(`pip install pairwise-sequence-alignment`) before running DTI analysis."
             )
-        self.moltype = moltype
-        self.gapopen = gapopen
-        self.gapextend = gapextend
-        self.matrix = matrix
+        self.moltype = "prot"
         self._cache: Dict[Tuple[str, str], StretcherAlignment] = {}
 
     def _normalize_seq(self, seq: str) -> str:
@@ -271,34 +408,80 @@ class PSAStretcherAligner:
             seq = "" if pd.isna(seq) else str(seq)
         return "".join(seq.split()).upper()
 
+    def _invert_alignment(self, aln: StretcherAlignment) -> StretcherAlignment:
+        return StretcherAlignment(
+            score=aln.score,
+            identity_pct=aln.identity_pct,
+            similarity_pct=aln.similarity_pct,
+            length=aln.length,
+            gaps_pct=aln.gaps_pct,
+            n_gaps=aln.n_gaps,
+            aligned_query=aln.aligned_subject,
+            aligned_subject=aln.aligned_query,
+            query_start=aln.subject_start,
+            query_end=aln.subject_end,
+            subject_start=aln.query_start,
+            subject_end=aln.query_end,
+        )
+
+    def _empty_alignment(self, q: str, s: str) -> StretcherAlignment:
+        length = max(len(q), len(s))
+        return StretcherAlignment(
+            score=0.0,
+            identity_pct=0.0,
+            similarity_pct=0.0,
+            length=length,
+            gaps_pct=100.0 if length > 0 else 0.0,
+            n_gaps=length,
+            aligned_query=q or "-" * length,
+            aligned_subject=s or "-" * length,
+            query_start=1 if q else 0,
+            query_end=len(q),
+            subject_start=1 if s else 0,
+            subject_end=len(s),
+        )
+
     def align(self, query_seq: str, subject_seq: str) -> StretcherAlignment:
         q = self._normalize_seq(query_seq)
         s = self._normalize_seq(subject_seq)
         key = (q, s)
-        if key not in self._cache:
-            aln = psa.stretcher(
-                moltype=self.moltype,
-                qseq=q,
-                sseq=s,
-                gapopen=self.gapopen,
-                gapextend=self.gapextend,
-                matrix=self.matrix,
-            )
-            self._cache[key] = StretcherAlignment(
-                score=float(aln.score),
-                identity_pct=float(aln.pidentity),
-                similarity_pct=float(getattr(aln, "psimilarity", float("nan"))),
-                length=int(aln.length),
-                gaps_pct=float(aln.pgaps),
-                n_gaps=int(aln.ngaps),
-                aligned_query=str(aln.qseq),
-                aligned_subject=str(aln.sseq),
-                query_start=int(aln.qstart),
-                query_end=int(aln.qend),
-                subject_start=int(aln.sstart),
-                subject_end=int(aln.send),
-            )
-        return self._cache[key]
+        if key in self._cache:
+            return self._cache[key]
+
+        rev_key = (s, q)
+        if rev_key in self._cache:
+            flipped = self._invert_alignment(self._cache[rev_key])
+            self._cache[key] = flipped
+            return flipped
+
+        if not q or not s:
+            empty_aln = self._empty_alignment(q, s)
+            self._cache[key] = empty_aln
+            self._cache[rev_key] = self._invert_alignment(empty_aln)
+            return empty_aln
+
+        aln = psa.stretcher(
+            moltype=self.moltype,
+            qseq=q,
+            sseq=s,
+        )
+        result = StretcherAlignment(
+            score=float(aln.score),
+            identity_pct=float(aln.pidentity),
+            similarity_pct=float(getattr(aln, "psimilarity", float("nan"))),
+            length=int(aln.length),
+            gaps_pct=float(aln.pgaps),
+            n_gaps=int(aln.ngaps),
+            aligned_query=str(aln.qseq),
+            aligned_subject=str(aln.sseq),
+            query_start=int(aln.qstart),
+            query_end=int(aln.qend),
+            subject_start=int(aln.sstart),
+            subject_end=int(aln.send),
+        )
+        self._cache[key] = result
+        self._cache[rev_key] = self._invert_alignment(result)
+        return result
 
 
 def _nn_sequence_alignment_stats(
@@ -409,36 +592,49 @@ def _nn_sequence_alignment_stats(
     return stats, details
 
 
-def _compute_sigma3(tv_labels: pd.Series) -> Tuple[float, float]:
-    """Return (3 * std, std) for regression labels. If <2 rows, std=0 and sigma3=0."""
-    if len(tv_labels) < 2:
+def _compute_sigma3(tv_labels: pd.Series):
+    """Return (3 * std, std) for regression labels. Supports scalar or vector labels."""
+    if tv_labels.empty:
         return 0.0, 0.0
-    std = float(np.std(tv_labels.astype(float), ddof=1))
+    if _series_has_sequence_labels(tv_labels):
+        matrix = _label_series_to_matrix(tv_labels)
+        if matrix.size == 0 or matrix.shape[0] < 2:
+            return [0.0] * matrix.shape[1], [0.0] * matrix.shape[1]
+        std = np.nanstd(matrix, axis=0, ddof=1)
+        sigma3 = (std * 3.0).tolist()
+        return sigma3, std.tolist()
+    numeric = pd.to_numeric(tv_labels, errors="coerce").dropna()
+    if len(numeric) < 2:
+        return 0.0, 0.0
+    std = float(np.std(numeric.astype(float), ddof=1))
     return 3.0 * std, std
 
 
 def _intra_conflict_smiles(df: pd.DataFrame, is_cls: bool, sigma3: Optional[float]) -> Set[str]:
     """Find same-SMILES conflicts within a single split."""
     conflicts: Set[str] = set()
+    if df is None or df.empty:
+        return conflicts
     for smi, g in df.groupby("smiles_clean"):
-        ys = g["label_raw"]
+        if g.empty:
+            continue
+        ys = g["label_raw"].tolist()
         if is_cls:
-            uniq = pd.unique(ys)
-            if len(uniq) > 1:
+            tuples = [_label_to_tuple(v) for v in ys]
+            if len(set(tuples)) > 1:
                 conflicts.add(smi)
         else:
-            if len(g) >= 2 and sigma3 is not None and sigma3 > 0:
-                y = ys.astype(float).to_numpy()
+            if len(ys) >= 2 and sigma3 is not None:
                 found = False
-                for i in range(len(y)):
+                for i in range(len(ys)):
                     if found:
                         break
-                    for j in range(i + 1, len(y)):
-                        if abs(y[i] - y[j]) >= sigma3:
+                    for j in range(i + 1, len(ys)):
+                        delta = _regression_delta(ys[i], ys[j])
+                        if _delta_exceeds_threshold(delta, sigma3):
+                            conflicts.add(smi)
                             found = True
                             break
-                if found:
-                    conflicts.add(smi)
     return conflicts
 
 
@@ -451,13 +647,18 @@ def _cross_conflict_smiles(A: pd.DataFrame, B: pd.DataFrame, is_cls: bool, sigma
         return set()
 
     if is_cls:
-        mask = merged["label_raw_A"].astype(int) != merged["label_raw_B"].astype(int)
+        tuples_a = merged["label_raw_A"].apply(_label_to_tuple)
+        tuples_b = merged["label_raw_B"].apply(_label_to_tuple)
+        mask = [a != b for a, b in zip(tuples_a.tolist(), tuples_b.tolist())]
         return set(merged.loc[mask, "smiles_clean"].unique())
     else:
-        if sigma3 is None or sigma3 == 0:
+        if sigma3 is None:
             return set()
-        delta = (merged["label_raw_A"].astype(float) - merged["label_raw_B"].astype(float)).abs()
-        return set(merged.loc[delta >= sigma3, "smiles_clean"].unique())
+        mask = [
+            _delta_exceeds_threshold(_regression_delta(a, b), sigma3)
+            for a, b in zip(merged["label_raw_A"].tolist(), merged["label_raw_B"].tolist())
+        ]
+        return set(merged.loc[mask, "smiles_clean"].unique())
 
 
 def _build_conflict_rows(tag: str, smi_set: Set[str], *dfs: pd.DataFrame) -> List[Dict[str, Any]]:
@@ -510,17 +711,17 @@ def _cliff_pairs(
 
         # Decide if this pair is a cliff
         if is_cls:
-            is_cliff = int(ra["label_raw"]) != int(rb["label_raw"])
-            delta = int(ra["label_raw"]) - int(rb["label_raw"])
-        else:
-            if sigma3 is None or sigma3 == 0:
+            labels_a = _label_to_tuple(ra["label_raw"])
+            labels_b = _label_to_tuple(rb["label_raw"])
+            if labels_a == labels_b:
                 continue
-            delta_val = float(ra["label_raw"]) - float(rb["label_raw"])
-            is_cliff = abs(delta_val) >= sigma3
-            delta = delta_val
-
-        if not is_cliff:
-            continue
+            delta = _classification_delta(labels_a, labels_b)
+        else:
+            if sigma3 is None:
+                continue
+            delta = _regression_delta(ra["label_raw"], rb["label_raw"])
+            if not _delta_exceeds_threshold(delta, sigma3):
+                continue
 
         fa, fb = fpsA[i], fpsB[j]
         fsa, fsb = scafA[i], scafB[j]
@@ -548,7 +749,7 @@ def _cliff_pairs(
             "tanimoto": tanimoto,                 # molecular ECFP Tanimoto
             "scaffold_tanimoto": scaffold_tanimoto,  # generic Murcko ECFP Tanimoto
             "levenshtein_sim": levenshtein_sim,   # SMILES Levenshtein ratio
-            "delta": float(delta) if not is_cls else int(delta),
+            "delta": _to_python_scalar(delta),
         })
     return rows
 
@@ -601,13 +802,35 @@ class SMILESAnalyzer:
         )
 
         # Statistics
-        tv_mean = tv_df["label_raw"].mean(skipna=True)
-        tv_std = tv_df["label_raw"].std(skipna=True)
+        label_series = tv_df["label_raw"]
+        if _series_has_sequence_labels(label_series):
+            label_matrix = _label_series_to_matrix(label_series)
+            if label_matrix.size == 0:
+                tv_mean: Any = []
+                base_std: Any = []
+            else:
+                tv_mean = np.nanmean(label_matrix, axis=0).tolist()
+                if label_matrix.shape[0] > 1:
+                    base_std = np.nanstd(label_matrix, axis=0, ddof=1).tolist()
+                else:
+                    base_std = [0.0] * label_matrix.shape[1]
+        else:
+            numeric = pd.to_numeric(label_series, errors="coerce")
+            numeric_clean = numeric.dropna()
+            if numeric_clean.empty:
+                tv_mean = None
+                base_std = 0.0
+            else:
+                mean_val = numeric_clean.mean()
+                tv_mean = float(mean_val) if pd.notna(mean_val) else None
+                base_std = float(numeric_clean.std(ddof=1)) if len(numeric_clean) > 1 else 0.0
         if not is_cls:
-            sigma3, _ = _compute_sigma3(tv_df["label_raw"])
-            self.log.info("Label stats: mean=%.3f std=%.3f 3σ=%.3f", tv_mean, tv_std, sigma3)
+            sigma3, std_vals = _compute_sigma3(label_series)
+            tv_std = std_vals
+            self.log.info("Label stats: mean=%s std=%s 3σ=%s", tv_mean, tv_std, sigma3)
         else:
             sigma3 = None
+            tv_std = base_std
         
         mol_tv_size = [
             rdMolDescriptors.CalcExactMolWt(
@@ -707,9 +930,9 @@ class SMILESAnalyzer:
             },
             "task": {
                 "type": self.cfg.task_type,
-                "label_tv_mean": float(tv_mean),
-                "label_tv_std": float(tv_std),
-                "label_tv_3sigma": float(sigma3) if sigma3 is not None else None,
+                "label_tv_mean": _to_python_scalar(tv_mean),
+                "label_tv_std": _to_python_scalar(tv_std),
+                "label_tv_3sigma": _to_python_scalar(sigma3) if sigma3 is not None else None,
                 "mol_tv_size_mean": float(mol_tv_size_mean),
                 "mol_tv_size_std": float(mol_tv_size_std),
             },

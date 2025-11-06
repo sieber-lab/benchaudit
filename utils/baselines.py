@@ -165,6 +165,10 @@ def eval_baselines_generic(cfg: Dict[str, Any], splits: Dict[str, pd.DataFrame])
 
     X_tr = _X_from_df(train, cfg, p)
     y_tr = _get_ycol(train, cfg)
+    if len(y_tr) > 0:
+        sample = y_tr[0]
+        if isinstance(sample, (list, tuple, np.ndarray)):
+            raise NotImplementedError("Multitask baselines are not supported yet.")
     X_te = _X_from_df(test, cfg, p)
     # test labels may not exist (e.g., Polaris). If present we compute local metrics.
     y_te = None
