@@ -4,7 +4,11 @@ import importlib
 from pathlib import Path
 import pandas as pd
 import numpy as np
-import polaris as po
+
+try:
+    import polaris as po
+except ImportError:  # pragma: no cover - optional dependency
+    po = None
 
 
 class BaseLoader:
@@ -94,6 +98,12 @@ class TabularLoader(BaseLoader):
             df = df.rename(columns={info["label_col"]: "label_raw"})
         if info.get("id_col") in df.columns:
             df = df.rename(columns={info["id_col"]: "id"})
+        seq_col = info.get("sequence_col")
+        if seq_col and seq_col in df.columns:
+            df = df.rename(columns={seq_col: "sequence_aa"})
+        target_col = info.get("target_id_col")
+        if target_col and target_col in df.columns:
+            df = df.rename(columns={target_col: "target_id"})
         return df
 
     def get_splits(self) -> Dict[str, pd.DataFrame]:
@@ -107,6 +117,14 @@ class TabularLoader(BaseLoader):
                 df_clean["label_raw"] = df["label_raw"].tolist()
                 if "id" in df.columns:
                     df_clean["id"] = df["id"].tolist()
+                if "sequence_aa" in df.columns:
+                    if len(df_clean) != len(df):
+                        raise ValueError("Sequence-aware tabular loader expects keep_invalid=True to retain row alignment.")
+                    df_clean["sequence_aa"] = df["sequence_aa"].tolist()
+                if "target_id" in df.columns:
+                    if len(df_clean) != len(df):
+                        raise ValueError("Sequence-aware tabular loader expects keep_invalid=True to retain row alignment.")
+                    df_clean["target_id"] = df["target_id"].tolist()
                 out[split] = df_clean
             return out
 
@@ -127,6 +145,14 @@ class TabularLoader(BaseLoader):
                 df_clean["label_raw"] = part["label_raw"].tolist()
                 if "id" in part.columns:
                     df_clean["id"] = part["id"].tolist()
+                if "sequence_aa" in part.columns:
+                    if len(df_clean) != len(part):
+                        raise ValueError("Sequence-aware tabular loader expects keep_invalid=True to retain row alignment.")
+                    df_clean["sequence_aa"] = part["sequence_aa"].tolist()
+                if "target_id" in part.columns:
+                    if len(df_clean) != len(part):
+                        raise ValueError("Sequence-aware tabular loader expects keep_invalid=True to retain row alignment.")
+                    df_clean["target_id"] = part["target_id"].tolist()
                 out[split] = df_clean
             return out
 
@@ -139,6 +165,10 @@ class PolarisLoader(BaseLoader):
     Returns only {'train', 'test'} with columns: smiles_clean, label_raw, id.
     """
     def get_splits(self) -> Dict[str, pd.DataFrame]:
+        if po is None:
+            raise ImportError(
+                "polaris-lib is required for Polaris datasets. Install with 'pip install polaris-lib'."
+            )
         bench = po.load_benchmark(self.cfg["name"])
         train, test = bench.get_train_test_split()
 

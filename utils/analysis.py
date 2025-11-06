@@ -1,4 +1,6 @@
 from __future__ import annotations
+import copy
+from collections import defaultdict
 from dataclasses import dataclass
 from typing import Dict, Any, List, Optional, Set, Tuple, Literal
 import logging
@@ -12,6 +14,22 @@ from rdkit.Chem.Scaffolds.MurckoScaffold import (
     MakeScaffoldGeneric as _GraphFramework,
     GetScaffoldForMol as _GetScaffoldForMol,
 )
+
+try:
+    import psa
+except ImportError:  # pragma: no cover - optional dependency
+    psa = None
+
+
+def _to_python_scalar(val: Any) -> Any:
+    if isinstance(val, (np.generic,)):
+        return val.item()
+    if isinstance(val, (pd.Timestamp,)):
+        return val.to_pydatetime()
+    if pd.isna(val):
+        return None
+    return val
+
 
 @dataclass
 class AnalyzerConfig:
@@ -39,6 +57,10 @@ class AnalyzerConfig:
         If input dataframes do NOT already have 'label_raw', rename this column to 'label_raw'.
     id_col : Optional[str]
         If provided and present, use/rename as 'id'. Otherwise sequential ids will be assigned per split.
+    sequence_col : Optional[str]
+        Optional column name for amino-acid sequences (renamed to 'sequence_aa' when present).
+    target_id_col : Optional[str]
+        Optional column name for target identifiers (renamed to 'target_id' when present).
     """
 
     task_type: Literal["classification", "regression"]
@@ -49,6 +71,8 @@ class AnalyzerConfig:
     smiles_col: Optional[str] = None
     label_col: Optional[str] = None
     id_col: Optional[str] = None
+    sequence_col: Optional[str] = None
+    target_id_col: Optional[str] = None
 
 
 @dataclass
@@ -57,6 +81,7 @@ class AnalysisResult:
     per_record_df: pd.DataFrame
     conflicts_rows: List[Dict[str, Any]]
     cliffs_rows: List[Dict[str, Any]]
+    sequence_alignment_rows: Optional[List[Dict[str, Any]]] = None
 
 
 def _normalize_columns(df: pd.DataFrame, cfg: AnalyzerConfig, split: str) -> pd.DataFrame:
@@ -195,6 +220,187 @@ def _pairs_above_thresh(
                 pairs.add((i, j))
                 
     return pairs
+
+
+@dataclass(frozen=True)
+class StretcherAlignment:
+    score: float
+    identity_pct: float
+    similarity_pct: float
+    length: int
+    gaps_pct: float
+    n_gaps: int
+    aligned_query: str
+    aligned_subject: str
+    query_start: int
+    query_end: int
+    subject_start: int
+    subject_end: int
+
+
+class PSAStretcherAligner:
+    """Thin wrapper around psa.stretcher with caching."""
+
+    def __init__(
+        self,
+        moltype: str = "prot",
+        gapopen: float = 10.0,
+        gapextend: float = 0.5,
+        matrix: str = "EBLOSUM62",
+    ):
+        if psa is None:
+            raise ImportError(
+                "pairwise-sequence-alignment is required. "
+                "Install EMBOSS (`sudo apt install emboss`) and the Python wrapper "
+                "(`pip install pairwise-sequence-alignment`) before running DTI analysis."
+            )
+        self.moltype = moltype
+        self.gapopen = gapopen
+        self.gapextend = gapextend
+        self.matrix = matrix
+        self._cache: Dict[Tuple[str, str], StretcherAlignment] = {}
+
+    def _normalize_seq(self, seq: str) -> str:
+        if not isinstance(seq, str):
+            seq = "" if pd.isna(seq) else str(seq)
+        return "".join(seq.split()).upper()
+
+    def align(self, query_seq: str, subject_seq: str) -> StretcherAlignment:
+        q = self._normalize_seq(query_seq)
+        s = self._normalize_seq(subject_seq)
+        key = (q, s)
+        if key not in self._cache:
+            aln = psa.stretcher(
+                moltype=self.moltype,
+                qseq=q,
+                sseq=s,
+                gapopen=self.gapopen,
+                gapextend=self.gapextend,
+                matrix=self.matrix,
+            )
+            self._cache[key] = StretcherAlignment(
+                score=float(aln.score),
+                identity_pct=float(aln.pidentity),
+                similarity_pct=float(getattr(aln, "psimilarity", float("nan"))),
+                length=int(aln.length),
+                gaps_pct=float(aln.pgaps),
+                n_gaps=int(aln.ngaps),
+                aligned_query=str(aln.qseq),
+                aligned_subject=str(aln.sseq),
+                query_start=int(aln.qstart),
+                query_end=int(aln.qend),
+                subject_start=int(aln.sstart),
+                subject_end=int(aln.send),
+            )
+        return self._cache[key]
+
+
+def _nn_sequence_alignment_stats(
+    ref_sequences: Set[str],
+    qry_sequences: Set[str],
+    aligner: PSAStretcherAligner,
+    ref_split: str,
+    qry_split: str,
+) -> Tuple[Optional[Dict[str, Any]], List[Dict[str, Any]]]:
+    if not ref_sequences or not qry_sequences:
+        return (
+            {
+                "mean_identity_pct": None,
+                "std_identity_pct": None,
+                "mean_similarity_pct": None,
+                "std_similarity_pct": None,
+                "mean_score": None,
+                "std_score": None,
+                "n": 0,
+            },
+            [],
+        )
+
+    ref_list = sorted(ref_sequences)
+    qry_list = sorted(qry_sequences)
+
+    identities: List[float] = []
+    scores: List[float] = []
+    similarities: List[float] = []
+    details: List[Dict[str, Any]] = []
+
+    for seq_q in qry_list:
+        best_alignment: Optional[StretcherAlignment] = None
+        best_seq = None
+        for seq_r in ref_list:
+            aln = aligner.align(seq_q, seq_r)
+            if (
+                best_alignment is None
+                or aln.identity_pct > best_alignment.identity_pct
+                or (
+                    aln.identity_pct == best_alignment.identity_pct
+                    and aln.score > best_alignment.score
+                )
+            ):
+                best_alignment = aln
+                best_seq = seq_r
+            if best_alignment is not None and best_alignment.identity_pct >= 99.99:
+                break
+
+        if best_alignment is None or best_seq is None:
+            continue
+
+        identities.append(float(best_alignment.identity_pct))
+        similarities.append(float(best_alignment.similarity_pct))
+        scores.append(float(best_alignment.score))
+        details.append({
+            "split_reference": ref_split,
+            "split_query": qry_split,
+            "sequence_reference": best_seq,
+            "sequence_query": seq_q,
+            "identity_pct": float(best_alignment.identity_pct),
+            "similarity_pct": float(best_alignment.similarity_pct),
+            "score": float(best_alignment.score),
+            "alignment_length": int(best_alignment.length),
+            "gaps_pct": float(best_alignment.gaps_pct),
+            "n_gaps": int(best_alignment.n_gaps),
+            "aligned_query": best_alignment.aligned_query,
+            "aligned_reference": best_alignment.aligned_subject,
+            "query_start": int(best_alignment.query_start),
+            "query_end": int(best_alignment.query_end),
+            "reference_start": int(best_alignment.subject_start),
+            "reference_end": int(best_alignment.subject_end),
+        })
+
+    if not identities:
+        return (
+            {
+                "mean_identity_pct": None,
+                "std_identity_pct": None,
+                "mean_similarity_pct": None,
+                "std_similarity_pct": None,
+                "mean_score": None,
+                "std_score": None,
+                "n": 0,
+            },
+            details,
+        )
+
+    arr_id = np.asarray(identities, dtype=float)
+    arr_score = np.asarray(scores, dtype=float)
+    arr_sim = np.asarray(similarities, dtype=float)
+    finite_sim = arr_sim[~np.isnan(arr_sim)]
+    if finite_sim.size > 0:
+        mean_sim = float(finite_sim.mean())
+        std_sim = float(finite_sim.std()) if finite_sim.size > 1 else 0.0
+    else:
+        mean_sim = None
+        std_sim = None
+    stats = {
+        "mean_identity_pct": float(arr_id.mean()),
+        "std_identity_pct": float(arr_id.std()) if len(arr_id) > 1 else 0.0,
+        "mean_similarity_pct": mean_sim,
+        "std_similarity_pct": std_sim,
+        "mean_score": float(arr_score.mean()),
+        "std_score": float(arr_score.std()) if len(arr_score) > 1 else 0.0,
+        "n": int(len(arr_id)),
+    }
+    return stats, details
 
 
 def _compute_sigma3(tv_labels: pd.Series) -> Tuple[float, float]:
@@ -544,4 +750,298 @@ class SMILESAnalyzer:
             per_record_df=per_record,
             conflicts_rows=conflict_rows,
             cliffs_rows=cliff_rows,
+            sequence_alignment_rows=None,
+        )
+
+
+class DTIAnalyzer:
+    """Drug–target interaction analysis: combines molecular + sequence hygiene."""
+
+    _SEQ_COLUMN_CANDIDATES = (
+        "sequence_aa",
+        "sequence",
+        "target_sequence",
+        "protein_sequence",
+        "aa_sequence",
+    )
+
+    def __init__(self, cfg: AnalyzerConfig, logger: Optional[logging.Logger] = None):
+        self.cfg = cfg
+        self.log = logger or logging.getLogger(__name__)
+        self._smiles = SMILESAnalyzer(cfg, self.log)
+        self._aligner = PSAStretcherAligner()
+
+    def _prepare_split(self, split: str, df: pd.DataFrame) -> pd.DataFrame:
+        out = df.copy()
+
+        if "sequence_aa" not in out.columns:
+            candidates: List[str] = []
+            if self.cfg.sequence_col:
+                candidates.append(self.cfg.sequence_col)
+            candidates.extend([c for c in self._SEQ_COLUMN_CANDIDATES if c not in candidates])
+            for col in candidates:
+                if col in out.columns:
+                    out = out.rename(columns={col: "sequence_aa"})
+                    break
+
+        if "sequence_aa" not in out.columns:
+            raise ValueError(
+                f"Missing amino-acid sequence column for split '{split}'. "
+                "Provide 'sequence_aa' or set AnalyzerConfig.sequence_col."
+            )
+
+        seq_series = out["sequence_aa"].map(lambda x: "" if pd.isna(x) else str(x))
+        seq_series = seq_series.str.upper().str.replace(r"\s+", "", regex=True)
+        out["sequence_aa"] = seq_series
+
+        if self.cfg.target_id_col and self.cfg.target_id_col in out.columns:
+            out = out.rename(columns={self.cfg.target_id_col: "target_id"})
+
+        empty_count = int((out["sequence_aa"] == "").sum())
+        if empty_count > 0:
+            self.log.warning("Split %s has %d rows with empty target sequences.", split, empty_count)
+
+        return out
+
+    def _build_drug_summary(self, splits: Dict[str, pd.DataFrame], base_summary: Dict[str, Any]) -> Dict[str, Any]:
+        train_df = splits["train"]
+        valid_df = splits.get("valid")
+        test_df = splits["test"]
+
+        unique_counts = {
+            "train": int(train_df["smiles_clean"].nunique()),
+            "valid": int(valid_df["smiles_clean"].nunique()) if valid_df is not None else None,
+            "test": int(test_df["smiles_clean"].nunique()),
+        }
+
+        train_set = set(train_df["smiles_clean"])
+        valid_set = set(valid_df["smiles_clean"]) if valid_df is not None else set()
+        test_set = set(test_df["smiles_clean"])
+
+        shared_counts = {
+            "train_valid": int(len(train_set & valid_set)) if valid_df is not None else None,
+            "train_test": int(len(train_set & test_set)),
+            "valid_test": int(len(valid_set & test_set)) if valid_df is not None else None,
+            "trainvalid_test": int(len((train_set | valid_set) & test_set)),
+        }
+
+        hygiene_base = base_summary.get("hygiene", {})
+        hygiene = {
+            "n_all_smiles": int(hygiene_base.get("n_all_valid_smiles", 0)),
+            "n_unique_smiles": int(hygiene_base.get("n_unique_valid_smiles", 0)),
+            "n_duplicate_smiles": int(hygiene_base.get("n_duplicate_valid_smiles", 0)),
+            "n_contaminated_trainvalid_vs_test": int(hygiene_base.get("n_contaminated_tv_vs_test", 0)),
+        }
+
+        return {
+            "unique_counts": unique_counts,
+            "shared_counts": shared_counts,
+            "hygiene": hygiene,
+            "similarity": base_summary.get("similarity", {}),
+        }
+
+    def _analyze_sequences(
+        self,
+        splits: Dict[str, pd.DataFrame],
+    ) -> Tuple[Dict[str, Any], List[Dict[str, Any]], List[Dict[str, Any]], Dict[str, int]]:
+        train_df = splits["train"]
+        valid_df = splits.get("valid")
+        test_df = splits["test"]
+
+        seq_train = set(train_df["sequence_aa"])
+        seq_valid = set(valid_df["sequence_aa"]) if valid_df is not None else set()
+        seq_test = set(test_df["sequence_aa"])
+        seq_train_valid = seq_train | seq_valid
+
+        unique_counts = {
+            "train": int(len(seq_train)),
+            "valid": int(len(seq_valid)) if valid_df is not None else None,
+            "test": int(len(seq_test)),
+        }
+
+        shared_counts = {
+            "train_valid": int(len(seq_train & seq_valid)) if valid_df is not None else None,
+            "train_test": int(len(seq_train & seq_test)),
+            "valid_test": int(len(seq_valid & seq_test)) if valid_df is not None else None,
+            "trainvalid_test": int(len(seq_train_valid & seq_test)),
+        }
+
+        total_sequences = len(train_df) + (len(valid_df) if valid_df is not None else 0) + len(test_df)
+        all_sequences: List[str] = train_df["sequence_aa"].tolist()
+        if valid_df is not None:
+            all_sequences.extend(valid_df["sequence_aa"].tolist())
+        all_sequences.extend(test_df["sequence_aa"].tolist())
+        total_unique = len(set(all_sequences))
+
+        duplicates_by_split = {
+            "train": int(len(train_df) - train_df["sequence_aa"].nunique()),
+            "valid": int(len(valid_df) - valid_df["sequence_aa"].nunique()) if valid_df is not None else None,
+            "test": int(len(test_df) - test_df["sequence_aa"].nunique()),
+        }
+
+        hygiene = {
+            "n_all_sequences": int(total_sequences),
+            "n_unique_sequences": int(total_unique),
+            "n_duplicate_sequences": int(total_sequences - total_unique),
+            "n_contaminated_trainvalid_vs_test": int(len(seq_train_valid & seq_test)),
+            "n_contaminated_train_valid": int(len(seq_train & seq_valid)) if valid_df is not None else None,
+            "duplicate_sequences_by_split": duplicates_by_split,
+        }
+
+        similarity: Dict[str, Optional[Dict[str, Any]]] = {}
+        alignment_rows: List[Dict[str, Any]] = []
+
+        if valid_df is not None and seq_valid:
+            stats_vt, details_vt = _nn_sequence_alignment_stats(seq_train, seq_valid, self._aligner, "train", "valid")
+            similarity["valid_to_train"] = stats_vt
+            alignment_rows.extend(details_vt)
+        else:
+            similarity["valid_to_train"] = None
+
+        stats_tt, details_tt = _nn_sequence_alignment_stats(seq_train, seq_test, self._aligner, "train", "test")
+        similarity["test_to_train"] = stats_tt
+        alignment_rows.extend(details_tt)
+
+        stats_ttv, details_ttv = _nn_sequence_alignment_stats(seq_train_valid, seq_test, self._aligner, "train_valid", "test")
+        similarity["test_to_trainvalid"] = stats_ttv
+        alignment_rows.extend(details_ttv)
+
+        if alignment_rows:
+            alignment_rows = sorted(
+                alignment_rows,
+                key=lambda r: (r["identity_pct"], r["score"]),
+                reverse=True,
+            )[:50]
+
+        pair_index: Dict[Tuple[str, str], Dict[str, Any]] = {}
+        sequence_index: Dict[str, Dict[str, Any]] = defaultdict(lambda: {"splits": set(), "smiles": set(), "rows": []})
+
+        for split_name, df in splits.items():
+            for _, row in df.iterrows():
+                smi = row["smiles_clean"]
+                seq = row["sequence_aa"]
+
+                pair_entry = pair_index.setdefault((smi, seq), {"splits": set(), "rows": []})
+                pair_entry["splits"].add(split_name)
+                pair_entry["rows"].append((split_name, row))
+
+                seq_entry = sequence_index[seq]
+                seq_entry["splits"].add(split_name)
+                seq_entry["smiles"].add(smi)
+                seq_entry["rows"].append((split_name, row))
+
+        pair_conflicts = {k: v for k, v in pair_index.items() if len(v["splits"]) > 1}
+        sequence_multi = {
+            seq: data
+            for seq, data in sequence_index.items()
+            if len(data["splits"]) > 1 and len(data["smiles"]) > 1
+        }
+
+        conflict_rows: List[Dict[str, Any]] = []
+        for (smi, seq), data in pair_conflicts.items():
+            for split_name, row in data["rows"]:
+                rec = {
+                    "kind": "dti_pair_cross_split",
+                    "split": split_name,
+                    "id": _to_python_scalar(row["id"]),
+                    "smiles_clean": smi,
+                    "sequence_aa": seq,
+                    "label_raw": _to_python_scalar(row["label_raw"]),
+                }
+                if "target_id" in row and not pd.isna(row["target_id"]):
+                    rec["target_id"] = _to_python_scalar(row["target_id"])
+                conflict_rows.append(rec)
+
+        for seq, data in sequence_multi.items():
+            for split_name, row in data["rows"]:
+                rec = {
+                    "kind": "sequence_multi_smiles_cross_split",
+                    "split": split_name,
+                    "id": _to_python_scalar(row["id"]),
+                    "smiles_clean": row["smiles_clean"],
+                    "sequence_aa": seq,
+                    "label_raw": _to_python_scalar(row["label_raw"]),
+                }
+                if "target_id" in row and not pd.isna(row["target_id"]):
+                    rec["target_id"] = _to_python_scalar(row["target_id"])
+                conflict_rows.append(rec)
+
+        seq_multi_examples = sorted(
+            (
+                {
+                    "sequence": seq,
+                    "n_unique_smiles": len(data["smiles"]),
+                    "splits": sorted(data["splits"]),
+                }
+                for seq, data in sequence_multi.items()
+            ),
+            key=lambda item: item["n_unique_smiles"],
+            reverse=True,
+        )[:5]
+
+        sequence_summary = {
+            "unique_counts": unique_counts,
+            "shared_counts": shared_counts,
+            "hygiene": hygiene,
+            "similarity": similarity,
+            "conflicts": {
+                "cross_split_pairs": int(len(pair_conflicts)),
+                "sequence_multi_smiles": int(len(sequence_multi)),
+            },
+            "examples": {
+                "sequence_multi_smiles": seq_multi_examples,
+            },
+        }
+
+        self.log.info(
+            "Target sequences: unique train=%s valid=%s test=%s shared(train-test)=%d shared(tv-test)=%d pair_conflicts=%d",
+            unique_counts["train"],
+            unique_counts["valid"],
+            unique_counts["test"],
+            shared_counts["train_test"],
+            shared_counts["trainvalid_test"],
+            len(pair_conflicts),
+        )
+
+        conflict_counts = {
+            "pair_conflicts": int(len(pair_conflicts)),
+            "sequence_multi_smiles": int(len(sequence_multi)),
+        }
+
+        return sequence_summary, conflict_rows, alignment_rows, conflict_counts
+
+    def run(self, splits_raw: Dict[str, pd.DataFrame]) -> AnalysisResult:
+        self.log.info("Starting DTI analysis.")
+
+        prepared: Dict[str, pd.DataFrame] = {}
+        for split, df in splits_raw.items():
+            prepared[split] = self._prepare_split(split, df)
+
+        smiles_result = self._smiles.run(prepared)
+
+        normalized: Dict[str, pd.DataFrame] = {}
+        for split, df in prepared.items():
+            normalized[split] = _normalize_columns(df, self.cfg, split)
+
+        sequence_summary, seq_conflict_rows, alignment_rows, conflict_counts = self._analyze_sequences(normalized)
+
+        summary = copy.deepcopy(smiles_result.summary)
+        summary["drugs"] = self._build_drug_summary(normalized, summary)
+        summary["targets"] = sequence_summary
+
+        conflicts_block = summary.setdefault("conflicts", {})
+        conflicts_block["cross_split_dti_pairs"] = conflict_counts["pair_conflicts"]
+        conflicts_block["sequence_cross_split_multi_smiles"] = conflict_counts["sequence_multi_smiles"]
+
+        combined_conflict_rows = list(smiles_result.conflicts_rows)
+        combined_conflict_rows.extend(seq_conflict_rows)
+
+        self.log.info("DTI analysis complete.")
+
+        return AnalysisResult(
+            summary=summary,
+            per_record_df=smiles_result.per_record_df,
+            conflicts_rows=combined_conflict_rows,
+            cliffs_rows=smiles_result.cliffs_rows,
+            sequence_alignment_rows=alignment_rows,
         )

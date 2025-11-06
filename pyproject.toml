@@ -95,6 +95,7 @@ dependencies = [
     "optuna==3.6.1",
     "overrides==7.7.0",
     "packaging==24.0",
+    "pairwise-sequence-alignment>=1.0.3",
     "pandas==2.2.2",
     "pandocfilters==1.5.1",
     "parso==0.8.4",
