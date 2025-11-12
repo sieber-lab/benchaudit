@@ -50,15 +50,15 @@ def build_config(row: Dict[str, object], model_seeds: Sequence[int]) -> Dict[str
     sequence = row["sequence"]
     return {
         "name": sequence_id,
+        "modelSeeds": list(model_seeds),
         "sequences": [
             {
                 "protein": {
                     "id": ["A"],
                     "sequence": sequence,
-                }
-            }
+                },
+            },
         ],
-        "modelSeeds": list(model_seeds),
         "dialect": "alphafold3",
         "version": 1,
     }
