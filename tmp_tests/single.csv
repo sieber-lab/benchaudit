@@ -1,5 +1,0 @@
-smiles,label,split,id
-CCO,1,train,0
-CCC,0,train,1
-CCN,1,valid,2
-CCO,0,test,3
