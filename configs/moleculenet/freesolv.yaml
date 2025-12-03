@@ -1,0 +1,12 @@
+type: tabular
+name: MoleculeNet/FreeSolv
+task: regression
+modality: property
+path: data/MoleculeNet/FreeSolv.csv
+info:
+  split_col: split
+  smiles_col: smiles
+  label_col: expt
+  id_col: iupac
+  keep_invalid: True
+out: runs/moleculenet

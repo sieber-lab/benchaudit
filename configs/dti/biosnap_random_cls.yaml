@@ -1,0 +1,14 @@
+type: dti
+name: BioSNAP_random_cls
+task: classification
+modality: dti
+paths:
+  train: data/BioSNAP/random/train.csv
+  valid: data/BioSNAP/random/valid.csv
+  test: data/BioSNAP/random/test.csv
+info:
+  smiles_col: Ligand
+  sequence_col: Protein
+  label_col: classification_label
+  keep_invalid: True
+out: runs/dti

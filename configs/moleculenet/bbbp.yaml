@@ -1,0 +1,12 @@
+type: tabular
+name: MoleculeNet/BBBP
+task: classification
+modality: property
+path: data/MoleculeNet/BBBP.csv
+info:
+  split_col: split
+  smiles_col: smiles
+  label_col: p_np
+  id_col: num
+  keep_invalid: True
+out: runs/moleculenet

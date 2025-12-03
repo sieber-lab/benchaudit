@@ -1,5 +1,0 @@
-type: polaris
-name: novartis/adme-novartis-cyp3a4-reg
-modality: property
-task: regression
-out: runs/polaris

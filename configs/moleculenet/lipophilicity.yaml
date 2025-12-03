@@ -1,0 +1,12 @@
+type: tabular
+name: MoleculeNet/Lipophilicity
+task: regression
+modality: property
+path: data/MoleculeNet/Lipophilicity.csv
+info:
+  split_col: split
+  smiles_col: smiles
+  label_col: exp
+  id_col: CMPD_CHEMBLID
+  keep_invalid: True
+out: runs/moleculenet

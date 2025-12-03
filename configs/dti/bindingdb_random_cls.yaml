@@ -1,0 +1,14 @@
+type: dti
+name: BindingDB_random_cls
+task: classification
+modality: dti
+paths:
+  train: data/BindingDB/random/train.csv
+  valid: data/BindingDB/random/valid.csv
+  test: data/BindingDB/random/test.csv
+info:
+  smiles_col: Ligand
+  sequence_col: Protein
+  label_col: classification_label
+  keep_invalid: True
+out: runs/dti

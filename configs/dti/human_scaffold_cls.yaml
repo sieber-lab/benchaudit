@@ -1,0 +1,14 @@
+type: dti
+name: Human_scaffold_cls
+task: classification
+modality: dti
+paths:
+  train: data/Human/scaffold/train.csv
+  valid: data/Human/scaffold/valid.csv
+  test: data/Human/scaffold/test.csv
+info:
+  smiles_col: Ligand
+  sequence_col: Protein
+  label_col: classification_label
+  keep_invalid: True
+out: runs/dti

@@ -1,0 +1,14 @@
+type: dti
+name: BindingDB_cluster_cls
+task: classification
+modality: dti
+paths:
+  train: data/BindingDB/cluster/train.csv
+  valid: data/BindingDB/cluster/valid.csv
+  test: data/BindingDB/cluster/test.csv
+info:
+  smiles_col: Ligand
+  sequence_col: Protein
+  label_col: classification_label
+  keep_invalid: True
+out: runs/dti

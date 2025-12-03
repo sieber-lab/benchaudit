@@ -1,0 +1,12 @@
+type: tabular
+name: MoleculeNet/BACE
+task: classification
+modality: property
+path: data/MoleculeNet/BACE.csv
+info:
+  split_col: split
+  smiles_col: mol
+  label_col: Class
+  id_col: CID
+  keep_invalid: True
+out: runs/moleculenet

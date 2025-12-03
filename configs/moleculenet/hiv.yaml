@@ -1,0 +1,12 @@
+type: tabular
+name: MoleculeNet/HIV
+task: classification
+modality: property
+path: data/MoleculeNet/HIV.csv
+info:
+  split_col: split
+  smiles_col: smiles
+  label_col: HIV_active
+  id_col: activity
+  keep_invalid: True
+out: runs/moleculenet

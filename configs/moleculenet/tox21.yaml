@@ -1,0 +1,24 @@
+type: tabular
+name: MoleculeNet/Tox21
+task: classification
+modality: property
+path: data/MoleculeNet/Tox21.csv
+info:
+  split_col: split
+  smiles_col: smiles
+  label_cols:
+    - NR-AR
+    - NR-AR-LBD
+    - NR-AhR
+    - NR-Aromatase
+    - NR-ER
+    - NR-ER-LBD
+    - NR-PPAR-gamma
+    - SR-ARE
+    - SR-ATAD5
+    - SR-HSE
+    - SR-MMP
+    - SR-p53
+  id_col: mol_id
+  keep_invalid: True
+out: runs/moleculenet
