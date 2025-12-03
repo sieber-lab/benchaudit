@@ -1,4 +1,6 @@
 data
 runs
 docs
+
 __pycache__
+.DS_Store
