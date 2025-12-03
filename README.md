@@ -1,11 +1,56 @@
-# Bench Setup Notes
+# AuditBench
 
-## Sequence Alignment Dependencies
-- Install the EMBOSS toolkit so that `stretcher`/`needle` binaries are available: `sudo apt install emboss`.
-- Install the Python wrapper that drives these programs: `pip install pairwise-sequence-alignment`.
-- No additional configuration is required; the analyzer invokes `psa.stretcher` directly once both pieces are present.
+Bench is a lightweight pipeline for auditing molecular property and drug–target interaction benchmarks. It standardizes SMILES strings, checks split hygiene, surfaces label conflicts and activity cliffs, and can run simple baseline models. Outputs are machine‑readable summaries and drill‑down tables you can inspect or feed into other tools.
 
-## DTI Configuration Hints
-- Set `type: dti` (or keep `type: tabular`) plus `modality: dti` in your YAML config to enable the DTI loader/analyzer pair.
-- Provide sequence metadata under `info`, e.g. `sequence_col` for the amino-acid column and (optionally) `target_id_col` for target identifiers.
-- For tabular DTI data, keep `info.keep_invalid: True` (default) so SMILES cleaning preserves row alignment with sequence fields.
+## Features
+- Config‑driven analysis of tabular, TDC, Polaris, and DTI datasets.
+- SMILES standardization with optional REOS alerts and configurable fingerprint settings.
+- Split hygiene reports: duplicates, cross‑split contamination, and nearest‑neighbor similarity.
+- Conflict and activity‑cliff detection for classification and regression tasks.
+- DTI extras: sequence normalization, cross‑split pair conflicts, and EMBOSS `stretcher` alignment summaries.
+- Optional simple baselines for quick performance sanity checks.
+
+## Installation with `uv`
+Bench uses a standard `pyproject.toml`. The quickest way to set up is with [`uv`](https://docs.astral.sh/uv/):
+
+```bash
+# 1) Create a virtual environment
+uv venv
+source .venv/bin/activate  # or .venv\Scripts\activate on Windows
+
+# 2) Install dependencies declared in pyproject.toml
+uv sync
+```
+
+If you need the optional sequence alignment support, install EMBOSS so `stretcher` is available (e.g., `sudo apt install emboss` on Debian/Ubuntu).
+
+## Usage
+The main entry point is `run.py`, which consumes one or more YAML configs and writes results under `runs/` by default.
+
+```bash
+# Analyze all configs in a folder
+uv run python run.py --configs configs --out-root runs
+
+# Analyze a single config and train baselines
+uv run python run.py --config configs/example.yml --benchmark
+```
+
+Outputs per config:
+- `summary.json`: split sizes, hygiene counts, similarity and conflict statistics.
+- `records.csv`: per-row view with cleaned SMILES, labels, and split tags.
+- `conflicts.jsonl`: detailed conflict rows.
+- `cliffs.jsonl`: detailed activity cliff rows.
+- `sequence_alignments.jsonl`: (DTI only) top alignments between splits.
+- `performance.json`: (when `--benchmark`) baseline model metrics and predictions.
+
+## Project layout
+- `run.py`: CLI runner that loads configs, builds loaders/analyzers, and writes artifacts.
+- `utils/`: loaders, analyzers, baseline helpers, and logging utilities.
+- `configs/`: example YAML configurations for supported datasets.
+- `data/`, `runs/`: expected data and output locations (not tracked).
+
+## Development
+- Code style: keep changes simple, PEP 8-ish. Add short docstrings for public functions.
+- Typing: prefer explicit, lightweight type hints when types are clear.
+- Tests: none are included yet; run a small config through `run.py` when making changes.
+- Optional extras: Polaris datasets require `polaris-lib`; sequence alignment requires `pairwise-sequence-alignment` and EMBOSS binaries.

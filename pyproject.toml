@@ -1,9 +1,26 @@
+[build-system]
+requires = ["setuptools>=61", "wheel"]
+build-backend = "setuptools.build_meta"
+
 [project]
 name = "bench"
 version = "0.1.0"
-description = "Add your description here"
+description = "AuditBench -- data hygiene and similarity audits for molecular and DTI benchmarks."
 readme = "README.md"
 requires-python = ">=3.10"
+authors = [
+    { name = "Maximilian G. Schuh" },
+    { name = "Aleksandra Daniluk" },
+    { name = "Stephan A. Sieber" },
+]
+license = { text = "MIT" }
+keywords = ["chemistry", "benchmarking", "molecular", "smiles", "dti"]
+classifiers = [
+    "Programming Language :: Python :: 3",
+    "License :: OSI Approved :: MIT License",
+    "Operating System :: OS Independent",
+]
+scripts = { bench = "run:main" }
 dependencies = [
     "alembic==1.13.1",
     "anyio==4.3.0",
@@ -159,3 +176,7 @@ dependencies = [
     "widgetsnbextension==4.0.10",
     "xgboost==2.0.3",
 ]
+
+[tool.setuptools]
+packages = ["utils"]
+py-modules = ["run", "main"]
