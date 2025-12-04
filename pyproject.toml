@@ -3,9 +3,9 @@ requires = ["setuptools>=61", "wheel"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "bench"
+name = "benchaudit"
 version = "0.1.0"
-description = "AuditBench -- data hygiene and similarity audits for molecular and DTI benchmarks."
+description = "BenchAudit -- data hygiene and similarity audits for molecular and DTI benchmarks."
 readme = "README.md"
 requires-python = ">=3.10"
 authors = [
@@ -20,7 +20,7 @@ classifiers = [
     "License :: OSI Approved :: MIT License",
     "Operating System :: OS Independent",
 ]
-scripts = { bench = "run:main" }
+scripts = { benchaudit = "run:main", bench = "run:main" }
 dependencies = [
     "alembic==1.13.1",
     "anyio==4.3.0",

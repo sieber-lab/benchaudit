@@ -13,7 +13,7 @@ from .baselines import run_baselines
 from .loader import BaseLoader, DTILoader, PolarisLoader, TabularLoader, TDCLoader
 
 
-LOGGER_NAME = "bench"
+LOGGER_NAME = "benchaudit"
 _JSON_INDENT = 2
 _SLUG_RE = re.compile(r"[^A-Za-z0-9._-]+")
 

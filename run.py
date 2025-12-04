@@ -1,6 +1,6 @@
 from __future__ import annotations
 
-"""CLI runner for bench (future AuditBench) dataset audits."""
+"""CLI runner for BenchAudit dataset audits."""
 
 import argparse
 import logging
@@ -87,7 +87,7 @@ def run_one_config(
 
 def main() -> None:
     """Parse CLI args and run one or more benchmark analyses."""
-    parser = argparse.ArgumentParser(description="Bench: run dataset analyzer (+ optional baselines)")
+    parser = argparse.ArgumentParser(description="BenchAudit: run dataset analyzer (+ optional baselines)")
     group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument("--configs", type=Path, help="Folder with YAML configs")
     group.add_argument("--config", type=Path, help="Single YAML config")

@@ -1,6 +1,6 @@
-# AuditBench
+# BenchAudit
 
-Bench is a lightweight pipeline for auditing molecular property and drug–target interaction benchmarks. It standardizes SMILES strings, checks split hygiene, surfaces label conflicts and activity cliffs, and can run simple baseline models. Outputs are machine‑readable summaries and drill‑down tables you can inspect or feed into other tools.
+BenchAudit is a lightweight pipeline for auditing molecular property and drug–target interaction benchmarks. It standardizes SMILES strings, checks split hygiene, surfaces label conflicts and activity cliffs, and can run simple baseline models. Outputs are machine‑readable summaries and drill‑down tables you can inspect or feed into other tools.
 
 ## Features
 - Config‑driven analysis of tabular, TDC, Polaris, and DTI datasets.
@@ -11,7 +11,7 @@ Bench is a lightweight pipeline for auditing molecular property and drug–targe
 - Optional simple baselines for quick performance sanity checks.
 
 ## Installation with `uv`
-Bench uses a standard `pyproject.toml`. The quickest way to set up is with [`uv`](https://docs.astral.sh/uv/):
+BenchAudit uses a standard `pyproject.toml`. The quickest way to set up is with [`uv`](https://docs.astral.sh/uv/):
 
 ```bash
 # 1) Create a virtual environment
@@ -25,14 +25,16 @@ uv sync
 If you need the optional sequence alignment support, install EMBOSS so `stretcher` is available (e.g., `sudo apt install emboss` on Debian/Ubuntu).
 
 ## Usage
-The main entry point is `run.py`, which consumes one or more YAML configs and writes results under `runs/` by default.
+The main entry point is `run.py`, which consumes one or more YAML configs and writes results under `runs/` by default. After `uv sync`, you can call it via `uv run python run.py ...` or the installed console script `uv run benchaudit ...` (the legacy alias `bench` also points to the same entrypoint).
 
 ```bash
 # Analyze all configs in a folder
 uv run python run.py --configs configs --out-root runs
+# or: uv run benchaudit --configs configs --out-root runs
 
 # Analyze a single config and train baselines
 uv run python run.py --config configs/example.yml --benchmark
+# or: uv run benchaudit --config configs/example.yml --benchmark
 ```
 
 Outputs per config:
