@@ -25,7 +25,9 @@ uv sync
 If you need the optional sequence alignment support, install EMBOSS so `stretcher` is available (e.g., `sudo apt install emboss` on Debian/Ubuntu).
 
 ## Usage
-The main entry point is `run.py`, which consumes one or more YAML configs and writes results under `runs/` by default. After `uv sync`, you can call it via `uv run python run.py ...` or the installed console script `uv run benchaudit ...` (the legacy alias `bench` also points to the same entrypoint).
+The main entry point is `run.py`, which consumes one or more YAML configs and writes results under `runs/` by default. After `uv sync`, you can call it via `uv run python run.py ...` or the installed console scripts:
+- `uv run benchaudit ...` (primary)
+- `uv run bench ...` (legacy alias)
 
 ```bash
 # Analyze all configs in a folder
