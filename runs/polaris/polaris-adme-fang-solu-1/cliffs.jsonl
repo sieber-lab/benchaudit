@@ -1,0 +1,1 @@
+{"kind": "intra_tv", "id_A": 613, "split_A": "train", "smiles_A": "Clc1ccc2oc(/C=C/c3csnn3)nc2c1", "y_A": -0.721246399, "id_B": 1478, "split_B": "train", "smiles_B": "Clc1ccc2[nH]c(COc3ccccc3)nc2c1", "y_B": 1.470263447, "tanimoto": 0.21666666666666667, "scaffold_tanimoto": 0.96, "levenshtein_sim": 0.711864406779661, "delta": [-2.1915098459999998]}

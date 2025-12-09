@@ -1,0 +1,20 @@
+{
+  "config": {
+    "type": "tdc",
+    "name": "Lipophilicity_AstraZeneca",
+    "task": "regression",
+    "modality": "property",
+    "info": {
+      "split": "random",
+      "smiles_col": "Drug",
+      "label_col": "Y",
+      "id_col": "id"
+    },
+    "out": "runs/tdc"
+  },
+  "outputs": {
+    "summary": "runs/tdc/tdc_lipophilicity_astrazeneca_random/summary.json",
+    "conflicts": "runs/tdc/tdc_lipophilicity_astrazeneca_random/conflicts.jsonl",
+    "cliffs": "runs/tdc/tdc_lipophilicity_astrazeneca_random/cliffs.jsonl"
+  }
+}

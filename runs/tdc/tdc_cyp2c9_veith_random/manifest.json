@@ -1,0 +1,20 @@
+{
+  "config": {
+    "type": "tdc",
+    "name": "CYP2C9_Veith",
+    "task": "classification",
+    "modality": "property",
+    "info": {
+      "split": "random",
+      "smiles_col": "Drug",
+      "label_col": "Y",
+      "id_col": "id"
+    },
+    "out": "runs/tdc"
+  },
+  "outputs": {
+    "summary": "runs/tdc/tdc_cyp2c9_veith_random/summary.json",
+    "conflicts": "runs/tdc/tdc_cyp2c9_veith_random/conflicts.jsonl",
+    "cliffs": "runs/tdc/tdc_cyp2c9_veith_random/cliffs.jsonl"
+  }
+}

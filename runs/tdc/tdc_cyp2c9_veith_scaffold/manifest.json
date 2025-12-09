@@ -1,0 +1,20 @@
+{
+  "config": {
+    "type": "tdc",
+    "name": "CYP2C9_Veith",
+    "task": "classification",
+    "modality": "property",
+    "info": {
+      "split": "scaffold",
+      "smiles_col": "Drug",
+      "label_col": "Y",
+      "id_col": "id"
+    },
+    "out": "runs/tdc"
+  },
+  "outputs": {
+    "summary": "runs/tdc/tdc_cyp2c9_veith_scaffold/summary.json",
+    "conflicts": "runs/tdc/tdc_cyp2c9_veith_scaffold/conflicts.jsonl",
+    "cliffs": "runs/tdc/tdc_cyp2c9_veith_scaffold/cliffs.jsonl"
+  }
+}

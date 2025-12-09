@@ -1,0 +1,20 @@
+{
+  "config": {
+    "type": "tdc",
+    "name": "Caco2_Wang",
+    "task": "regression",
+    "modality": "property",
+    "info": {
+      "split": "scaffold",
+      "smiles_col": "Drug",
+      "label_col": "Y",
+      "id_col": "id"
+    },
+    "out": "runs/tdc"
+  },
+  "outputs": {
+    "summary": "runs/tdc/tdc_caco2_wang_scaffold/summary.json",
+    "conflicts": "runs/tdc/tdc_caco2_wang_scaffold/conflicts.jsonl",
+    "cliffs": "runs/tdc/tdc_caco2_wang_scaffold/cliffs.jsonl"
+  }
+}

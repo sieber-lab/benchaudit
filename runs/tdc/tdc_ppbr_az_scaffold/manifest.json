@@ -1,0 +1,20 @@
+{
+  "config": {
+    "type": "tdc",
+    "name": "PPBR_AZ",
+    "task": "regression",
+    "modality": "property",
+    "info": {
+      "split": "scaffold",
+      "smiles_col": "Drug",
+      "label_col": "Y",
+      "id_col": "id"
+    },
+    "out": "runs/tdc"
+  },
+  "outputs": {
+    "summary": "runs/tdc/tdc_ppbr_az_scaffold/summary.json",
+    "conflicts": "runs/tdc/tdc_ppbr_az_scaffold/conflicts.jsonl",
+    "cliffs": "runs/tdc/tdc_ppbr_az_scaffold/cliffs.jsonl"
+  }
+}

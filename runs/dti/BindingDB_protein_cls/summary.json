@@ -1,0 +1,167 @@
+{
+  "counts": {
+    "train": 34236,
+    "valid": 3909,
+    "test": 11054
+  },
+  "hygiene": {
+    "n_all_valid_smiles": 49199,
+    "n_unique_valid_smiles": 14542,
+    "n_duplicate_valid_smiles": 34657,
+    "n_contaminated_tv_vs_test": 7155,
+    "reos_mean": 0.4879538602700223,
+    "reos_std": 0.8227877790868636
+  },
+  "similarity": {
+    "valid_to_train": {
+      "mean": 0.9335992485005941,
+      "std": 0.18486327530162078,
+      "n": 3909
+    },
+    "test_to_train": {
+      "mean": 0.9194318699916748,
+      "std": 0.20230520567030807,
+      "n": 11054
+    },
+    "test_to_trainvalid": {
+      "mean": 0.9522734910806184,
+      "std": 0.15115806557091654,
+      "n": 11054
+    }
+  },
+  "task": {
+    "type": "classification",
+    "label_tv_mean": 0.42511469393105256,
+    "label_tv_std": 0.4943668658282955,
+    "label_tv_3sigma": null,
+    "mol_tv_size_mean": 440.0706735495276,
+    "mol_tv_size_std": 167.47960281586197
+  },
+  "conflicts": {
+    "intra_train": 8678,
+    "intra_valid": 297,
+    "intra_test": 1628,
+    "cross_train_valid": 2528,
+    "cross_train_test": 6549,
+    "cross_valid_test": 1269,
+    "severe_trainvalid_test": 7155,
+    "cross_split_dti_pairs": 0,
+    "sequence_cross_split_multi_smiles": 0
+  },
+  "cliffs": {
+    "intra_train_valid": 138371,
+    "intra_test": 11065,
+    "cross_tv_test": 94656,
+    "sim_threshold": 0.9
+  },
+  "drugs": {
+    "unique_counts": {
+      "train": 13540,
+      "valid": 3226,
+      "test": 7726
+    },
+    "shared_counts": {
+      "train_valid": 2795,
+      "train_test": 6788,
+      "valid_test": 1667,
+      "trainvalid_test": 7155
+    },
+    "hygiene": {
+      "n_all_smiles": 49199,
+      "n_unique_smiles": 14542,
+      "n_duplicate_smiles": 34657,
+      "n_contaminated_trainvalid_vs_test": 7155
+    },
+    "similarity": {
+      "valid_to_train": {
+        "mean": 0.9335992485005941,
+        "std": 0.18486327530162078,
+        "n": 3909
+      },
+      "test_to_train": {
+        "mean": 0.9194318699916748,
+        "std": 0.20230520567030807,
+        "n": 11054
+      },
+      "test_to_trainvalid": {
+        "mean": 0.9522734910806184,
+        "std": 0.15115806557091654,
+        "n": 11054
+      }
+    }
+  },
+  "targets": {
+    "unique_counts": {
+      "train": 1836,
+      "valid": 262,
+      "test": 525
+    },
+    "shared_counts": {
+      "train_valid": 0,
+      "train_test": 0,
+      "valid_test": 0,
+      "trainvalid_test": 0
+    },
+    "hygiene": {
+      "n_all_sequences": 49199,
+      "n_unique_sequences": 2623,
+      "n_duplicate_sequences": 46576,
+      "n_contaminated_trainvalid_vs_test": 0,
+      "n_contaminated_train_valid": 0,
+      "duplicate_sequences_by_split": {
+        "train": 32400,
+        "valid": 3647,
+        "test": 10529
+      }
+    },
+    "similarity": {
+      "valid_to_train": {
+        "mean_identity_pct": 59.778316010319976,
+        "std_identity_pct": 28.790029721408544,
+        "mean_similarity_pct": 69.03756677745005,
+        "std_similarity_pct": 24.54905036023466,
+        "mean_score": 1800.4656488549617,
+        "std_score": 2068.4444400301777,
+        "n": 262
+      },
+      "test_to_train": {
+        "mean_identity_pct": 58.50753563589629,
+        "std_identity_pct": 29.18490266071553,
+        "mean_similarity_pct": 67.98959725873551,
+        "std_similarity_pct": 25.101387398622663,
+        "mean_score": 1691.6590476190477,
+        "std_score": 1952.4285097427346,
+        "n": 525
+      },
+      "test_to_trainvalid": {
+        "mean_identity_pct": 60.91208987025769,
+        "std_identity_pct": 29.22554283271914,
+        "mean_similarity_pct": 70.03423889175475,
+        "std_similarity_pct": 25.026387122780207,
+        "mean_score": 1835.0857142857142,
+        "std_score": 2093.9534170207944,
+        "n": 525
+      }
+    },
+    "conflicts": {
+      "cross_split_pairs": 0,
+      "sequence_multi_smiles": 0
+    },
+    "examples": {
+      "sequence_multi_smiles": []
+    }
+  },
+  "config": {
+    "type": "dti",
+    "name": "BindingDB_protein_cls",
+    "task": "classification",
+    "modality": "dti",
+    "info": {
+      "smiles_col": "Ligand",
+      "sequence_col": "Protein",
+      "label_col": "classification_label",
+      "keep_invalid": true
+    },
+    "out": "runs/dti"
+  }
+}

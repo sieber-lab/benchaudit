@@ -1,0 +1,14 @@
+{
+  "config": {
+    "type": "polaris",
+    "name": "polaris/adme-fang-solu-1",
+    "modality": "property",
+    "task": "regression",
+    "out": "runs/polaris"
+  },
+  "outputs": {
+    "summary": "runs/polaris/polaris_polaris-adme-fang-solu-1_split/summary.json",
+    "conflicts": "runs/polaris/polaris_polaris-adme-fang-solu-1_split/conflicts.jsonl",
+    "cliffs": "runs/polaris/polaris_polaris-adme-fang-solu-1_split/cliffs.jsonl"
+  }
+}

@@ -1,0 +1,16 @@
+{"kind": "intra_train", "split": "train", "id": 3678, "smiles_clean": "CN1CCCC[C@@H]1CCN1c2ccccc2Sc2ccc([S+](C)[O-])cc21", "label_raw": 0}
+{"kind": "intra_train", "split": "train", "id": 5514, "smiles_clean": "CN1CCCC[C@@H]1CCN1c2ccccc2Sc2ccc([S+](C)[O-])cc21", "label_raw": 1}
+{"kind": "intra_train", "split": "train", "id": 5568, "smiles_clean": "O=C(c1ccc(F)cc1)C1CCN(CCn2c(=O)[nH]c3ccccc3c2=O)CC1", "label_raw": 1}
+{"kind": "intra_train", "split": "train", "id": 5569, "smiles_clean": "O=C(c1ccc(F)cc1)C1CCN(CCn2c(=O)[nH]c3ccccc3c2=O)CC1", "label_raw": 0}
+{"kind": "intra_train", "split": "train", "id": 5820, "smiles_clean": "Nc1c2c(nc3ccccc13)CCCC2", "label_raw": 0}
+{"kind": "intra_train", "split": "train", "id": 5822, "smiles_clean": "Nc1c2c(nc3ccccc13)CCCC2", "label_raw": 1}
+{"kind": "intra_train", "split": "train", "id": 6444, "smiles_clean": "Cn1cc(C(F)(F)F)nc1-c1ccc(OC[C@@H](O)CNCCOc2ccc(O)c(C(N)=O)c2)cc1", "label_raw": 0}
+{"kind": "intra_train", "split": "train", "id": 6445, "smiles_clean": "Cn1cc(C(F)(F)F)nc1-c1ccc(OC[C@@H](O)CNCCOc2ccc(O)c(C(N)=O)c2)cc1", "label_raw": 1}
+{"kind": "intra_test", "split": "test", "id": 2440, "smiles_clean": "CSC(=N)N", "label_raw": 0}
+{"kind": "intra_test", "split": "test", "id": 2451, "smiles_clean": "CSC(=N)N", "label_raw": 1}
+{"kind": "cross_train_test", "split": "train", "id": 3310, "smiles_clean": "O=C(O)CN(CCN(CC(=O)O)CC(=O)O)CC(=O)O", "label_raw": 1}
+{"kind": "cross_train_test", "split": "test", "id": 2481, "smiles_clean": "O=C(O)CN(CCN(CC(=O)O)CC(=O)O)CC(=O)O", "label_raw": 0}
+{"kind": "cross_train_test", "split": "test", "id": 2482, "smiles_clean": "O=C(O)CN(CCN(CC(=O)O)CC(=O)O)CC(=O)O", "label_raw": 0}
+{"kind": "severe_trainvalid_test", "split": "train", "id": 3310, "smiles_clean": "O=C(O)CN(CCN(CC(=O)O)CC(=O)O)CC(=O)O", "label_raw": 1}
+{"kind": "severe_trainvalid_test", "split": "test", "id": 2481, "smiles_clean": "O=C(O)CN(CCN(CC(=O)O)CC(=O)O)CC(=O)O", "label_raw": 0}
+{"kind": "severe_trainvalid_test", "split": "test", "id": 2482, "smiles_clean": "O=C(O)CN(CCN(CC(=O)O)CC(=O)O)CC(=O)O", "label_raw": 0}

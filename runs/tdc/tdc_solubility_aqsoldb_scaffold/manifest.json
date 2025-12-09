@@ -1,0 +1,20 @@
+{
+  "config": {
+    "type": "tdc",
+    "name": "Solubility_AqSolDB",
+    "task": "regression",
+    "modality": "property",
+    "info": {
+      "split": "scaffold",
+      "smiles_col": "Drug",
+      "label_col": "Y",
+      "id_col": "id"
+    },
+    "out": "runs/tdc"
+  },
+  "outputs": {
+    "summary": "runs/tdc/tdc_solubility_aqsoldb_scaffold/summary.json",
+    "conflicts": "runs/tdc/tdc_solubility_aqsoldb_scaffold/conflicts.jsonl",
+    "cliffs": "runs/tdc/tdc_solubility_aqsoldb_scaffold/cliffs.jsonl"
+  }
+}

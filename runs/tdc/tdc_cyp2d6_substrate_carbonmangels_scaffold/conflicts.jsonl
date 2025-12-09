@@ -1,0 +1,2 @@
+{"kind": "intra_test", "split": "test", "id": 124, "smiles_clean": "CCCCN1CCCCC1C(=O)Nc1c(C)cccc1C", "label_raw": 1}
+{"kind": "intra_test", "split": "test", "id": 126, "smiles_clean": "CCCCN1CCCCC1C(=O)Nc1c(C)cccc1C", "label_raw": 0}

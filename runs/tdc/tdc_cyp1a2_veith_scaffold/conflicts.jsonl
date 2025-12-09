@@ -1,0 +1,8 @@
+{"kind": "intra_train", "split": "train", "id": 2793, "smiles_clean": "O=C(O)C1CC(C(=O)O)N1", "label_raw": 0}
+{"kind": "intra_train", "split": "train", "id": 2794, "smiles_clean": "O=C(O)C1CC(C(=O)O)N1", "label_raw": 1}
+{"kind": "intra_train", "split": "train", "id": 6597, "smiles_clean": "O=C(O)c1ccncc1", "label_raw": 0}
+{"kind": "intra_train", "split": "train", "id": 6598, "smiles_clean": "O=C(O)c1ccncc1", "label_raw": 1}
+{"kind": "intra_test", "split": "test", "id": 564, "smiles_clean": "N#Cc1cc2[nH]c(=O)c(=O)[nH]c2cc1[N+](=O)[O-]", "label_raw": 1}
+{"kind": "intra_test", "split": "test", "id": 567, "smiles_clean": "N#Cc1cc2[nH]c(=O)c(=O)[nH]c2cc1[N+](=O)[O-]", "label_raw": 0}
+{"kind": "intra_test", "split": "test", "id": 1613, "smiles_clean": "Cc1noc(NS(=O)(=O)c2ccc(N=CCC(=O)c3ccc4c(c3)OCO4)cc2)c1C", "label_raw": 1}
+{"kind": "intra_test", "split": "test", "id": 1614, "smiles_clean": "Cc1noc(NS(=O)(=O)c2ccc(N=CCC(=O)c3ccc4c(c3)OCO4)cc2)c1C", "label_raw": 0}

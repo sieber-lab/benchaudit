@@ -1,0 +1,36 @@
+{
+  "counts": {
+    "train": 791,
+    "valid": 113,
+    "test": 226
+  },
+  "hygiene": {
+    "n_all_valid_smiles": 1130,
+    "n_unique_valid_smiles": 1110,
+    "n_duplicate_valid_smiles": 20,
+    "n_contaminated_tv_vs_test": 7,
+    "reos_mean": 0.8462389380530974,
+    "reos_std": 1.070922027673822
+  },
+  "task": {
+    "type": "regression",
+    "label_tv_mean": 4.290530973451327,
+    "label_tv_std": 24.75584779725233,
+    "label_tv_3sigma": 74.26754339175699
+  },
+  "conflicts": {
+    "intra_train": 0,
+    "intra_valid": 0,
+    "intra_test": 0,
+    "cross_train_valid": 0,
+    "cross_train_test": 0,
+    "cross_valid_test": 0,
+    "severe_trainvalid_test": 0
+  },
+  "cliffs": {
+    "intra_train_valid": 1,
+    "intra_test": 0,
+    "cross_tv_test": 0,
+    "sim_threshold": 0.9
+  }
+}
