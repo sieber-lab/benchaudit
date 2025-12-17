@@ -1,5 +1,6 @@
 from __future__ import annotations
 import copy
+import json
 from collections import defaultdict
 from dataclasses import dataclass
 from typing import Dict, Any, List, Optional, Set, Tuple, Literal
@@ -212,6 +213,12 @@ class AnalyzerConfig:
         Optional column name for amino-acid sequences (renamed to 'sequence_aa' when present).
     target_id_col : Optional[str]
         Optional column name for target identifiers (renamed to 'target_id' when present).
+    name : Optional[str]
+        Logical dataset identifier (used for Foldseek metadata matching).
+    unique_sequences_jsonl : Optional[str]
+        Path to metadata that maps sequences to Foldseek sequence IDs.
+    foldseek_m8_path : Optional[str]
+        Path to Foldseek `.m8` alignment file for structural similarity checks.
     """
 
     task_type: Literal["classification", "regression"]
@@ -225,6 +232,9 @@ class AnalyzerConfig:
     label_cols: Optional[List[str]] = None
     sequence_col: Optional[str] = None
     target_id_col: Optional[str] = None
+    name: Optional[str] = None
+    unique_sequences_jsonl: Optional[str] = None
+    foldseek_m8_path: Optional[str] = None
 
 
 @dataclass
@@ -234,6 +244,7 @@ class AnalysisResult:
     conflicts_rows: List[Dict[str, Any]]
     cliffs_rows: List[Dict[str, Any]]
     sequence_alignment_rows: Optional[List[Dict[str, Any]]] = None
+    structure_alignment_rows: Optional[List[Dict[str, Any]]] = None
 
 
 def _normalize_columns(df: pd.DataFrame, cfg: AnalyzerConfig, split: str) -> pd.DataFrame:
@@ -1238,6 +1249,200 @@ class DTIAnalyzer:
         }
 
         return sequence_summary, conflict_rows, alignment_rows, conflict_counts
+    
+    def _analyze_structures_foldseek(
+        self,
+        splits: Dict[str, pd.DataFrame],
+    ) -> Tuple[Dict[str, Any], List[Dict[str, Any]]]:
+        """
+        Structural leakage analysis using Foldseek, mirroring _analyze_sequences.
+
+        Semantics:
+        - valid -> train
+        - test  -> train
+        - test  -> train_valid (train ∪ valid)
+
+        Uses nearest-neighbor structural similarity (Foldseek probability).
+        """
+
+        # ------------------------------------------------------------------
+        # 1) Guard: skip if Foldseek inputs not provided
+        # ------------------------------------------------------------------
+        if not self.cfg.unique_sequences_jsonl or not self.cfg.foldseek_m8_path:
+            self.log.info("Foldseek inputs not configured; skipping structural analysis.")
+            return (
+                {
+                    "similarity": {
+                        "valid_to_train": None,
+                        "test_to_train": None,
+                        "test_to_trainvalid": None,
+                    },
+                    "foldseek_coverage": {},
+                },
+                [],
+            )
+
+        # ------------------------------------------------------------------
+        # 2) Build split sets (EXACTLY like _analyze_sequences)
+        # ------------------------------------------------------------------
+        train_df = splits["train"]
+        valid_df = splits.get("valid")
+        test_df = splits["test"]
+
+        seq_train = set(train_df["sequence_aa"])
+        seq_valid = set(valid_df["sequence_aa"]) if valid_df is not None else set()
+        seq_test = set(test_df["sequence_aa"])
+        seq_train_valid = seq_train | seq_valid
+
+        # ------------------------------------------------------------------
+        # 3) Load Foldseek sequence IDs for THIS dataset
+        # ------------------------------------------------------------------
+        seq_to_seqid: Dict[str, str] = {}
+        dataset_name = self.cfg.name
+
+        with open(self.cfg.unique_sequences_jsonl) as f:
+            for line in f:
+                if not line.strip():
+                    continue
+                obj = json.loads(line)
+                sid = obj["sequence_id"]
+                seq = obj["sequence"]
+                sources = obj.get("sources", []) or []
+                matched = False
+                for src in sources:
+                    dataset = src.get("dataset")
+                    if dataset_name and dataset != dataset_name:
+                        continue
+                    if seq not in seq_to_seqid:
+                        seq_to_seqid[seq] = sid
+                        matched = True
+                        break
+                if not matched and not dataset_name and seq not in seq_to_seqid:
+                    seq_to_seqid[seq] = sid
+
+        def to_ids(seqs: Set[str]) -> Set[str]:
+            return {seq_to_seqid[s] for s in seqs if s in seq_to_seqid}
+
+        train_ids = to_ids(seq_train)
+        valid_ids = to_ids(seq_valid)
+        test_ids = to_ids(seq_test)
+        train_valid_ids = to_ids(seq_train_valid)
+
+        # ------------------------------------------------------------------
+        # 4) NN search helper (inline, like _nn_sequence_alignment_stats)
+        # ------------------------------------------------------------------
+        def _nn_structure_alignment_stats(ref_ids: Set[str], qry_ids: Set[str], ref_split: str, qry_split: str):
+            best = {}
+            details = []
+
+            with open(self.cfg.foldseek_m8_path) as f:
+                for line in f:
+                    parts = line.rstrip("\n").split("\t")
+                    if len(parts) < 11:
+                        continue
+
+                    qid, tid = parts[0], parts[1]
+                    if qid not in qry_ids or tid not in ref_ids:
+                        continue
+
+                    prob = float(parts[3])
+                    score = float(parts[2])
+                    evalue = float(parts[4])
+
+                    if (
+                        qid not in best
+                        or prob > best[qid]["probability"]
+                        or (prob == best[qid]["probability"] and score > best[qid]["alignment_score"])
+                    ):
+                        best[qid] = {
+                            "split_reference": ref_split,
+                            "split_query": qry_split,
+                            "query_id": qid,
+                            "reference_id": tid,
+                            "probability": prob,
+                            "alignment_score": score,
+                            "evalue": evalue,
+                            "query_start": int(parts[5]),
+                            "query_end": int(parts[6]),
+                            "query_length": int(parts[7]),
+                            "reference_start": int(parts[8]),
+                            "reference_end": int(parts[9]),
+                            "reference_length": int(parts[10]),
+                        }
+
+            if not best:
+                return (
+                    {
+                        "mean_probability": None,
+                        "std_probability": None,
+                        "mean_alignment_score": None,
+                        "std_alignment_score": None,
+                        "mean_evalue": None,
+                        "std_evalue": None,
+                        "n": 0,
+                    },
+                    [],
+                )
+
+            probs = [v["probability"] for v in best.values()]
+            scores = [v["alignment_score"] for v in best.values()]
+            evals = [v["evalue"] for v in best.values()]
+
+            stats = {
+                "mean_probability": float(np.mean(probs)),
+                "std_probability": float(np.std(probs)) if len(probs) > 1 else 0.0,
+                "mean_alignment_score": float(np.mean(scores)),
+                "std_alignment_score": float(np.std(scores)) if len(scores) > 1 else 0.0,
+                "mean_evalue": float(np.mean(evals)),
+                "std_evalue": float(np.std(evals)) if len(evals) > 1 else 0.0,
+                "n": int(len(probs)),
+            }
+
+            return stats, list(best.values())
+
+        # ------------------------------------------------------------------
+        # 5) Run NN checks (exactly like sequence)
+        # ------------------------------------------------------------------
+        similarity = {}
+        alignment_rows = []
+
+        if valid_ids:
+            stats_vt, rows_vt = _nn_structure_alignment_stats(train_ids, valid_ids, "train", "valid")
+            similarity["valid_to_train"] = stats_vt
+            alignment_rows.extend(rows_vt)
+        else:
+            similarity["valid_to_train"] = None
+
+        stats_tt, rows_tt = _nn_structure_alignment_stats(train_ids, test_ids, "train", "test")
+        similarity["test_to_train"] = stats_tt
+        alignment_rows.extend(rows_tt)
+
+        stats_ttv, rows_ttv = _nn_structure_alignment_stats(train_valid_ids, test_ids, "train_valid", "test")
+        similarity["test_to_trainvalid"] = stats_ttv
+        alignment_rows.extend(rows_ttv)
+
+        # ------------------------------------------------------------------
+        # 6) Keep top-50 examples (same rule as sequence)
+        # ------------------------------------------------------------------
+        if alignment_rows:
+            alignment_rows = sorted(
+                alignment_rows,
+                key=lambda r: (r["probability"], r["alignment_score"]),
+                reverse=True,
+            )[:50]
+
+        structure_summary = {
+            "similarity": similarity,
+            "foldseek_coverage": {
+                "n_train_sequences_in_foldseek": len(train_ids),
+                "n_valid_sequences_in_foldseek": len(valid_ids),
+                "n_test_sequences_in_foldseek": len(test_ids),
+                "n_train_valid_sequences_in_foldseek": len(train_valid_ids),
+            },
+        }
+
+        return structure_summary, alignment_rows
+
 
     def run(self, splits_raw: Dict[str, pd.DataFrame]) -> AnalysisResult:
         self.log.info("Starting DTI analysis.")
@@ -1253,10 +1458,12 @@ class DTIAnalyzer:
             normalized[split] = _normalize_columns(df, self.cfg, split)
 
         sequence_summary, seq_conflict_rows, alignment_rows, conflict_counts = self._analyze_sequences(normalized)
+        structure_summary, structure_alignment_rows = self._analyze_structures_foldseek(normalized)
 
         summary = copy.deepcopy(smiles_result.summary)
         summary["drugs"] = self._build_drug_summary(normalized, summary)
         summary["targets"] = sequence_summary
+        summary["targets"]["structures"] = structure_summary
 
         conflicts_block = summary.setdefault("conflicts", {})
         conflicts_block["cross_split_dti_pairs"] = conflict_counts["pair_conflicts"]
@@ -1273,4 +1480,5 @@ class DTIAnalyzer:
             conflicts_rows=combined_conflict_rows,
             cliffs_rows=smiles_result.cliffs_rows,
             sequence_alignment_rows=alignment_rows,
+            structure_alignment_rows=structure_alignment_rows,
         )
