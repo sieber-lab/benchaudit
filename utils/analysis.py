@@ -1298,6 +1298,7 @@ class DTIAnalyzer:
         # 3) Load Foldseek sequence IDs for THIS dataset
         # ------------------------------------------------------------------
         seq_to_seqid: Dict[str, str] = {}
+        seqid_to_seq: Dict[str, str] = {}
         dataset_name = self.cfg.name
 
         with open(self.cfg.unique_sequences_jsonl) as f:
@@ -1315,10 +1316,14 @@ class DTIAnalyzer:
                         continue
                     if seq not in seq_to_seqid:
                         seq_to_seqid[seq] = sid
+                    if sid not in seqid_to_seq:
+                        seqid_to_seq[sid] = seq
                         matched = True
                         break
                 if not matched and not dataset_name and seq not in seq_to_seqid:
                     seq_to_seqid[seq] = sid
+                    if sid not in seqid_to_seq:
+                        seqid_to_seq[sid] = seq
 
         def to_ids(seqs: Set[str]) -> Set[str]:
             return {seq_to_seqid[s] for s in seqs if s in seq_to_seqid}
@@ -1425,11 +1430,21 @@ class DTIAnalyzer:
         # 6) Keep top-50 examples (same rule as sequence)
         # ------------------------------------------------------------------
         if alignment_rows:
-            alignment_rows = sorted(
+            ranked = sorted(
                 alignment_rows,
                 key=lambda r: (r["probability"], r["alignment_score"]),
                 reverse=True,
-            )[:50]
+            )
+            filtered: List[Dict[str, Any]] = []
+            for row in ranked:
+                q_seq = seqid_to_seq.get(row["query_id"])
+                r_seq = seqid_to_seq.get(row["reference_id"])
+                if q_seq is not None and r_seq is not None and q_seq == r_seq:
+                    continue
+                filtered.append(row)
+                if len(filtered) >= 50:
+                    break
+            alignment_rows = filtered
 
         structure_summary = {
             "similarity": similarity,
