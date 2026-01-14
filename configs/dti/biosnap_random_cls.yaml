@@ -11,4 +11,6 @@ info:
   sequence_col: Protein
   label_col: classification_label
   keep_invalid: True
+  unique_sequences_jsonl: helpers/dti_unique_sequences.jsonl
+  foldseek_m8_path: helpers/dti_all_vs_all.m8 #run the run_foldseek_fasta.sh script to generate this file
 out: runs/dti
