@@ -140,6 +140,9 @@ def _build_analyzer_config(cfg: Dict[str, Any]) -> AnalyzerConfig:
     if task not in {"classification", "regression"}:
         raise ValueError("cfg.task must be 'classification' or 'regression'")
 
+    unique_sequences_jsonl = info.get("unique_sequences_jsonl") or cfg.get("unique_sequences_jsonl")
+    foldseek_m8_path = info.get("foldseek_m8_path") or cfg.get("foldseek_m8_path")
+
     return AnalyzerConfig(
         task_type="classification" if task == "classification" else "regression",
         typ=_analyzer_typ(cfg),
@@ -152,6 +155,9 @@ def _build_analyzer_config(cfg: Dict[str, Any]) -> AnalyzerConfig:
         label_cols=_normalize_label_cols(info),
         sequence_col=info.get("sequence_col"),
         target_id_col=info.get("target_id_col"),
+        name=str(cfg.get("name") or cfg.get("id") or "") or None,
+        unique_sequences_jsonl=str(unique_sequences_jsonl) if unique_sequences_jsonl else None,
+        foldseek_m8_path=str(foldseek_m8_path) if foldseek_m8_path else None,
     )
 
 
@@ -220,4 +226,10 @@ class ResultWriter:
             )
         else:
             paths["sequence_alignments"] = None
+        if result.structure_alignment_rows is not None:
+            paths["structure_alignments"] = self._write_jsonl(
+                result.structure_alignment_rows, "structure_alignments.jsonl"
+            )
+        else:
+            paths["structure_alignments"] = None
         return paths
