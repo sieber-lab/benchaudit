@@ -1,0 +1,68 @@
+{
+  "counts": {
+    "train": 8629,
+    "valid": 1233,
+    "test": 2466
+  },
+  "hygiene": {
+    "n_all_valid_smiles": 12328,
+    "n_unique_valid_smiles": 12268,
+    "n_duplicate_valid_smiles": 60,
+    "n_contaminated_tv_vs_test": 23,
+    "reos_mean": 0.6639626850537417,
+    "reos_std": 0.9734521040665958
+  },
+  "similarity": {
+    "valid_to_train": {
+      "mean": 0.5729017835457322,
+      "std": 0.19150346673529156,
+      "n": 1233
+    },
+    "test_to_train": {
+      "mean": 0.5673028761609766,
+      "std": 0.18936272387440203,
+      "n": 2466
+    },
+    "test_to_trainvalid": {
+      "mean": 0.5781144372991512,
+      "std": 0.19049158133869853,
+      "n": 2466
+    }
+  },
+  "task": {
+    "type": "classification",
+    "label_tv_mean": 0.41502737781383087,
+    "label_tv_std": 0.49275173633863417,
+    "label_tv_3sigma": null,
+    "mol_tv_size_mean": 350.27726425455006,
+    "mol_tv_size_std": 106.48062225868104
+  },
+  "conflicts": {
+    "intra_train": 0,
+    "intra_valid": 0,
+    "intra_test": 0,
+    "cross_train_valid": 1,
+    "cross_train_test": 0,
+    "cross_valid_test": 0,
+    "severe_trainvalid_test": 0
+  },
+  "cliffs": {
+    "intra_train_valid": 2112,
+    "intra_test": 129,
+    "cross_tv_test": 1031,
+    "sim_threshold": 0.9
+  },
+  "config": {
+    "type": "tdc",
+    "name": "CYP3A4_Veith",
+    "task": "classification",
+    "modality": "property",
+    "info": {
+      "split": "random",
+      "smiles_col": "Drug",
+      "label_col": "Y",
+      "id_col": "id"
+    },
+    "out": "runs/tdc"
+  }
+}

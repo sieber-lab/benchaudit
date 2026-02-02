@@ -29,12 +29,24 @@ def discover_yaml_files(configs_dir: Optional[Path], single_config: Optional[Pat
     """Collect unique YAML files from a folder or a single path."""
     files: List[Path] = []
     if single_config:
+        if not single_config.exists():
+            raise FileNotFoundError(f"--config not found: {single_config}")
         if single_config.suffix.lower() in {".yml", ".yaml"}:
             files.append(single_config)
         else:
             raise ValueError(f"--config must be a YAML file: {single_config}")
     if configs_dir:
-        files.extend(sorted(p for p in configs_dir.iterdir() if p.suffix.lower() in {".yml", ".yaml"}))
+        if not configs_dir.exists():
+            raise FileNotFoundError(f"--configs folder not found: {configs_dir}")
+        if not configs_dir.is_dir():
+            raise ValueError(f"--configs must be a directory: {configs_dir}")
+        files.extend(
+            sorted(
+                p
+                for p in configs_dir.rglob("*")
+                if p.is_file() and p.suffix.lower() in {".yml", ".yaml"}
+            )
+        )
 
     seen = set()
     uniq: List[Path] = []
@@ -52,12 +64,22 @@ def run_one_config(
     out_root: Path,
     log: logging.Logger,
     do_benchmark: bool = False,
+    configs_root: Optional[Path] = None,
+    force: bool = False,
 ) -> None:
     """Run the loader, analyzer, and optional baselines for a single config."""
     typ = cfg.get("type", "unknown")
     name = cfg.get("name", "unnamed")
-    out_dir = resolve_output_dir(cfg, out_root, config_path=config_path)
+    out_dir = resolve_output_dir(cfg, out_root, config_path=config_path, configs_root=configs_root)
     writer = ResultWriter(out_dir, log)
+
+    if not force:
+        expected = [out_dir / "summary.json"]
+        if do_benchmark:
+            expected.append(out_dir / "performance.json")
+        if all(path.exists() for path in expected):
+            log.info("skipping existing results -> %s (use --force to rerun)", out_dir)
+            return
 
     log.info("run: %s/%s -> %s", typ, name, out_dir)
 
@@ -97,12 +119,20 @@ def main() -> None:
         action="store_true",
         help="Train baselines (train-only) and write performance.json",
     )
+    parser.add_argument(
+        "--force",
+        action="store_true",
+        help="Rerun configs even if outputs already exist (default is to skip)",
+    )
     parser.add_argument("--log-level", type=str, default="INFO", help="Logging level (DEBUG, INFO, WARNING)")
     args = parser.parse_args()
 
     log = make_logger("runner", args.log_level)
 
-    files = discover_yaml_files(args.configs, args.config)
+    configs_root = args.configs.resolve() if args.configs else None
+    single_config = args.config.resolve() if args.config else None
+
+    files = discover_yaml_files(configs_root, single_config)
     if not files:
         log.info("no configs found")
         return
@@ -110,7 +140,15 @@ def main() -> None:
     for yml in files:
         try:
             cfg = load_yaml(yml)
-            run_one_config(cfg, yml, args.out_root, log, do_benchmark=args.benchmark)
+            run_one_config(
+                cfg,
+                yml,
+                args.out_root,
+                log,
+                do_benchmark=args.benchmark,
+                configs_root=configs_root,
+                force=args.force,
+            )
         except Exception as exc:
             log.error("failed: %s: %s", yml.name, exc)
 

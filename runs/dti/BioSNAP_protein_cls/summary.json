@@ -1,0 +1,206 @@
+{
+  "counts": {
+    "train": 18841,
+    "valid": 2565,
+    "test": 6058
+  },
+  "hygiene": {
+    "n_all_valid_smiles": 27464,
+    "n_unique_valid_smiles": 4469,
+    "n_duplicate_valid_smiles": 22995,
+    "n_contaminated_tv_vs_test": 2967,
+    "reos_mean": 0.7695973091656545,
+    "reos_std": 0.9747010976689265
+  },
+  "similarity": {
+    "valid_to_train": {
+      "mean": 0.9867404768795628,
+      "std": 0.0825234136278973,
+      "n": 2565
+    },
+    "test_to_train": {
+      "mean": 0.9868753251309237,
+      "std": 0.08252103411138022,
+      "n": 6058
+    },
+    "test_to_trainvalid": {
+      "mean": 0.9918010949500975,
+      "std": 0.06487920872431341,
+      "n": 6058
+    }
+  },
+  "task": {
+    "type": "classification",
+    "label_tv_mean": 0.48790058862001306,
+    "label_tv_std": 0.4998652587638642,
+    "label_tv_3sigma": null,
+    "mol_tv_size_mean": 348.3302955956796,
+    "mol_tv_size_std": 191.18646061631972
+  },
+  "conflicts": {
+    "intra_train": 2990,
+    "intra_valid": 251,
+    "intra_test": 857,
+    "cross_train_valid": 1600,
+    "cross_train_test": 2711,
+    "cross_valid_test": 860,
+    "severe_trainvalid_test": 2903,
+    "cross_split_dti_pairs": 0,
+    "sequence_cross_split_multi_smiles": 0
+  },
+  "cliffs": {
+    "intra_train_valid": 54134,
+    "intra_test": 4029,
+    "cross_tv_test": 44491,
+    "sim_threshold": 0.9
+  },
+  "drugs": {
+    "unique_counts": {
+      "train": 4345,
+      "valid": 1873,
+      "test": 3032
+    },
+    "shared_counts": {
+      "train_valid": 1814,
+      "train_test": 2931,
+      "valid_test": 1290,
+      "trainvalid_test": 2967
+    },
+    "hygiene": {
+      "n_all_smiles": 27464,
+      "n_unique_smiles": 4469,
+      "n_duplicate_smiles": 22995,
+      "n_contaminated_trainvalid_vs_test": 2967
+    },
+    "similarity": {
+      "valid_to_train": {
+        "mean": 0.9867404768795628,
+        "std": 0.0825234136278973,
+        "n": 2565
+      },
+      "test_to_train": {
+        "mean": 0.9868753251309237,
+        "std": 0.08252103411138022,
+        "n": 6058
+      },
+      "test_to_trainvalid": {
+        "mean": 0.9918010949500975,
+        "std": 0.06487920872431341,
+        "n": 6058
+      }
+    }
+  },
+  "targets": {
+    "unique_counts": {
+      "train": 1527,
+      "valid": 218,
+      "test": 436
+    },
+    "shared_counts": {
+      "train_valid": 0,
+      "train_test": 0,
+      "valid_test": 0,
+      "trainvalid_test": 0
+    },
+    "hygiene": {
+      "n_all_sequences": 27464,
+      "n_unique_sequences": 2181,
+      "n_duplicate_sequences": 25283,
+      "n_contaminated_trainvalid_vs_test": 0,
+      "n_contaminated_train_valid": 0,
+      "duplicate_sequences_by_split": {
+        "train": 17314,
+        "valid": 2347,
+        "test": 5622
+      }
+    },
+    "similarity": {
+      "valid_to_train": {
+        "mean_identity_pct": 38.20558584901776,
+        "std_identity_pct": 21.734956483556186,
+        "mean_similarity_pct": 51.40901872608485,
+        "std_similarity_pct": 20.699618469230696,
+        "mean_score": 594.743119266055,
+        "std_score": 989.4411072188634,
+        "n": 218
+      },
+      "test_to_train": {
+        "mean_identity_pct": 39.83015368690608,
+        "std_identity_pct": 22.01416526393113,
+        "mean_similarity_pct": 52.88448873913078,
+        "std_similarity_pct": 20.679700544839875,
+        "mean_score": 805.1766055045872,
+        "std_score": 1330.7820658860303,
+        "n": 436
+      },
+      "test_to_trainvalid": {
+        "mean_identity_pct": 40.54123340883005,
+        "std_identity_pct": 22.149619436318325,
+        "mean_similarity_pct": 53.584525511642745,
+        "std_similarity_pct": 20.80955896329887,
+        "mean_score": 830.2729357798165,
+        "std_score": 1331.9080922990702,
+        "n": 436
+      }
+    },
+    "conflicts": {
+      "cross_split_pairs": 0,
+      "sequence_multi_smiles": 0
+    },
+    "examples": {
+      "sequence_multi_smiles": []
+    },
+    "structures": {
+      "similarity": {
+        "valid_to_train": {
+          "mean_probability": 0.4038387096774194,
+          "std_probability": 0.22804205039950154,
+          "mean_alignment_score": 1635.9400921658987,
+          "std_alignment_score": 1616.6897143100007,
+          "mean_evalue": 1.0373257521377541,
+          "std_evalue": 2.3699738083385515,
+          "n": 217
+        },
+        "test_to_train": {
+          "mean_probability": 0.41002073732718897,
+          "std_probability": 0.22544256941519603,
+          "mean_alignment_score": 1930.9032258064517,
+          "std_alignment_score": 2088.650146154465,
+          "mean_evalue": 1.0902247431298895,
+          "std_evalue": 2.4417854161892993,
+          "n": 434
+        },
+        "test_to_trainvalid": {
+          "mean_probability": 0.41771198156682027,
+          "std_probability": 0.22543543629915722,
+          "mean_alignment_score": 1962.163594470046,
+          "std_alignment_score": 2089.413530588973,
+          "mean_evalue": 1.0419046533388168,
+          "std_evalue": 2.38658705296263,
+          "n": 434
+        }
+      },
+      "foldseek_coverage": {
+        "n_train_sequences_in_foldseek": 1527,
+        "n_valid_sequences_in_foldseek": 218,
+        "n_test_sequences_in_foldseek": 436,
+        "n_train_valid_sequences_in_foldseek": 1745
+      }
+    }
+  },
+  "config": {
+    "type": "dti",
+    "name": "BioSNAP_protein_cls",
+    "task": "classification",
+    "modality": "dti",
+    "info": {
+      "smiles_col": "Ligand",
+      "sequence_col": "Protein",
+      "label_col": "classification_label",
+      "keep_invalid": true,
+      "unique_sequences_jsonl": "helpers/dti_unique_sequences.jsonl",
+      "foldseek_m8_path": "helpers/dti_all_vs_all.m8"
+    },
+    "out": "runs/dti"
+  }
+}

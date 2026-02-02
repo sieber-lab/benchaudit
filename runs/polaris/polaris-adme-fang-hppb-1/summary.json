@@ -1,0 +1,58 @@
+{
+  "counts": {
+    "train": 126,
+    "valid": null,
+    "test": 34
+  },
+  "hygiene": {
+    "n_all_valid_smiles": 160,
+    "n_unique_valid_smiles": 160,
+    "n_duplicate_valid_smiles": 0,
+    "n_contaminated_tv_vs_test": 0,
+    "reos_mean": 0.19047619047619047,
+    "reos_std": 0.4140393356054125
+  },
+  "similarity": {
+    "valid_to_train": null,
+    "test_to_train": {
+      "mean": 0.3992213752642123,
+      "std": 0.19525264344158155,
+      "n": 34
+    },
+    "test_to_trainvalid": {
+      "mean": 0.3992213752642123,
+      "std": 0.19525264344158155,
+      "n": 34
+    }
+  },
+  "task": {
+    "type": "regression",
+    "label_tv_mean": 0.7044301998333332,
+    "label_tv_std": 0.8543831506100033,
+    "label_tv_3sigma": 2.56314945183001,
+    "mol_tv_size_mean": 377.1218166242857,
+    "mol_tv_size_std": 81.32124424725012
+  },
+  "conflicts": {
+    "intra_train": 0,
+    "intra_valid": 0,
+    "intra_test": 0,
+    "cross_train_valid": 0,
+    "cross_train_test": 0,
+    "cross_valid_test": 0,
+    "severe_trainvalid_test": 0
+  },
+  "cliffs": {
+    "intra_train_valid": 0,
+    "intra_test": null,
+    "cross_tv_test": null,
+    "sim_threshold": 0.9
+  },
+  "config": {
+    "type": "polaris",
+    "name": "polaris/adme-fang-hppb-1",
+    "task": "regression",
+    "modality": "property",
+    "out": "runs/polaris"
+  }
+}

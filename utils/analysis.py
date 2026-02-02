@@ -682,7 +682,7 @@ def _build_conflict_rows(tag: str, smi_set: Set[str], *dfs: pd.DataFrame) -> Lis
             rows.append({
                 "kind": tag,
                 "split": r["split"],
-                "id": int(r["id"]),
+                "id": _to_python_scalar(r["id"]),
                 "smiles_clean": r["smiles_clean"],
                 "label_raw": r["label_raw"],
             })
@@ -749,11 +749,11 @@ def _cliff_pairs(
 
         rows.append({
             "kind": "intra" if intra and A is B else "cross",
-            "id_A": int(ra["id"]),
+            "id_A": _to_python_scalar(ra["id"]),
             "split_A": ra["split"],
             "smiles_A": ra["smiles_clean"],
             "y_A": ra["label_raw"],
-            "id_B": int(rb["id"]),
+            "id_B": _to_python_scalar(rb["id"]),
             "split_B": rb["split"],
             "smiles_B": rb["smiles_clean"],
             "y_B": rb["label_raw"],

@@ -1,0 +1,248 @@
+{
+  "counts": {
+    "train": 17797,
+    "valid": 968,
+    "test": 363
+  },
+  "hygiene": {
+    "n_all_valid_smiles": 19128,
+    "n_unique_valid_smiles": 15076,
+    "n_duplicate_valid_smiles": 4052,
+    "n_contaminated_tv_vs_test": 48,
+    "reos_mean": 0.8265920596855849,
+    "reos_std": 1.0912270693363126
+  },
+  "similarity": {
+    "valid_to_train": {
+      "mean": 0.6405680561273016,
+      "std": 0.1937047768525469,
+      "n": 968
+    },
+    "test_to_train": {
+      "mean": 0.6001185372242368,
+      "std": 0.24654450729136904,
+      "n": 363
+    },
+    "test_to_trainvalid": {
+      "mean": 0.6031089323510733,
+      "std": 0.24549630037578743,
+      "n": 363
+    }
+  },
+  "task": {
+    "type": "regression",
+    "label_tv_mean": 6.359394617639222,
+    "label_tv_std": 1.8620006283435682,
+    "label_tv_3sigma": 5.586001885030704,
+    "mol_tv_size_mean": 470.92495243190604,
+    "mol_tv_size_std": 309.691459006487
+  },
+  "conflicts": {
+    "intra_train": 38,
+    "intra_valid": 3,
+    "intra_test": 0,
+    "cross_train_valid": 0,
+    "cross_train_test": 2,
+    "cross_valid_test": 0,
+    "severe_trainvalid_test": 2,
+    "cross_split_dti_pairs": 4,
+    "sequence_cross_split_multi_smiles": 368
+  },
+  "cliffs": {
+    "intra_train_valid": 904,
+    "intra_test": null,
+    "cross_tv_test": 37,
+    "sim_threshold": 0.9
+  },
+  "drugs": {
+    "unique_counts": {
+      "train": 14001,
+      "valid": 800,
+      "test": 343
+    },
+    "shared_counts": {
+      "train_valid": 20,
+      "train_test": 48,
+      "valid_test": 0,
+      "trainvalid_test": 48
+    },
+    "hygiene": {
+      "n_all_smiles": 19128,
+      "n_unique_smiles": 15076,
+      "n_duplicate_smiles": 4052,
+      "n_contaminated_trainvalid_vs_test": 48
+    },
+    "similarity": {
+      "valid_to_train": {
+        "mean": 0.6405680561273016,
+        "std": 0.1937047768525469,
+        "n": 968
+      },
+      "test_to_train": {
+        "mean": 0.6001185372242368,
+        "std": 0.24654450729136904,
+        "n": 363
+      },
+      "test_to_trainvalid": {
+        "mean": 0.6031089323510733,
+        "std": 0.24549630037578743,
+        "n": 363
+      }
+    }
+  },
+  "targets": {
+    "unique_counts": {
+      "train": 11861,
+      "valid": 857,
+      "test": 277
+    },
+    "shared_counts": {
+      "train_valid": 335,
+      "train_test": 38,
+      "valid_test": 7,
+      "trainvalid_test": 39
+    },
+    "hygiene": {
+      "n_all_sequences": 19128,
+      "n_unique_sequences": 12621,
+      "n_duplicate_sequences": 6507,
+      "n_contaminated_trainvalid_vs_test": 39,
+      "n_contaminated_train_valid": 335,
+      "duplicate_sequences_by_split": {
+        "train": 5936,
+        "valid": 111,
+        "test": 86
+      }
+    },
+    "similarity": {
+      "valid_to_train": {
+        "mean_identity_pct": 91.00050227525615,
+        "std_identity_pct": 21.243799617353044,
+        "mean_similarity_pct": 92.644440737376,
+        "std_similarity_pct": 17.39030162692867,
+        "mean_score": 2256.828471411902,
+        "std_score": 2289.614466633444,
+        "n": 857
+      },
+      "test_to_train": {
+        "mean_identity_pct": 74.76435131088344,
+        "std_identity_pct": 30.234425004182253,
+        "mean_similarity_pct": 79.70154539858711,
+        "std_similarity_pct": 25.06259729237117,
+        "mean_score": 1291.5812274368232,
+        "std_score": 1034.1841016170586,
+        "n": 277
+      },
+      "test_to_trainvalid": {
+        "mean_identity_pct": 74.76950786226101,
+        "std_identity_pct": 30.238570715830516,
+        "mean_similarity_pct": 79.70672525978424,
+        "std_similarity_pct": 25.066692995190607,
+        "mean_score": 1291.8158844765344,
+        "std_score": 1034.3005408007634,
+        "n": 277
+      }
+    },
+    "conflicts": {
+      "cross_split_pairs": 4,
+      "sequence_multi_smiles": 368
+    },
+    "examples": {
+      "sequence_multi_smiles": [
+        {
+          "sequence": "HWGYGKHNGPEHWHKDFPIAKGERQSPVDIDTHTAKYDPSLKPLSVSYDQATSLRILNNGHAFNVEFDDSQDKAVLKGGPLDGTYRLIQFHFHWGSLDGQGSEHTVDKKKYAAELHLVHWNTKYGDFGKAVQQPDGLAVLGIFLKVGSAKPGLQKVVDVLDSIKTKGKSADFTNFDPRGLLPESLDYWTYPGSLTTPPLLECVTWIVLKEPISVSSEQVLKFRKLNFNGEGEPEELMVDNWRPAQPLKNRQIKASFK",
+          "n_unique_smiles": 159,
+          "splits": [
+            "train",
+            "valid"
+          ]
+        },
+        {
+          "sequence": "IVGGYTCGANTVPYQVSLNSGYHFCGGSLINSQWVVSAAHCYKSGIQVRLGEDNINVVEGNEQFISASKSIVHPSYNSNTLNNDIMLIKLKSAASLNSRVASISLPTSCASAGTQCLISGWGNTKSSGTSYPDVLKCLKAPILSDSSCKSAYPGQITSNMFCAGYLEGGKDSCQGDSGGPVVCSGKLQGIVSWGSGCAQKNKPGVYTKVCNYVSWIKQTIASN",
+          "n_unique_smiles": 129,
+          "splits": [
+            "train",
+            "valid"
+          ]
+        },
+        {
+          "sequence": "HHWGYGKHNGPEHWHKDFPIAKGERQSPVDIDTHTAKYDPSLKPLSVSYDQATSLRILNNGHAFNVEFDDSQDKAVLKGGPLDGTYRLIQFHFHWGSLDGQGSEHTVDKKKYAAELHLVHWNTKYGDFGKAVQQPDGLAVLGIFLKVGSAKPGLQKVVDVLDSIKTKGKSADFTNFDPRGLLPESLDYWTYPGSLTTPPLLECVTWIVLKEPISVSSEQVLKFRKLNFNGEGEPEELMVDNWRPAQPLKNRQIKASFK",
+          "n_unique_smiles": 96,
+          "splits": [
+            "train",
+            "valid"
+          ]
+        },
+        {
+          "sequence": "SMNPPPPETSNPNKPKRQTNQLQYLLRVVLKTLWKHQFAWPFQQPVDAVKLNLPDYYKIIKTPMDMGTIKKRLENNYYWNAQECIQDFNTMFTNCYIYNKPGDDIVLMAEALEKLFLQKINELPTEE",
+          "n_unique_smiles": 86,
+          "splits": [
+            "train",
+            "valid"
+          ]
+        },
+        {
+          "sequence": "PQITLWQRPLVTIKIGGQLKEALLDTGADDTVLEEMSLPGRWKPKMIGGIGGFIKVRQYDQILIEICGHKAIGTVLVGPTPVNIIGRNLLTQIGCTLNFPQITLWQRPLVTIKIGGQLKEALLDTGADDTVLEEMSLPGRWKPKMIGGIGGFIKVRQYDQILIEICGHKAIGTVLVGPTPVNIIGRNLLTQIGCTLNF",
+          "n_unique_smiles": 71,
+          "splits": [
+            "train",
+            "valid"
+          ]
+        }
+      ]
+    },
+    "structures": {
+      "similarity": {
+        "valid_to_train": {
+          "mean_probability": 0.9293010501750293,
+          "std_probability": 0.19573802035543858,
+          "mean_alignment_score": 3599.901983663944,
+          "std_alignment_score": 3556.4492462662733,
+          "mean_evalue": 0.13961208161341404,
+          "std_evalue": 0.9759053645985498,
+          "n": 857
+        },
+        "test_to_train": {
+          "mean_probability": 0.7942527075812273,
+          "std_probability": 0.2985615109991067,
+          "mean_alignment_score": 2201.418772563177,
+          "std_alignment_score": 1610.0594103243347,
+          "mean_evalue": 0.4476783969865903,
+          "std_evalue": 1.6422228624044435,
+          "n": 277
+        },
+        "test_to_trainvalid": {
+          "mean_probability": 0.7943068592057762,
+          "std_probability": 0.29853550434357606,
+          "mean_alignment_score": 2201.768953068592,
+          "std_alignment_score": 1610.1046933391076,
+          "mean_evalue": 0.44521594211294413,
+          "std_evalue": 1.6418367006508914,
+          "n": 277
+        }
+      },
+      "foldseek_coverage": {
+        "n_train_sequences_in_foldseek": 11861,
+        "n_valid_sequences_in_foldseek": 857,
+        "n_test_sequences_in_foldseek": 277,
+        "n_train_valid_sequences_in_foldseek": 12383
+      }
+    }
+  },
+  "config": {
+    "type": "dti",
+    "name": "PDBBindv2020_reg",
+    "task": "regression",
+    "modality": "dti",
+    "info": {
+      "smiles_col": "Ligand",
+      "sequence_col": "Protein",
+      "label_col": "regression_label",
+      "id_col": "ID",
+      "keep_invalid": true,
+      "unique_sequences_jsonl": "helpers/dti_unique_sequences.jsonl",
+      "foldseek_m8_path": "helpers/dti_all_vs_all.m8"
+    },
+    "out": "runs/dti"
+  }
+}

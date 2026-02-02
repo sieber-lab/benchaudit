@@ -1,1 +1,0 @@
-{"kind": "cross_tv_test", "id_A": 206, "split_A": "train", "smiles_A": "CCN(CC)CCCC(C)Nc1ccnc2cc(Cl)ccc12", "y_A": 570.0, "id_B": 66, "split_B": "test", "smiles_B": "CCN(CCO)CCCC(C)Nc1ccnc2cc(Cl)ccc12", "y_B": 850.0, "tanimoto": 0.86, "scaffold_tanimoto": 0.8809523809523809, "levenshtein_sim": 0.9850746268656716, "delta": -280.0}

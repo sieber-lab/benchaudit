@@ -1,0 +1,2 @@
+{"kind": "cross_train_valid", "split": "train", "id": 4616, "smiles_clean": "C[C@@H](Cc1ccc(OCC(=O)O)cc1)NC[C@H](O)c1cccc(Cl)c1", "label_raw": 0}
+{"kind": "cross_train_valid", "split": "valid", "id": 998, "smiles_clean": "C[C@@H](Cc1ccc(OCC(=O)O)cc1)NC[C@H](O)c1cccc(Cl)c1", "label_raw": 1}

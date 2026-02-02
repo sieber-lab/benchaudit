@@ -1,0 +1,68 @@
+{
+  "counts": {
+    "train": 6988,
+    "valid": 998,
+    "test": 1996
+  },
+  "hygiene": {
+    "n_all_valid_smiles": 9982,
+    "n_unique_valid_smiles": 9348,
+    "n_duplicate_valid_smiles": 634,
+    "n_contaminated_tv_vs_test": 146,
+    "reos_mean": 0.9194840971700475,
+    "reos_std": 0.9750313178009162
+  },
+  "similarity": {
+    "valid_to_train": {
+      "mean": 0.6487069503417854,
+      "std": 0.21219575231720986,
+      "n": 998
+    },
+    "test_to_train": {
+      "mean": 0.644428816258077,
+      "std": 0.21216861166003034,
+      "n": 1996
+    },
+    "test_to_trainvalid": {
+      "mean": 0.6563201682311954,
+      "std": 0.21165352200949802,
+      "n": 1996
+    }
+  },
+  "task": {
+    "type": "regression",
+    "label_tv_mean": -2.8839580819181188,
+    "label_tv_std": 2.377675215678079,
+    "label_tv_3sigma": 7.133025647034237,
+    "mol_tv_size_mean": 248.66021901905893,
+    "mol_tv_size_std": 148.28811923484528
+  },
+  "conflicts": {
+    "intra_train": 12,
+    "intra_valid": 0,
+    "intra_test": 0,
+    "cross_train_valid": 4,
+    "cross_train_test": 10,
+    "cross_valid_test": 0,
+    "severe_trainvalid_test": 10
+  },
+  "cliffs": {
+    "intra_train_valid": 1876,
+    "intra_test": 71,
+    "cross_tv_test": 753,
+    "sim_threshold": 0.9
+  },
+  "config": {
+    "type": "tdc",
+    "name": "Solubility_AqSolDB",
+    "task": "regression",
+    "modality": "property",
+    "info": {
+      "split": "random",
+      "smiles_col": "Drug",
+      "label_col": "Y",
+      "id_col": "id"
+    },
+    "out": "runs/tdc"
+  }
+}

@@ -1,0 +1,252 @@
+{
+  "counts": {
+    "train": 4197,
+    "valid": 599,
+    "test": 1201
+  },
+  "hygiene": {
+    "n_all_valid_smiles": 5997,
+    "n_unique_valid_smiles": 2576,
+    "n_duplicate_valid_smiles": 3421,
+    "n_contaminated_tv_vs_test": 1,
+    "reos_mean": 0.6551292743953294,
+    "reos_std": 0.8237334347990334
+  },
+  "similarity": {
+    "valid_to_train": {
+      "mean": 0.4349971887799769,
+      "std": 0.1967090448646555,
+      "n": 599
+    },
+    "test_to_train": {
+      "mean": 0.4240425140200179,
+      "std": 0.1573270340382395,
+      "n": 1201
+    },
+    "test_to_trainvalid": {
+      "mean": 0.4435613072466053,
+      "std": 0.16482033944926092,
+      "n": 1201
+    }
+  },
+  "task": {
+    "type": "classification",
+    "label_tv_mean": 0.43744787322768974,
+    "label_tv_std": 0.49612352601898585,
+    "label_tv_3sigma": null,
+    "mol_tv_size_mean": 270.7400259319219,
+    "mol_tv_size_std": 232.9014411117509
+  },
+  "conflicts": {
+    "intra_train": 32,
+    "intra_valid": 3,
+    "intra_test": 8,
+    "cross_train_valid": 0,
+    "cross_train_test": 0,
+    "cross_valid_test": 1,
+    "severe_trainvalid_test": 1,
+    "cross_split_dti_pairs": 0,
+    "sequence_cross_split_multi_smiles": 723
+  },
+  "cliffs": {
+    "intra_train_valid": 118640,
+    "intra_test": 408,
+    "cross_tv_test": 384,
+    "sim_threshold": 0.9
+  },
+  "drugs": {
+    "unique_counts": {
+      "train": 1551,
+      "valid": 328,
+      "test": 698
+    },
+    "shared_counts": {
+      "train_valid": 0,
+      "train_test": 0,
+      "valid_test": 1,
+      "trainvalid_test": 1
+    },
+    "hygiene": {
+      "n_all_smiles": 5997,
+      "n_unique_smiles": 2576,
+      "n_duplicate_smiles": 3421,
+      "n_contaminated_trainvalid_vs_test": 1
+    },
+    "similarity": {
+      "valid_to_train": {
+        "mean": 0.4349971887799769,
+        "std": 0.1967090448646555,
+        "n": 599
+      },
+      "test_to_train": {
+        "mean": 0.4240425140200179,
+        "std": 0.1573270340382395,
+        "n": 1201
+      },
+      "test_to_trainvalid": {
+        "mean": 0.4435613072466053,
+        "std": 0.16482033944926092,
+        "n": 1201
+      }
+    }
+  },
+  "targets": {
+    "unique_counts": {
+      "train": 1784,
+      "valid": 401,
+      "test": 718
+    },
+    "shared_counts": {
+      "train_valid": 329,
+      "train_test": 551,
+      "valid_test": 201,
+      "trainvalid_test": 573
+    },
+    "hygiene": {
+      "n_all_sequences": 5997,
+      "n_unique_sequences": 2001,
+      "n_duplicate_sequences": 3996,
+      "n_contaminated_trainvalid_vs_test": 573,
+      "n_contaminated_train_valid": 329,
+      "duplicate_sequences_by_split": {
+        "train": 2413,
+        "valid": 198,
+        "test": 483
+      }
+    },
+    "similarity": {
+      "valid_to_train": {
+        "mean_identity_pct": 88.40001586987101,
+        "std_identity_pct": 26.051872536916505,
+        "mean_similarity_pct": 90.79518321567421,
+        "std_similarity_pct": 21.170505714282633,
+        "mean_score": 3022.154613466334,
+        "std_score": 3449.426070449427,
+        "n": 401
+      },
+      "test_to_train": {
+        "mean_identity_pct": 84.96340645773726,
+        "std_identity_pct": 28.858371545203923,
+        "mean_similarity_pct": 88.06536017192155,
+        "std_similarity_pct": 23.499710800301298,
+        "mean_score": 2548.9791086350974,
+        "std_score": 2794.5397737225558,
+        "n": 718
+      },
+      "test_to_trainvalid": {
+        "mean_identity_pct": 86.84794397930206,
+        "std_identity_pct": 27.49414263000501,
+        "mean_similarity_pct": 89.55502898791096,
+        "std_similarity_pct": 22.362084946470056,
+        "mean_score": 2631.363509749304,
+        "std_score": 2815.810228426709,
+        "n": 718
+      }
+    },
+    "conflicts": {
+      "cross_split_pairs": 0,
+      "sequence_multi_smiles": 723
+    },
+    "examples": {
+      "sequence_multi_smiles": [
+        {
+          "sequence": "MSANATLKPLCPILEQMSRLQSHSNTSIRYIDHAAVLLHGLASLLGLVENGVILFVVGCRMRQTVVTTWVLHLALSDLLASASLPFFTYFLAVGHSWELGTTFCKLHSSIFFLNMFASGFLLSAISLDRCLQVVRPVWAQNHRTVAAAHKVCLVLWALAVLNTVPYFVFRDTISRLDGRIMCYYNVLLLNPGPDRDATCNSRQVALAVSKFLLAFLVPLAIIASSHAAVSLRLQHRGRRRPGRFVRLVAAVVAAFALCWGPYHVFSLLEARAHANPGLRPLVWRGLPFVTSLAFFNSVANPVLYVLTCPDMLRKLRRSLRTVLESVLVDDSELGGAGSSRRRRTSSTARSASPLALCSRPEEPRGPARLLGWLLGSCAASPQTGPLNRALSSTSS",
+          "n_unique_smiles": 176,
+          "splits": [
+            "test",
+            "train",
+            "valid"
+          ]
+        },
+        {
+          "sequence": "MREAAAALVPPPAFAVTPAAAMEEPPPPPPPPPPPPEPETESEPECCLAARQEGTLGDSACKSPESDLEDFSDETNTENLYGTSPPSTPRQMKRMSTKHQRNNVGRPASRSNLKEKMNAPNQPPHKDTGKTVENVEEYSYKQEKKIRAALRTTERDRKKNVQCSFMLDSVGGSLPKKSIPDVDLNKPYLSLGCSNAKLPVSVPMPIARPARQTSRTDCPADRLKFFETLRLLLKLTSVSKKKDREQRGQENTSGFWLNRSNELIWLELQAWHAGRTINDQDFFLYTARQAIPDIINEILTFKVDYGSFAFVRDRAGFNGTSVEGQCKATPGTKIVGYSTHHEHLQRQRVSFEQVKRIMELLEYIEALYPSLQALQKDYEKYAAKDFQDRVQALCLWLNITKDLNQKLRIMGTVLGIKNLSDIGWPVFEIPSPRPSKGNEPEYEGDDTEGELKELESSTDESEEEQISDPRVPEIRQPIDNSFDIQSRDCISKKLERLESEDDSLGWGAPDWSTEAGFSRHCLTSIYRPFVDKALKQMGLRKLILRLHKLMDGSLQRARIALVKNDRPVEFSEFPDPMWGSDYVQLSRTPPSSEEKCSAVSWEELKAMDLPSFEPAFLVLCRVLLNVIHECLKLRLEQRPAGEPSLLSIKQLVRECKEVLKGGLLMKQYYQFMLQEVLEDLEKPDCNIDAFEEDLHKMLMVYFDYMRSWIQMLQQLPQASHSLKNLLEEEWNFTKEITHYIRGGEAQAGKLFCDIAGMLLKSTGSFLEFGLQESCAEFWTSADDSSASDEIRRSVIEISRALKELFHEARERASKALGFAKMLRKDLEIAAEFRLSAPVRDLLDVLKSKQYVKVQIPGLENLQMFVPDTLAEEKSIILQLLNAAAGKDCSKDSDDVLIDAYLLLTKHGDRARDSEDSWGTWEAQPVKVVPQVETVDTLRSMQVDNLLLVVMQSAHLTIQRKAFQQSIEGLMTLCQEQTSSQPVIAKALQQLKNDALELCNRISNAIDRVDHMFTSEFDAEVDESESVTLQQYYREAMIQGYNFGFEYHKEVVRLMSGEFRQKIGDKYISFARKWMNYVLTKCESGRGTRPRWATQGFDFLQAIEPAFISALPEDDFLSLQALMNECIGHVIGKPHSPVTGLYLAIHRNSPRPMKVPRCHSDPPNPHLIIPTPEGFSTRSMPSDARSHGSPAAAAAAAAAAVAASRPSPSGGDSVLPKSISSAHDTRGSSVPENDRLASIAAELQFRSLSRHSSPTEERDEPAYPRGDSSGSTRRSWELRTLISQSKDTASKLGPIEAIQKSVRLFEEKRYREMRRKNIIGQVCDTPKSYDNVMHVGLRKVTFKWQRGNKIGEGQYGKVYTCISVDTGELMAMKEIRFQPNDHKTIKETADELKIFEGIKHPNLVRYFGVELHREEMYIFMEYCDEGTLEEVSRLGLQEHVIRLYSKQITIAINVLHEHGIVHRDIKGANIFLTSSGLIKLGDFGCSVKLKNNAQTMPGEVNSTLGTAAYMAPEVITRAKGEGHGRAADIWSLGCVVIEMVTGKRPWHEYEHNFQIMYKVGMGHKPPIPERLSPEGKDFLSHCLESDPKMRWTASQLLDHSFVKVCTDEE",
+          "n_unique_smiles": 159,
+          "splits": [
+            "test",
+            "train",
+            "valid"
+          ]
+        },
+        {
+          "sequence": "MVVMNSLRVILQASPGKLLWRKFQIPRFMPARPCSLYTCTYKTRNRALHPLWESVDLVPGGDRQSPINIRWRDSVYDPGLKPLTISYDPATCLHVWNNGYSFLVEFEDSTDKSVIKGGPLEHNYRLKQFHFHWGAIDAWGSEHTVDSKCFPAELHLVHWNAVRFENFEDAALEENGLAVIGVFLKLGKHHKELQKLVDTLPSIKHKDALVEFGSFDPSCLMPTCPDYWTYSGSLTTPPLSESVTWIIKKQPVEVDHDQLEQFRTLLFTSEGEKEKRMVDNFRPLQPLMNRTVRSSFRHDYVLNVQAKPKPATSQATP",
+          "n_unique_smiles": 55,
+          "splits": [
+            "test",
+            "train",
+            "valid"
+          ]
+        },
+        {
+          "sequence": "MATAGNPWGWFLGYLILGVAGSLVSGSCSQIINGEDCSPHSQPWQAALVMENELFCSGVLVHPQWVLSAAHCFQNSYTIGLGLHSLEADQEPGSQMVEASLSVRHPEYNRPLLANDLMLIKLDESVSESDTIRSISIASQCPTAGNSCLVSGWGLLANGRMPTVLQCVNVSVVSEEVCSKLYDPLYHPSMFCAGGGHDQKDSCNGDSGGPLICNGYLQGLVSFGKAPCGQVGVPGVYTNLCKFTEWIEKTVQAS",
+          "n_unique_smiles": 45,
+          "splits": [
+            "test",
+            "train",
+            "valid"
+          ]
+        },
+        {
+          "sequence": "MAHVRGLQLPGCLALAALCSLVHSQHVFLAPQQARSLLQRVRRANTFLEEVRKGNLERECVEETCSYEEAFEALESSTATDVFWAKYTACETARTPRDKLAACLEGNCAEGLGTNYRGHVNITRSGIECQLWRSRYPHKPEINSTTHPGADLQENFCRNPDSSTTGPWCYTTDPTVRRQECSIPVCGQDQVTVAMTPRSEGSSVNLSPPLEQCVPDRGQQYQGRLAVTTHGLPCLAWASAQAKALSKHQDFNSAVQLVENFCRNPDGDEEGVWCYVAGKPGDFGYCDLNYCEEAVEEETGDGLDEDSDRAIEGRTATSEYQTFFNPRTFGSGEADCGLRPLFEKKSLEDKTERELLESYIDGRIVEGSDAEIGMSPWQVMLFRKSPQELLCGASLISDRWVLTAAHCLLYPPWDKNFTENDLLVRIGKHSRTRYERNIEKISMLEKIYIHPRYNWRENLDRDIALMKLKKPVAFSDYIHPVCLPDRETAASLLQAGYKGRVTGWGNLKETWTANVGKGQPSVLQVVNLPIVERPVCKDSTRIRITDNMFCAGYKPDEGKRGDACEGDSGGPFVMKSPFNNRWYQMGIVSWGEGCDRDGKYGFYTHVFRLKKWIQKVIDQFGE",
+          "n_unique_smiles": 32,
+          "splits": [
+            "test",
+            "train",
+            "valid"
+          ]
+        }
+      ]
+    },
+    "structures": {
+      "similarity": {
+        "valid_to_train": {
+          "mean_probability": 0.8885299999999999,
+          "std_probability": 0.2530062827283149,
+          "mean_alignment_score": 4620.3225,
+          "std_alignment_score": 4646.380066621084,
+          "mean_evalue": 0.23167088350424142,
+          "std_evalue": 1.266323400041864,
+          "n": 400
+        },
+        "test_to_train": {
+          "mean_probability": 0.8568493723849372,
+          "std_probability": 0.2776166741347242,
+          "mean_alignment_score": 4034.2928870292885,
+          "std_alignment_score": 3827.4939258517406,
+          "mean_evalue": 0.3039851090417117,
+          "std_evalue": 1.424384396074634,
+          "n": 717
+        },
+        "test_to_trainvalid": {
+          "mean_probability": 0.874050139275766,
+          "std_probability": 0.2654661538183359,
+          "mean_alignment_score": 4119.942896935933,
+          "std_alignment_score": 3872.1102551729546,
+          "mean_evalue": 0.2756378761544669,
+          "std_evalue": 1.3534578237219814,
+          "n": 718
+        }
+      },
+      "foldseek_coverage": {
+        "n_train_sequences_in_foldseek": 1784,
+        "n_valid_sequences_in_foldseek": 401,
+        "n_test_sequences_in_foldseek": 718,
+        "n_train_valid_sequences_in_foldseek": 1856
+      }
+    }
+  },
+  "config": {
+    "type": "dti",
+    "name": "Human_scaffold_cls",
+    "task": "classification",
+    "modality": "dti",
+    "info": {
+      "smiles_col": "Ligand",
+      "sequence_col": "Protein",
+      "label_col": "classification_label",
+      "keep_invalid": true,
+      "unique_sequences_jsonl": "helpers/dti_unique_sequences.jsonl",
+      "foldseek_m8_path": "helpers/dti_all_vs_all.m8"
+    },
+    "out": "runs/dti"
+  }
+}

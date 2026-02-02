@@ -1,0 +1,68 @@
+{
+  "counts": {
+    "train": 1421,
+    "valid": 203,
+    "test": 406
+  },
+  "hygiene": {
+    "n_all_valid_smiles": 2030,
+    "n_unique_valid_smiles": 1959,
+    "n_duplicate_valid_smiles": 71,
+    "n_contaminated_tv_vs_test": 27,
+    "reos_mean": 0.5671182266009852,
+    "reos_std": 0.8442053992912744
+  },
+  "similarity": {
+    "valid_to_train": {
+      "mean": 0.5893061493880618,
+      "std": 0.2161504755656588,
+      "n": 203
+    },
+    "test_to_train": {
+      "mean": 0.5833708455674292,
+      "std": 0.2131931774145261,
+      "n": 406
+    },
+    "test_to_trainvalid": {
+      "mean": 0.597416218872546,
+      "std": 0.2104770425161005,
+      "n": 406
+    }
+  },
+  "task": {
+    "type": "classification",
+    "label_tv_mean": 0.7684729064039408,
+    "label_tv_std": 0.4219382941806129,
+    "label_tv_3sigma": null,
+    "mol_tv_size_mean": 341.8945659080584,
+    "mol_tv_size_std": 150.96239405582156
+  },
+  "conflicts": {
+    "intra_train": 3,
+    "intra_valid": 0,
+    "intra_test": 1,
+    "cross_train_valid": 5,
+    "cross_train_test": 5,
+    "cross_valid_test": 0,
+    "severe_trainvalid_test": 5
+  },
+  "cliffs": {
+    "intra_train_valid": 81,
+    "intra_test": 13,
+    "cross_tv_test": 70,
+    "sim_threshold": 0.9
+  },
+  "config": {
+    "type": "tdc",
+    "name": "BBB_Martins",
+    "task": "classification",
+    "modality": "property",
+    "info": {
+      "split": "random",
+      "smiles_col": "Drug",
+      "label_col": "Y",
+      "id_col": "id"
+    },
+    "out": "runs/tdc"
+  }
+}

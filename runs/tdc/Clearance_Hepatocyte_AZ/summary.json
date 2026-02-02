@@ -1,0 +1,68 @@
+{
+  "counts": {
+    "train": 849,
+    "valid": 121,
+    "test": 243
+  },
+  "hygiene": {
+    "n_all_valid_smiles": 1213,
+    "n_unique_valid_smiles": 1014,
+    "n_duplicate_valid_smiles": 199,
+    "n_contaminated_tv_vs_test": 60,
+    "reos_mean": 0.32783505154639175,
+    "reos_std": 0.6486856232254643
+  },
+  "similarity": {
+    "valid_to_train": {
+      "mean": 0.6622748606411807,
+      "std": 0.2686373272666436,
+      "n": 121
+    },
+    "test_to_train": {
+      "mean": 0.6437924854287688,
+      "std": 0.28500360959573817,
+      "n": 243
+    },
+    "test_to_trainvalid": {
+      "mean": 0.6666383583506017,
+      "std": 0.2819712712075638,
+      "n": 243
+    }
+  },
+  "task": {
+    "type": "regression",
+    "label_tv_mean": 42.755484536082484,
+    "label_tv_std": 49.81747417473025,
+    "label_tv_3sigma": 149.45242252419075,
+    "mol_tv_size_mean": 406.0640562137175,
+    "mol_tv_size_std": 119.9167882135292
+  },
+  "conflicts": {
+    "intra_train": 0,
+    "intra_valid": 0,
+    "intra_test": 0,
+    "cross_train_valid": 0,
+    "cross_train_test": 0,
+    "cross_valid_test": 0,
+    "severe_trainvalid_test": 0
+  },
+  "cliffs": {
+    "intra_train_valid": 0,
+    "intra_test": null,
+    "cross_tv_test": null,
+    "sim_threshold": 0.9
+  },
+  "config": {
+    "type": "tdc",
+    "name": "Clearance_Hepatocyte_AZ",
+    "task": "regression",
+    "modality": "property",
+    "info": {
+      "split": "random",
+      "smiles_col": "Drug",
+      "label_col": "Y",
+      "id_col": "id"
+    },
+    "out": "runs/tdc"
+  }
+}

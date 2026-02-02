@@ -1,5 +1,7 @@
 data
 docs
 
+*.m8
+
 __pycache__
 .DS_Store

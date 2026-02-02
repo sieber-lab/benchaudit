@@ -1,2 +1,0 @@
-{"kind": "intra_train", "split": "train", "id": 6780, "smiles_clean": "C[C@@H](Cc1ccc(OCC(=O)O)cc1)NC[C@H](O)c1cccc(Cl)c1", "label_raw": 0}
-{"kind": "intra_train", "split": "train", "id": 6781, "smiles_clean": "C[C@@H](Cc1ccc(OCC(=O)O)cc1)NC[C@H](O)c1cccc(Cl)c1", "label_raw": 1}

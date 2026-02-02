@@ -1,0 +1,68 @@
+{
+  "counts": {
+    "train": 467,
+    "valid": 67,
+    "test": 133
+  },
+  "hygiene": {
+    "n_all_valid_smiles": 667,
+    "n_unique_valid_smiles": 664,
+    "n_duplicate_valid_smiles": 3,
+    "n_contaminated_tv_vs_test": 2,
+    "reos_mean": 0.7415730337078652,
+    "reos_std": 0.9727401565189315
+  },
+  "similarity": {
+    "valid_to_train": {
+      "mean": 0.4913011445567044,
+      "std": 0.22096938680825665,
+      "n": 67
+    },
+    "test_to_train": {
+      "mean": 0.4900016823172611,
+      "std": 0.19038964023383753,
+      "n": 133
+    },
+    "test_to_trainvalid": {
+      "mean": 0.49617395413337073,
+      "std": 0.19160935025063072,
+      "n": 133
+    }
+  },
+  "task": {
+    "type": "regression",
+    "label_tv_mean": 15.31256554307116,
+    "label_tv_std": 68.94522064293652,
+    "label_tv_3sigma": 206.83566192880954,
+    "mol_tv_size_mean": 392.73751461388656,
+    "mol_tv_size_std": 216.64465436187342
+  },
+  "conflicts": {
+    "intra_train": 0,
+    "intra_valid": 0,
+    "intra_test": 0,
+    "cross_train_valid": 0,
+    "cross_train_test": 0,
+    "cross_valid_test": 0,
+    "severe_trainvalid_test": 0
+  },
+  "cliffs": {
+    "intra_train_valid": 0,
+    "intra_test": null,
+    "cross_tv_test": 1,
+    "sim_threshold": 0.9
+  },
+  "config": {
+    "type": "tdc",
+    "name": "Half_Life_Obach",
+    "task": "regression",
+    "modality": "property",
+    "info": {
+      "split": "random",
+      "smiles_col": "Drug",
+      "label_col": "Y",
+      "id_col": "id"
+    },
+    "out": "runs/tdc"
+  }
+}

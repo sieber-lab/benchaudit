@@ -1,5 +1,0 @@
-type: polaris
-name: polaris/adme-fang-solu-1
-modality: property
-task: regression
-out: runs/polaris

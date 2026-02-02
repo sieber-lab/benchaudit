@@ -1,0 +1,206 @@
+{
+  "counts": {
+    "train": 4022,
+    "valid": 600,
+    "test": 1375
+  },
+  "hygiene": {
+    "n_all_valid_smiles": 5997,
+    "n_unique_valid_smiles": 2576,
+    "n_duplicate_valid_smiles": 3421,
+    "n_contaminated_tv_vs_test": 471,
+    "reos_mean": 0.658156642146257,
+    "reos_std": 0.8453044425810627
+  },
+  "similarity": {
+    "valid_to_train": {
+      "mean": 0.8724918388295335,
+      "std": 0.24722378793830357,
+      "n": 600
+    },
+    "test_to_train": {
+      "mean": 0.7846681180406062,
+      "std": 0.30242885971968964,
+      "n": 1375
+    },
+    "test_to_trainvalid": {
+      "mean": 0.7997586766338842,
+      "std": 0.2945786266981648,
+      "n": 1375
+    }
+  },
+  "task": {
+    "type": "classification",
+    "label_tv_mean": 0.4123755949805279,
+    "label_tv_std": 0.4923153490761478,
+    "label_tv_3sigma": null,
+    "mol_tv_size_mean": 281.4087084570884,
+    "mol_tv_size_std": 227.8812824965155
+  },
+  "conflicts": {
+    "intra_train": 27,
+    "intra_valid": 2,
+    "intra_test": 8,
+    "cross_train_valid": 15,
+    "cross_train_test": 26,
+    "cross_valid_test": 6,
+    "severe_trainvalid_test": 27,
+    "cross_split_dti_pairs": 0,
+    "sequence_cross_split_multi_smiles": 0
+  },
+  "cliffs": {
+    "intra_train_valid": 73304,
+    "intra_test": 5532,
+    "cross_tv_test": 40675,
+    "sim_threshold": 0.9
+  },
+  "drugs": {
+    "unique_counts": {
+      "train": 1925,
+      "valid": 436,
+      "test": 966
+    },
+    "shared_counts": {
+      "train_valid": 280,
+      "train_test": 447,
+      "valid_test": 170,
+      "trainvalid_test": 471
+    },
+    "hygiene": {
+      "n_all_smiles": 5997,
+      "n_unique_smiles": 2576,
+      "n_duplicate_smiles": 3421,
+      "n_contaminated_trainvalid_vs_test": 471
+    },
+    "similarity": {
+      "valid_to_train": {
+        "mean": 0.8724918388295335,
+        "std": 0.24722378793830357,
+        "n": 600
+      },
+      "test_to_train": {
+        "mean": 0.7846681180406062,
+        "std": 0.30242885971968964,
+        "n": 1375
+      },
+      "test_to_trainvalid": {
+        "mean": 0.7997586766338842,
+        "std": 0.2945786266981648,
+        "n": 1375
+      }
+    }
+  },
+  "targets": {
+    "unique_counts": {
+      "train": 1401,
+      "valid": 200,
+      "test": 400
+    },
+    "shared_counts": {
+      "train_valid": 0,
+      "train_test": 0,
+      "valid_test": 0,
+      "trainvalid_test": 0
+    },
+    "hygiene": {
+      "n_all_sequences": 5997,
+      "n_unique_sequences": 2001,
+      "n_duplicate_sequences": 3996,
+      "n_contaminated_trainvalid_vs_test": 0,
+      "n_contaminated_train_valid": 0,
+      "duplicate_sequences_by_split": {
+        "train": 2621,
+        "valid": 400,
+        "test": 975
+      }
+    },
+    "similarity": {
+      "valid_to_train": {
+        "mean_identity_pct": 31.14860528554047,
+        "std_identity_pct": 17.836227627864286,
+        "mean_similarity_pct": 44.20288472744895,
+        "std_similarity_pct": 17.75665785162781,
+        "mean_score": 413.975,
+        "std_score": 1136.3499172240035,
+        "n": 200
+      },
+      "test_to_train": {
+        "mean_identity_pct": 32.053818516412264,
+        "std_identity_pct": 17.959906710494884,
+        "mean_similarity_pct": 44.88828160680723,
+        "std_similarity_pct": 17.817466627053832,
+        "mean_score": 450.375,
+        "std_score": 1193.5247690663984,
+        "n": 400
+      },
+      "test_to_trainvalid": {
+        "mean_identity_pct": 33.119278802775796,
+        "std_identity_pct": 18.54754767764463,
+        "mean_similarity_pct": 46.05817338986736,
+        "std_similarity_pct": 18.27928789514026,
+        "mean_score": 501.5525,
+        "std_score": 1211.7002320061467,
+        "n": 400
+      }
+    },
+    "conflicts": {
+      "cross_split_pairs": 0,
+      "sequence_multi_smiles": 0
+    },
+    "examples": {
+      "sequence_multi_smiles": []
+    },
+    "structures": {
+      "similarity": {
+        "valid_to_train": {
+          "mean_probability": 0.3382613065326633,
+          "std_probability": 0.18274366829471972,
+          "mean_alignment_score": 1478.8291457286432,
+          "std_alignment_score": 1893.124354091682,
+          "mean_evalue": 1.464351060781767,
+          "std_evalue": 2.8436212956827704,
+          "n": 199
+        },
+        "test_to_train": {
+          "mean_probability": 0.3405438596491228,
+          "std_probability": 0.18833622538061257,
+          "mean_alignment_score": 1463.9097744360902,
+          "std_alignment_score": 1943.3598110663577,
+          "mean_evalue": 1.3847508208275707,
+          "std_evalue": 2.6282018654384873,
+          "n": 399
+        },
+        "test_to_trainvalid": {
+          "mean_probability": 0.3523834586466165,
+          "std_probability": 0.19208937150107203,
+          "mean_alignment_score": 1519.7769423558898,
+          "std_alignment_score": 1976.5559000277503,
+          "mean_evalue": 1.3695311872103906,
+          "std_evalue": 2.660961390816163,
+          "n": 399
+        }
+      },
+      "foldseek_coverage": {
+        "n_train_sequences_in_foldseek": 1401,
+        "n_valid_sequences_in_foldseek": 200,
+        "n_test_sequences_in_foldseek": 400,
+        "n_train_valid_sequences_in_foldseek": 1601
+      }
+    }
+  },
+  "config": {
+    "type": "dti",
+    "name": "Human_protein_cls",
+    "task": "classification",
+    "modality": "dti",
+    "info": {
+      "smiles_col": "Ligand",
+      "sequence_col": "Protein",
+      "label_col": "classification_label",
+      "keep_invalid": true,
+      "unique_sequences_jsonl": "helpers/dti_unique_sequences.jsonl",
+      "foldseek_m8_path": "helpers/dti_all_vs_all.m8"
+    },
+    "out": "runs/dti"
+  }
+}

@@ -85,14 +85,61 @@ def _preferred_name(cfg: Dict[str, Any], config_path: Optional[Path]) -> str:
     return "run"
 
 
-def resolve_output_dir(cfg: Dict[str, Any], cli_out_root: Path, config_path: Optional[Path] = None) -> Path:
-    """Derive the output folder: <cfg['out'] or cli_root/type>/<config-name>."""
+def _config_relative_parent(config_path: Optional[Path], configs_root: Optional[Path]) -> Optional[Path]:
+    """Return the config's parent path relative to the configs root, if applicable."""
+    if not config_path or not configs_root:
+        return None
+    try:
+        rel_parent = config_path.resolve().parent.relative_to(configs_root.resolve())
+    except Exception:
+        return None
+    return None if rel_parent == Path(".") else rel_parent
+
+
+def _extend_with_structure(base_path: Path, rel_parent: Optional[Path]) -> Path:
+    """Append the config's relative parent path (if any) onto the output base."""
+    if not rel_parent or rel_parent == Path("."):
+        return base_path
+
+    base_parts = base_path.parts
+    rel_parts = list(Path(rel_parent).parts)
+    overlap = 0
+    max_overlap = min(len(base_parts), len(rel_parts))
+    for size in range(max_overlap, 0, -1):
+        if base_parts[-size:] == tuple(rel_parts[:size]):
+            overlap = size
+            break
+
+    if overlap:
+        rel_parts = rel_parts[overlap:]
+    if rel_parts:
+        base_path = base_path.joinpath(*rel_parts)
+    return base_path
+
+
+def resolve_output_dir(
+    cfg: Dict[str, Any],
+    cli_out_root: Path,
+    config_path: Optional[Path] = None,
+    configs_root: Optional[Path] = None,
+) -> Path:
+    """Derive the output folder: <cfg['out'] or cli_root/type>/<relative-config-path>/<config-name>."""
     base = cfg.get("out")
-    if base:
-        base_path = Path(base)
+    rel_parent = _config_relative_parent(config_path, configs_root)
+
+    if rel_parent is not None:
+        if base and Path(base).is_absolute():
+            base_path = Path(base)
+        else:
+            base_path = cli_out_root / rel_parent
     else:
-        type_slug = _slugify(cfg.get("type") or cfg.get("modality") or "unknown") or "unknown"
-        base_path = cli_out_root / type_slug
+        if base:
+            base_path = Path(base)
+        else:
+            type_slug = _slugify(cfg.get("type") or cfg.get("modality") or "unknown") or "unknown"
+            base_path = cli_out_root / type_slug
+
+    base_path = _extend_with_structure(base_path, rel_parent)
 
     if not base_path.is_absolute():
         base_path = (Path.cwd() / base_path).resolve()

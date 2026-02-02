@@ -149,6 +149,43 @@
     },
     "examples": {
       "sequence_multi_smiles": []
+    },
+    "structures": {
+      "similarity": {
+        "valid_to_train": {
+          "mean_probability": 0.632236641221374,
+          "std_probability": 0.2902119344577264,
+          "mean_alignment_score": 2929.1450381679388,
+          "std_alignment_score": 2548.754138467114,
+          "mean_evalue": 0.588044949706187,
+          "std_evalue": 1.9638395434572382,
+          "n": 262
+        },
+        "test_to_train": {
+          "mean_probability": 0.6311414913957935,
+          "std_probability": 0.2838328673973191,
+          "mean_alignment_score": 2982.7820267686425,
+          "std_alignment_score": 2816.472345428613,
+          "mean_evalue": 0.514165490519494,
+          "std_evalue": 1.7687869714662332,
+          "n": 523
+        },
+        "test_to_trainvalid": {
+          "mean_probability": 0.6519389312977099,
+          "std_probability": 0.2836766115398584,
+          "mean_alignment_score": 3166.942748091603,
+          "std_alignment_score": 2933.6563338727733,
+          "mean_evalue": 0.4509693361177586,
+          "std_evalue": 1.6255288634689962,
+          "n": 524
+        }
+      },
+      "foldseek_coverage": {
+        "n_train_sequences_in_foldseek": 1836,
+        "n_valid_sequences_in_foldseek": 262,
+        "n_test_sequences_in_foldseek": 525,
+        "n_train_valid_sequences_in_foldseek": 2098
+      }
     }
   },
   "config": {
@@ -160,7 +197,9 @@
       "smiles_col": "Ligand",
       "sequence_col": "Protein",
       "label_col": "classification_label",
-      "keep_invalid": true
+      "keep_invalid": true,
+      "unique_sequences_jsonl": "helpers/dti_unique_sequences.jsonl",
+      "foldseek_m8_path": "helpers/dti_all_vs_all.m8"
     },
     "out": "runs/dti"
   }

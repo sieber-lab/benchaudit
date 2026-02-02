@@ -1,0 +1,252 @@
+{
+  "counts": {
+    "train": 19224,
+    "valid": 2746,
+    "test": 5494
+  },
+  "hygiene": {
+    "n_all_valid_smiles": 27464,
+    "n_unique_valid_smiles": 4469,
+    "n_duplicate_valid_smiles": 22995,
+    "n_contaminated_tv_vs_test": 3,
+    "reos_mean": 0.7953117888029131,
+    "reos_std": 0.9835118725991463
+  },
+  "similarity": {
+    "valid_to_train": {
+      "mean": 0.47550978232165736,
+      "std": 0.1690563625743594,
+      "n": 2746
+    },
+    "test_to_train": {
+      "mean": 0.43299635390795604,
+      "std": 0.15636353178832565,
+      "n": 5494
+    },
+    "test_to_trainvalid": {
+      "mean": 0.44640061662880487,
+      "std": 0.1618754048069447,
+      "n": 5494
+    }
+  },
+  "task": {
+    "type": "classification",
+    "label_tv_mean": 0.5067819754210287,
+    "label_tv_std": 0.499965381188641,
+    "label_tv_3sigma": null,
+    "mol_tv_size_mean": 343.39413410538594,
+    "mol_tv_size_std": 193.24549783913716
+  },
+  "conflicts": {
+    "intra_train": 2950,
+    "intra_valid": 438,
+    "intra_test": 860,
+    "cross_train_valid": 1,
+    "cross_train_test": 2,
+    "cross_valid_test": 1,
+    "severe_trainvalid_test": 3,
+    "cross_split_dti_pairs": 6,
+    "sequence_cross_split_multi_smiles": 1993
+  },
+  "cliffs": {
+    "intra_train_valid": 70761,
+    "intra_test": 6731,
+    "cross_tv_test": 10554,
+    "sim_threshold": 0.9
+  },
+  "drugs": {
+    "unique_counts": {
+      "train": 3102,
+      "valid": 466,
+      "test": 905
+    },
+    "shared_counts": {
+      "train_valid": 1,
+      "train_test": 2,
+      "valid_test": 1,
+      "trainvalid_test": 3
+    },
+    "hygiene": {
+      "n_all_smiles": 27464,
+      "n_unique_smiles": 4469,
+      "n_duplicate_smiles": 22995,
+      "n_contaminated_trainvalid_vs_test": 3
+    },
+    "similarity": {
+      "valid_to_train": {
+        "mean": 0.47550978232165736,
+        "std": 0.1690563625743594,
+        "n": 2746
+      },
+      "test_to_train": {
+        "mean": 0.43299635390795604,
+        "std": 0.15636353178832565,
+        "n": 5494
+      },
+      "test_to_trainvalid": {
+        "mean": 0.44640061662880487,
+        "std": 0.1618754048069447,
+        "n": 5494
+      }
+    }
+  },
+  "targets": {
+    "unique_counts": {
+      "train": 2177,
+      "valid": 1340,
+      "test": 1750
+    },
+    "shared_counts": {
+      "train_valid": 1338,
+      "train_test": 1746,
+      "valid_test": 1095,
+      "trainvalid_test": 1748
+    },
+    "hygiene": {
+      "n_all_sequences": 27464,
+      "n_unique_sequences": 2181,
+      "n_duplicate_sequences": 25283,
+      "n_contaminated_trainvalid_vs_test": 1748,
+      "n_contaminated_train_valid": 1338,
+      "duplicate_sequences_by_split": {
+        "train": 17047,
+        "valid": 1406,
+        "test": 3744
+      }
+    },
+    "similarity": {
+      "valid_to_train": {
+        "mean_identity_pct": 99.88375474773821,
+        "std_identity_pct": 2.9681803346755,
+        "mean_similarity_pct": 99.9091678003192,
+        "std_similarity_pct": 2.338264661324463,
+        "mean_score": 2839.300746268657,
+        "std_score": 2164.2780137370783,
+        "n": 1340
+      },
+      "test_to_train": {
+        "mean_identity_pct": 99.82741907657264,
+        "std_identity_pct": 3.5989440106645563,
+        "mean_similarity_pct": 99.8646318948211,
+        "std_similarity_pct": 2.8495091788726326,
+        "mean_score": 2910.8537142857144,
+        "std_score": 2508.8664370930387,
+        "n": 1750
+      },
+      "test_to_trainvalid": {
+        "mean_identity_pct": 99.9151999603672,
+        "std_identity_pct": 2.4938611718518753,
+        "mean_similarity_pct": 99.9329536412108,
+        "std_similarity_pct": 1.985296016010519,
+        "mean_score": 2915.2342857142858,
+        "std_score": 2507.4684868485933,
+        "n": 1750
+      }
+    },
+    "conflicts": {
+      "cross_split_pairs": 6,
+      "sequence_multi_smiles": 1993
+    },
+    "examples": {
+      "sequence_multi_smiles": [
+        {
+          "sequence": "MALIPDLAMETWLLLAVSLVLLYLYGTHSHGLFKKLGIPGPTPLPFLGNILSYHKGFCMFDMECHKKYGKVWGFYDGQQPVLAITDPDMIKTVLVKECYSVFTNRRPFGPVGFMKSAISIAEDEEWKRLRSLLSPTFTSGKLKEMVPIIAQYGDVLVRNLRREAETGKPVTLKDVFGAYSMDVITSTSFGVNIDSLNNPQDPFVENTKKLLRFDFLDPFFLSITVFPFLIPILEVLNICVFPREVTNFLRKSVKRMKESRLEDTQKHRVDFLQLMIDSQNSKETESHKALSDLELVAQSIIFIFAGYETTSSVLSFIMYELATHPDVQQKLQEEIDAVLPNKAPPTYDTVLQMEYLDMVVNETLRLFPIAMRLERVCKKDVEINGMFIPKGVVVMIPSYALHRDPKYWTEPEKFLPERFSKKNKDNIDPYIYTPFGSGPRNCIGMRFALMNMKLALIRVLQNFSFKPCKETQIPLKLSLGGLLQPEKPVVLKVESRDGTVSGA",
+          "n_unique_smiles": 578,
+          "splits": [
+            "test",
+            "train",
+            "valid"
+          ]
+        },
+        {
+          "sequence": "MGLEALVPLAVIVAIFLLLVDLMHRRQRWAARYPPGPLPLPGLGNLLHVDFQNTPYCFDQLRRRFGDVFSLQLAWTPVVVLNGLAAVREALVTHGEDTADRPPVPITQILGFGPRSQGVFLARYGPAWREQRRFSVSTLRNLGLGKKSLEQWVTEEAACLCAAFANHSGRPFRPNGLLDKAVSNVIASLTCGRRFEYDDPRFLRLLDLAQEGLKEESGFLREVLNAVPVLLHIPALAGKVLRFQKAFLTQLDELLTEHRMTWDPAQPPRDLTEAFLAEMEKAKGNPESSFNDENLRIVVADLFSAGMVTTSTTLAWGLLLMILHPDVQRRVQQEIDDVIGQVRRPEMGDQAHMPYTTAVIHEVQRFGDIVPLGVTHMTSRDIEVQGFRIPKGTTLITNLSSVLKDEAVWEKPFRFHPEHFLDAQGHFVKPEAFLPFSAGRRACLGEPLARMELFLFFTSLLQHFSFSVPTGQPRPSHHGVFAFLVSPSPYELCAVPR",
+          "n_unique_smiles": 329,
+          "splits": [
+            "test",
+            "train",
+            "valid"
+          ]
+        },
+        {
+          "sequence": "MDSLVVLVLCLSCLLLLSLWRQSSGRGKLPPGPTPLPVIGNILQIGIKDISKSLTNLSKVYGPVFTLYFGLKPIVVLHGYEAVKEALIDLGEEFSGRGIFPLAERANRGFGIVFSNGKKWKEIRRFSLMTLRNFGMGKRSIEDRVQEEARCLVEELRKTKASPCDPTFILGCAPCNVICSIIFHKRFDYKDQQFLNLMEKLNENIKILSSPWIQICNNFSPIIDYFPGTHNKLLKNVAFMKSYILEKVKEHQESMDMNNPQDFIDCFLMKMEKEKHNQPSEFTIESLENTAVDLFGAGTETTSTTLRYALLLLLKHPEVTAKVQEEIERVIGRNRSPCMQDRSHMPYTDAVVHEVQRYIDLLPTSLPHAVTCDIKFRNYLIPKGTTILISLTSVLHDNKEFPNPEMFDPHHFLDEGGNFKKSKYFMPFSAGKRICVGEALAGMELFLFLTSILQNFNLKSLVDPKNLDTTPVVNGFASVPPFYQLCFIPV",
+          "n_unique_smiles": 292,
+          "splits": [
+            "test",
+            "train",
+            "valid"
+          ]
+        },
+        {
+          "sequence": "MALSQSVPFSATELLLASAIFCLVFWVLKGLRPRVPKGLKSPPEPWGWPLLGHVLTLGKNPHLALSRMSQRYGDVLQIRIGSTPVLVLSRLDTIRQALVRQGDDFKGRPDLYTSTLITDGQSLTFSTDSGPVWAARRRLAQNALNTFSIASDPASSSSCYLEEHVSKEAKALISRLQELMAGPGHFDPYNQVVVSVANVIGAMCFGQHFPESSDEMLSLVKNTHEFVETASSGNPLDFFPILRYLPNPALQRFKAFNQRFLWFLQKTVQEHYQDFDKNSVRDITGALFKHSKKGPRASGNLIPQEKIVNLVNDIFGAGFDTVTTAISWSLMYLVTKPEIQRKIQKELDTVIGRERRPRLSDRPQLPYLEAFILETFRHSSFLPFTIPHSTTRDTTLNGFYIPKKCCVFVNQWQVNHDPELWEDPSEFRPERFLTADGTAINKPLSEKMMLFGMGKRRCIGEVLAKWEIFLFLAILLQQLEFSVPPGVKVDLTPIYGLTMKHARCEHVQARLRFSIN",
+          "n_unique_smiles": 255,
+          "splits": [
+            "test",
+            "train",
+            "valid"
+          ]
+        },
+        {
+          "sequence": "MDPFVVLVLCLSCLLLLSIWRQSSGRGKLPPGPTPLPVIGNILQIDIKDVSKSLTNLSKIYGPVFTLYFGLERMVVLHGYEVVKEALIDLGEEFSGRGHFPLAERANRGFGIVFSNGKRWKEIRRFSLMTLRNFGMGKRSIEDRVQEEARCLVEELRKTKASPCDPTFILGCAPCNVICSIIFQKRFDYKDQQFLNLMEKLNENIRIVSTPWIQICNNFPTIIDYFPGTHNKLLKNLAFMESDILEKVKEHQESMDINNPRDFIDCFLIKMEKEKQNQQSEFTIENLVITAADLLGAGTETTSTTLRYALLLLLKHPEVTAKVQEEIERVVGRNRSPCMQDRGHMPYTDAVVHEVQRYIDLIPTSLPHAVTCDVKFRNYLIPKGTTILTSLTSVLHDNKEFPNPEMFDPRHFLDEGGNFKKSNYFMPFSAGKRICVGEGLARMELFLFLTFILQNFNLKSLIDPKDLDTTPVVNGFASVPPFYQLCFIPV",
+          "n_unique_smiles": 232,
+          "splits": [
+            "test",
+            "train",
+            "valid"
+          ]
+        }
+      ]
+    },
+    "structures": {
+      "similarity": {
+        "valid_to_train": {
+          "mean_probability": 0.9990067164179105,
+          "std_probability": 0.025823322496156,
+          "mean_alignment_score": 4295.075373134328,
+          "std_alignment_score": 3192.5702883118215,
+          "mean_evalue": 5.684035348361147e-12,
+          "std_evalue": 1.6583380854241238e-10,
+          "n": 1340
+        },
+        "test_to_train": {
+          "mean_probability": 0.9984011428571429,
+          "std_probability": 0.03366707928028961,
+          "mean_alignment_score": 4365.8394285714285,
+          "std_alignment_score": 3448.938513793933,
+          "mean_evalue": 0.0035057142908638834,
+          "std_evalue": 0.1466126430774916,
+          "n": 1750
+        },
+        "test_to_trainvalid": {
+          "mean_probability": 0.9991617142857142,
+          "std_probability": 0.024979159712015277,
+          "mean_alignment_score": 4370.179428571429,
+          "std_alignment_score": 3448.1235143322665,
+          "mean_evalue": 0.0035057142908638834,
+          "std_evalue": 0.1466126430774916,
+          "n": 1750
+        }
+      },
+      "foldseek_coverage": {
+        "n_train_sequences_in_foldseek": 2177,
+        "n_valid_sequences_in_foldseek": 1340,
+        "n_test_sequences_in_foldseek": 1750,
+        "n_train_valid_sequences_in_foldseek": 2179
+      }
+    }
+  },
+  "config": {
+    "type": "dti",
+    "name": "BioSNAP_scaffold_cls",
+    "task": "classification",
+    "modality": "dti",
+    "info": {
+      "smiles_col": "Ligand",
+      "sequence_col": "Protein",
+      "label_col": "classification_label",
+      "keep_invalid": true,
+      "unique_sequences_jsonl": "helpers/dti_unique_sequences.jsonl",
+      "foldseek_m8_path": "helpers/dti_all_vs_all.m8"
+    },
+    "out": "runs/dti"
+  }
+}
