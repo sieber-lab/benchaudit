@@ -1,0 +1,2 @@
+{"kind": "cross_train_valid", "split": "train", "id": "BACE_1264", "smiles_clean": "CN1C(=O)C(c2ccccc2)(c2ccccc2)N=C1N", "label_raw": 0}
+{"kind": "cross_train_valid", "split": "valid", "id": "BACE_263", "smiles_clean": "CN1C(=O)C(c2ccccc2)(c2ccccc2)N=C1N", "label_raw": 1}

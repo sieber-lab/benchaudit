@@ -5,6 +5,8 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 
+from utils.splitting import split_indices
+
 try:
     import polaris as po
 except ImportError:  # pragma: no cover - optional dependency
@@ -233,7 +235,20 @@ class TabularLoader(BaseLoader):
             df = self._standardize_cols(df)
             split_col = self.info.get("split_col", "split")
             if split_col not in df.columns:
-                raise KeyError(f"missing split_col '{split_col}' in {self.cfg['path']}")
+                split_method = self.info.get("split_method")
+                if not split_method:
+                    raise KeyError(f"missing split_col '{split_col}' in {self.cfg['path']}")
+                split_fracs = self.info.get("split_fracs", [0.8, 0.1, 0.1])
+                split_seed = self.info.get("split_seed", 123)
+                train_idx, valid_idx, test_idx = split_indices(
+                    df["smiles"].tolist(),
+                    method=split_method,
+                    fracs=split_fracs,
+                    seed=split_seed,
+                )
+                df[split_col] = "train"
+                df.loc[valid_idx, split_col] = "valid"
+                df.loc[test_idx, split_col] = "test"
             df[split_col] = df[split_col].str.lower().map({"train": "train", "val": "valid", "valid": "valid", "test": "test"})
             out = {}
             for split in ("train", "valid", "test"):

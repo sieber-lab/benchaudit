@@ -1,0 +1,84 @@
+{
+  "counts": {
+    "train": 1187,
+    "valid": 148,
+    "test": 149
+  },
+  "hygiene": {
+    "n_all_valid_smiles": 1484,
+    "n_unique_valid_smiles": 1418,
+    "n_duplicate_valid_smiles": 66,
+    "n_contaminated_tv_vs_test": 13,
+    "reos_mean": 0.7677902621722846,
+    "reos_std": 0.9508202807849023
+  },
+  "similarity": {
+    "valid_to_train": {
+      "mean": 0.5466336100628242,
+      "std": 0.24366560945902016,
+      "n": 148
+    },
+    "test_to_train": {
+      "mean": 0.5232139226858059,
+      "std": 0.24745528406322875,
+      "n": 149
+    },
+    "test_to_trainvalid": {
+      "mean": 0.5441671251628325,
+      "std": 0.2581195363565464,
+      "n": 149
+    }
+  },
+  "task": {
+    "type": "classification",
+    "label_tv_mean": [
+      0.9348314606741573,
+      0.07640449438202247
+    ],
+    "label_tv_std": [
+      0.2469155101940795,
+      0.2657437606165408
+    ],
+    "label_tv_3sigma": null,
+    "mol_tv_size_mean": 383.0620023895144,
+    "mol_tv_size_std": 231.97813985088837
+  },
+  "conflicts": {
+    "intra_train": 29,
+    "intra_valid": 0,
+    "intra_test": 0,
+    "cross_train_valid": 10,
+    "cross_train_test": 8,
+    "cross_valid_test": 3,
+    "severe_trainvalid_test": 11
+  },
+  "cliffs": {
+    "intra_train_valid": 43,
+    "intra_test": null,
+    "cross_tv_test": 22,
+    "sim_threshold": 0.9
+  },
+  "config": {
+    "type": "tabular",
+    "name": "MoleculeNet/ClinTox",
+    "task": "classification",
+    "modality": "property",
+    "info": {
+      "split_col": "split",
+      "split_method": "random",
+      "split_fracs": [
+        0.8,
+        0.1,
+        0.1
+      ],
+      "split_seed": 123,
+      "smiles_col": "smiles",
+      "label_cols": [
+        "FDA_APPROVED",
+        "CT_TOX"
+      ],
+      "keep_invalid": true
+    },
+    "out": "runs/moleculenet"
+  }
+}

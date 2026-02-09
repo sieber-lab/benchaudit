@@ -1,0 +1,76 @@
+{
+  "counts": {
+    "train": 1210,
+    "valid": 151,
+    "test": 152
+  },
+  "hygiene": {
+    "n_all_valid_smiles": 1513,
+    "n_unique_valid_smiles": 1504,
+    "n_duplicate_valid_smiles": 9,
+    "n_contaminated_tv_vs_test": 3,
+    "reos_mean": 0.3886847905951506,
+    "reos_std": 0.6682867393650356
+  },
+  "similarity": {
+    "valid_to_train": {
+      "mean": 0.720732891461649,
+      "std": 0.16033418695245433,
+      "n": 151
+    },
+    "test_to_train": {
+      "mean": 0.7259551921689875,
+      "std": 0.15057860148361776,
+      "n": 152
+    },
+    "test_to_trainvalid": {
+      "mean": 0.7489902813904963,
+      "std": 0.14398920034337329,
+      "n": 152
+    }
+  },
+  "task": {
+    "type": "classification",
+    "label_tv_mean": 0.4680382072005878,
+    "label_tv_std": 0.49916081194961137,
+    "label_tv_3sigma": null,
+    "mol_tv_size_mean": 479.963777997007,
+    "mol_tv_size_std": 122.02341326340448
+  },
+  "conflicts": {
+    "intra_train": 0,
+    "intra_valid": 0,
+    "intra_test": 0,
+    "cross_train_valid": 1,
+    "cross_train_test": 0,
+    "cross_valid_test": 0,
+    "severe_trainvalid_test": 0
+  },
+  "cliffs": {
+    "intra_train_valid": 1659,
+    "intra_test": 39,
+    "cross_tv_test": 303,
+    "sim_threshold": 0.9
+  },
+  "config": {
+    "type": "tabular",
+    "name": "MoleculeNet/BACE",
+    "task": "classification",
+    "modality": "property",
+    "info": {
+      "split_col": "split",
+      "split_method": "scaffold",
+      "split_fracs": [
+        0.8,
+        0.1,
+        0.1
+      ],
+      "split_seed": 123,
+      "smiles_col": "mol",
+      "label_col": "Class",
+      "id_col": "CID",
+      "keep_invalid": true
+    },
+    "out": "runs/moleculenet"
+  }
+}

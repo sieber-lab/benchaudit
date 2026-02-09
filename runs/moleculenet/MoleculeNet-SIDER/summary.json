@@ -1,0 +1,159 @@
+{
+  "counts": {
+    "train": 1141,
+    "valid": 143,
+    "test": 143
+  },
+  "hygiene": {
+    "n_all_valid_smiles": 1427,
+    "n_unique_valid_smiles": 1380,
+    "n_duplicate_valid_smiles": 47,
+    "n_contaminated_tv_vs_test": 8,
+    "reos_mean": 0.7889408099688473,
+    "reos_std": 1.005752340519809
+  },
+  "similarity": {
+    "valid_to_train": {
+      "mean": 0.49199748570762575,
+      "std": 0.22775469138652862,
+      "n": 143
+    },
+    "test_to_train": {
+      "mean": 0.5378288846836722,
+      "std": 0.2420917396445434,
+      "n": 143
+    },
+    "test_to_trainvalid": {
+      "mean": 0.5468006816862188,
+      "std": 0.24642484266156509,
+      "n": 143
+    }
+  },
+  "task": {
+    "type": "classification",
+    "label_tv_mean": [
+      0.5233644859813084,
+      0.6962616822429907,
+      0.01557632398753894,
+      0.6121495327102804,
+      0.8099688473520249,
+      0.6978193146417445,
+      0.911993769470405,
+      0.1806853582554517,
+      0.7235202492211839,
+      0.5155763239875389,
+      0.26401869158878505,
+      0.9096573208722741,
+      0.22585669781931464,
+      0.15186915887850466,
+      0.780373831775701,
+      0.6222741433021807,
+      0.9252336448598131,
+      0.1806853582554517,
+      0.7071651090342679,
+      0.7461059190031153,
+      0.7157320872274143,
+      0.6409657320872274,
+      0.0895638629283489,
+      0.4665109034267913,
+      0.6962616822429907,
+      0.9166666666666666,
+      0.6674454828660437
+    ],
+    "label_tv_std": [
+      0.4996484074977241,
+      0.4600501989576863,
+      0.12387757489617927,
+      0.4874500332445857,
+      0.3924783840664227,
+      0.45938205645907493,
+      0.2834143456311823,
+      0.38490718874498936,
+      0.4474311265387453,
+      0.49995204253269704,
+      0.4409810358817344,
+      0.2867837741958219,
+      0.4183081740465994,
+      0.3590338577410739,
+      0.4141546814938045,
+      0.48500746030979697,
+      0.26311644747345675,
+      0.38490718874498947,
+      0.45524062055230463,
+      0.43540730843219994,
+      0.45124078686476127,
+      0.47990418835609505,
+      0.28566717216495097,
+      0.4990716001527227,
+      0.4600501989576863,
+      0.27649308881626283,
+      0.4713120119560202
+    ],
+    "label_tv_3sigma": null,
+    "mol_tv_size_mean": 463.9005088353506,
+    "mol_tv_size_std": 657.3963380627727
+  },
+  "conflicts": {
+    "intra_train": 24,
+    "intra_valid": 0,
+    "intra_test": 0,
+    "cross_train_valid": 5,
+    "cross_train_test": 7,
+    "cross_valid_test": 2,
+    "severe_trainvalid_test": 8
+  },
+  "cliffs": {
+    "intra_train_valid": 710,
+    "intra_test": 5,
+    "cross_tv_test": 171,
+    "sim_threshold": 0.9
+  },
+  "config": {
+    "type": "tabular",
+    "name": "MoleculeNet/SIDER",
+    "task": "classification",
+    "modality": "property",
+    "info": {
+      "split_col": "split",
+      "split_method": "random",
+      "split_fracs": [
+        0.8,
+        0.1,
+        0.1
+      ],
+      "split_seed": 123,
+      "smiles_col": "smiles",
+      "label_cols": [
+        "Hepatobiliary disorders",
+        "Metabolism and nutrition disorders",
+        "Product issues",
+        "Eye disorders",
+        "Investigations",
+        "Musculoskeletal and connective tissue disorders",
+        "Gastrointestinal disorders",
+        "Social circumstances",
+        "Immune system disorders",
+        "Reproductive system and breast disorders",
+        "Neoplasms benign, malignant and unspecified (incl cysts and polyps)",
+        "General disorders and administration site conditions",
+        "Endocrine disorders",
+        "Surgical and medical procedures",
+        "Vascular disorders",
+        "Blood and lymphatic system disorders",
+        "Skin and subcutaneous tissue disorders",
+        "Congenital, familial and genetic disorders",
+        "Infections and infestations",
+        "Respiratory, thoracic and mediastinal disorders",
+        "Psychiatric disorders",
+        "Renal and urinary disorders",
+        "Pregnancy, puerperium and perinatal conditions",
+        "Ear and labyrinth disorders",
+        "Cardiac disorders",
+        "Nervous system disorders",
+        "Injury, poisoning and procedural complications"
+      ],
+      "keep_invalid": true
+    },
+    "out": "runs/moleculenet"
+  }
+}

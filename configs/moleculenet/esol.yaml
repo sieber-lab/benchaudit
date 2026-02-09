@@ -5,6 +5,9 @@ modality: property
 path: data/MoleculeNet/ESOL.csv
 info:
   split_col: split
+  split_method: random
+  split_fracs: [0.8, 0.1, 0.1]
+  split_seed: 123
   smiles_col: smiles
   label_col: "measured log solubility in mols per litre"
   id_col: "Compound ID"

@@ -1,0 +1,76 @@
+{
+  "counts": {
+    "train": 32901,
+    "valid": 4113,
+    "test": 4113
+  },
+  "hygiene": {
+    "n_all_valid_smiles": 41127,
+    "n_unique_valid_smiles": 40579,
+    "n_duplicate_valid_smiles": 548,
+    "n_contaminated_tv_vs_test": 69,
+    "reos_mean": 1.2254011995461176,
+    "reos_std": 1.219161820734982
+  },
+  "similarity": {
+    "valid_to_train": {
+      "mean": 0.5163232466010507,
+      "std": 0.17737447971707554,
+      "n": 4113
+    },
+    "test_to_train": {
+      "mean": 0.5201145794657265,
+      "std": 0.1786290240191952,
+      "n": 4113
+    },
+    "test_to_trainvalid": {
+      "mean": 0.5414624615431882,
+      "std": 0.1821376747579656,
+      "n": 4113
+    }
+  },
+  "task": {
+    "type": "classification",
+    "label_tv_mean": 0.03531096341924677,
+    "label_tv_std": 0.18456711410656243,
+    "label_tv_3sigma": null,
+    "mol_tv_size_mean": 358.00838268659083,
+    "mol_tv_size_std": 165.7514353241146
+  },
+  "conflicts": {
+    "intra_train": 22,
+    "intra_valid": 0,
+    "intra_test": 1,
+    "cross_train_valid": 2,
+    "cross_train_test": 5,
+    "cross_valid_test": 0,
+    "severe_trainvalid_test": 5
+  },
+  "cliffs": {
+    "intra_train_valid": 3798,
+    "intra_test": 29,
+    "cross_tv_test": 378,
+    "sim_threshold": 0.9
+  },
+  "config": {
+    "type": "tabular",
+    "name": "MoleculeNet/HIV",
+    "task": "classification",
+    "modality": "property",
+    "info": {
+      "split_col": "split",
+      "split_method": "scaffold",
+      "split_fracs": [
+        0.8,
+        0.1,
+        0.1
+      ],
+      "split_seed": 123,
+      "smiles_col": "smiles",
+      "label_col": "HIV_active",
+      "id_col": "activity",
+      "keep_invalid": true
+    },
+    "out": "runs/moleculenet"
+  }
+}

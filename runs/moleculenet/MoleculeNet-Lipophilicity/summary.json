@@ -1,0 +1,76 @@
+{
+  "counts": {
+    "train": 3360,
+    "valid": 420,
+    "test": 420
+  },
+  "hygiene": {
+    "n_all_valid_smiles": 4200,
+    "n_unique_valid_smiles": 4177,
+    "n_duplicate_valid_smiles": 23,
+    "n_contaminated_tv_vs_test": 3,
+    "reos_mean": 0.27724867724867724,
+    "reos_std": 0.6063620072993577
+  },
+  "similarity": {
+    "valid_to_train": {
+      "mean": 0.6549296872667263,
+      "std": 0.19992946715117904,
+      "n": 420
+    },
+    "test_to_train": {
+      "mean": 0.6420596388466723,
+      "std": 0.20465582744313174,
+      "n": 420
+    },
+    "test_to_trainvalid": {
+      "mean": 0.6543058499718868,
+      "std": 0.20270262298092653,
+      "n": 420
+    }
+  },
+  "task": {
+    "type": "regression",
+    "label_tv_mean": 2.1886005291005293,
+    "label_tv_std": 1.2053584491551492,
+    "label_tv_3sigma": 3.616075347465448,
+    "mol_tv_size_mean": 383.32241044018645,
+    "mol_tv_size_std": 106.56324272892054
+  },
+  "conflicts": {
+    "intra_train": 0,
+    "intra_valid": 0,
+    "intra_test": 0,
+    "cross_train_valid": 0,
+    "cross_train_test": 0,
+    "cross_valid_test": 0,
+    "severe_trainvalid_test": 0
+  },
+  "cliffs": {
+    "intra_train_valid": 12,
+    "intra_test": null,
+    "cross_tv_test": 2,
+    "sim_threshold": 0.9
+  },
+  "config": {
+    "type": "tabular",
+    "name": "MoleculeNet/Lipophilicity",
+    "task": "regression",
+    "modality": "property",
+    "info": {
+      "split_col": "split",
+      "split_method": "random",
+      "split_fracs": [
+        0.8,
+        0.1,
+        0.1
+      ],
+      "split_seed": 123,
+      "smiles_col": "smiles",
+      "label_col": "exp",
+      "id_col": "CMPD_CHEMBLID",
+      "keep_invalid": true
+    },
+    "out": "runs/moleculenet"
+  }
+}

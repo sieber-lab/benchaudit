@@ -1,0 +1,115 @@
+{
+  "counts": {
+    "train": 6264,
+    "valid": 783,
+    "test": 784
+  },
+  "hygiene": {
+    "n_all_valid_smiles": 7831,
+    "n_unique_valid_smiles": 7556,
+    "n_duplicate_valid_smiles": 275,
+    "n_contaminated_tv_vs_test": 43,
+    "reos_mean": 0.8387966510571875,
+    "reos_std": 0.9176164834666108
+  },
+  "similarity": {
+    "valid_to_train": {
+      "mean": 0.6069217155502633,
+      "std": 0.1996979934290293,
+      "n": 783
+    },
+    "test_to_train": {
+      "mean": 0.6009984847326028,
+      "std": 0.20549474262677328,
+      "n": 784
+    },
+    "test_to_trainvalid": {
+      "mean": 0.6112237636242268,
+      "std": 0.20681990756275034,
+      "n": 784
+    }
+  },
+  "task": {
+    "type": "classification",
+    "label_tv_mean": [
+      0.04232885085574572,
+      0.03512803676953381,
+      0.11700864846532134,
+      0.05211106884747052,
+      0.12855354907920616,
+      0.05043089690392595,
+      0.027203856749311296,
+      0.16092172919443914,
+      0.037199811646523306,
+      0.05806562446315066,
+      0.15883925162275678,
+      0.06124119862452923
+    ],
+    "label_tv_std": [
+      0.2013537055414723,
+      0.18411850101295824,
+      0.321457847923608,
+      0.22227213385969716,
+      0.33473507081643356,
+      0.2188498691249868,
+      0.16269100821037763,
+      0.36749373530926815,
+      0.1892659722816191,
+      0.233887591194312,
+      0.365561015891317,
+      0.23979184652884844
+    ],
+    "label_tv_3sigma": null,
+    "mol_tv_size_mean": 268.75210431329214,
+    "mol_tv_size_std": 158.63439136159994
+  },
+  "conflicts": {
+    "intra_train": 113,
+    "intra_valid": 5,
+    "intra_test": 2,
+    "cross_train_valid": 29,
+    "cross_train_test": 30,
+    "cross_valid_test": 6,
+    "severe_trainvalid_test": 35
+  },
+  "cliffs": {
+    "intra_train_valid": 30561,
+    "intra_test": 453,
+    "cross_tv_test": 7450,
+    "sim_threshold": 0.9
+  },
+  "config": {
+    "type": "tabular",
+    "name": "MoleculeNet/Tox21",
+    "task": "classification",
+    "modality": "property",
+    "info": {
+      "split_col": "split",
+      "split_method": "random",
+      "split_fracs": [
+        0.8,
+        0.1,
+        0.1
+      ],
+      "split_seed": 123,
+      "smiles_col": "smiles",
+      "label_cols": [
+        "NR-AR",
+        "NR-AR-LBD",
+        "NR-AhR",
+        "NR-Aromatase",
+        "NR-ER",
+        "NR-ER-LBD",
+        "NR-PPAR-gamma",
+        "SR-ARE",
+        "SR-ATAD5",
+        "SR-HSE",
+        "SR-MMP",
+        "SR-p53"
+      ],
+      "id_col": "mol_id",
+      "keep_invalid": true
+    },
+    "out": "runs/moleculenet"
+  }
+}

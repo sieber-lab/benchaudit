@@ -312,6 +312,19 @@ def scaffold_fps(smiles_list: List[str], radius: int, n_bits: int) -> List[Optio
     return fps
 
 
+def _safe_exact_mol_wt(smiles: Any) -> Optional[float]:
+    """Return exact molecular weight for valid SMILES, otherwise None."""
+    try:
+        if smiles is None or (isinstance(smiles, float) and np.isnan(smiles)):
+            return None
+        mol = Chem.MolFromSmiles(str(smiles))
+        if mol is None:
+            return None
+        return float(rdMolDescriptors.CalcExactMolWt(mol))
+    except Exception:
+        return None
+
+
 def _nn_tanimoto_stats(
     src_fps: List[Optional[DataStructs.ExplicitBitVect]],
     qry_fps: List[Optional[DataStructs.ExplicitBitVect]],
@@ -843,13 +856,15 @@ class SMILESAnalyzer:
             sigma3 = None
             tv_std = base_std
         
-        mol_tv_size = [
-            rdMolDescriptors.CalcExactMolWt(
-                Chem.MolFromSmiles(smi)
-            ) for smi in tv_df["smiles_clean"]
-        ]
-        mol_tv_size_mean = np.mean(mol_tv_size)
-        mol_tv_size_std = np.std(mol_tv_size)
+        mol_tv_size = [_safe_exact_mol_wt(smi) for smi in tv_df["smiles_clean"]]
+        mol_tv_size_valid = [mw for mw in mol_tv_size if mw is not None]
+        if len(mol_tv_size_valid) == 0:
+            mol_tv_size_mean = None
+            mol_tv_size_std = None
+        else:
+            mol_arr = np.asarray(mol_tv_size_valid, dtype=float)
+            mol_tv_size_mean = float(mol_arr.mean())
+            mol_tv_size_std = float(mol_arr.std())
 
         # Features for similarity (TV and Test): molecular + scaffold
         fps_tv_mol, fps_tv_scaf = self._featurize_for_similarity(tv_df["smiles_clean"].tolist())
@@ -944,8 +959,8 @@ class SMILESAnalyzer:
                 "label_tv_mean": _to_python_scalar(tv_mean),
                 "label_tv_std": _to_python_scalar(tv_std),
                 "label_tv_3sigma": _to_python_scalar(sigma3) if sigma3 is not None else None,
-                "mol_tv_size_mean": float(mol_tv_size_mean),
-                "mol_tv_size_std": float(mol_tv_size_std),
+                "mol_tv_size_mean": _to_python_scalar(mol_tv_size_mean),
+                "mol_tv_size_std": _to_python_scalar(mol_tv_size_std),
             },
             "conflicts": {
                 "intra_train": int(len(intra_train)),
