@@ -1,5 +1,6 @@
 data
-docs
+docs/*
+!docs/benchmark_and_analysis_class_reference.md
 experiments
 !tests/data/
 !tests/data/**

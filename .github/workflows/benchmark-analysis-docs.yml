@@ -1,0 +1,51 @@
+name: Benchmark and Analysis Docs
+
+on:
+  push:
+    paths:
+      - "utils/**/*.py"
+      - "run.py"
+      - "scripts/generate_benchmark_analysis_class_docs.py"
+      - "docs/benchmark_and_analysis_class_reference.md"
+      - ".github/workflows/benchmark-analysis-docs.yml"
+  pull_request:
+    paths:
+      - "utils/**/*.py"
+      - "run.py"
+      - "scripts/generate_benchmark_analysis_class_docs.py"
+      - "docs/benchmark_and_analysis_class_reference.md"
+      - ".github/workflows/benchmark-analysis-docs.yml"
+  workflow_dispatch:
+
+concurrency:
+  group: benchmark-analysis-docs-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  generate-docs:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.10"
+
+      - name: Generate benchmark and analysis docs
+        run: |
+          python scripts/generate_benchmark_analysis_class_docs.py \
+            --output docs/benchmark_and_analysis_class_reference.md
+
+      - name: Upload generated docs artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: benchmark-and-analysis-class-reference
+          path: docs/benchmark_and_analysis_class_reference.md
+
+      - name: Verify committed docs are up to date
+        run: |
+          git diff --exit-code -- docs/benchmark_and_analysis_class_reference.md

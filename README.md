@@ -58,4 +58,5 @@ Outputs per config:
 - Typing: prefer explicit, lightweight type hints when types are clear.
 - Tests: run `python -m unittest discover -s tests -p "test_*.py"` (or `pytest tests` if pytest is installed).
 - Test data: tiny dummy benchmark datasets live under `tests/data/`.
+- Benchmark/analysis docs: run `python scripts/generate_benchmark_analysis_class_docs.py --output docs/benchmark_and_analysis_class_reference.md` to regenerate the class reference; CI enforces freshness via `.github/workflows/benchmark-analysis-docs.yml`.
 - Optional extras: Polaris datasets require `polaris-lib`; sequence alignment requires `pairwise-sequence-alignment` and EMBOSS binaries.
