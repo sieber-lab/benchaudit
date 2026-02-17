@@ -1,0 +1,12 @@
+type: tabular
+name: Tiny Tabular Paths
+task: classification
+paths:
+  train: tests/data/tabular_paths/train.csv
+  valid: tests/data/tabular_paths/valid.csv
+  test: tests/data/tabular_paths/test.csv
+info:
+  smiles_col: Drug
+  label_col: Y
+  id_col: ID
+  cleaner: none

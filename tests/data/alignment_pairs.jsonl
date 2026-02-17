@@ -1,0 +1,4 @@
+{"query_id":"q1@demo","reference_id":"r1@demo","identity_pct":20.0,"similarity_pct":35.0,"probability":0.12}
+{"query_id":"q2@demo","reference_id":"r2@demo","identity_pct":40.0,"similarity_pct":55.0,"probability":0.33}
+{"query_id":"q3@demo","reference_id":"r3@demo","identity_pct":60.0,"similarity_pct":75.0,"probability":0.66}
+{"query_id":"q4@demo","reference_id":"r4@demo","identity_pct":80.0,"similarity_pct":90.0,"probability":0.88}

@@ -1,0 +1,16 @@
+type: dti
+modality: dti
+name: Tiny DTI
+task: classification
+paths:
+  train: tests/data/dti/train.csv
+  valid: tests/data/dti/valid.csv
+  test: tests/data/dti/test.csv
+info:
+  smiles_col: Ligand
+  label_col: classification_label
+  id_col: ID
+  sequence_col: Protein
+  target_id_col: Target_ID
+  cleaner: none
+  keep_invalid: true

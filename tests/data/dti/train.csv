@@ -1,0 +1,4 @@
+ID,Ligand,Protein,classification_label,Target_ID
+1,CCO,AAAA,1,TGT1
+2,CCN,BBBB,0,TGT2
+3,CCC,CCCC,1,TGT3

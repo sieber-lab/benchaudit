@@ -1,0 +1,7 @@
+compound_id,smiles,label,split
+tr1,CCO,0,train
+tr2,CCN,1,train
+va1,CCC,0,valid
+va2,CCCl,1,valid
+te1,CCBr,1,test
+te2,CCF,0,test

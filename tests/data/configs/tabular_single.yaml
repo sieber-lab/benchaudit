@@ -1,0 +1,10 @@
+type: tabular
+name: Tiny Tabular
+task: classification
+path: tests/data/tabular_single.csv
+info:
+  split_col: split
+  smiles_col: smiles
+  label_col: label
+  id_col: compound_id
+  cleaner: none

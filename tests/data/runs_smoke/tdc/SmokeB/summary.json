@@ -1,0 +1,9 @@
+{
+  "similarity": {
+    "test_to_trainvalid": {
+      "mean": 0.57,
+      "std": 0.08,
+      "n": 18
+    }
+  }
+}

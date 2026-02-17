@@ -3,12 +3,35 @@ set -euo pipefail
 
 ROOT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")/.." && pwd)"
 cd "$ROOT_DIR"
+export PYTHONPATH="$ROOT_DIR${PYTHONPATH:+:$PYTHONPATH}"
 
 TMP_DIR="$(mktemp -d)"
 trap 'rm -rf "$TMP_DIR"' EXIT
 
+required_fixtures=(
+  "tests/data/tabular_single.csv"
+  "tests/data/tabular_paths/train.csv"
+  "tests/data/tabular_paths/valid.csv"
+  "tests/data/tabular_paths/test.csv"
+  "tests/data/dti/train.csv"
+  "tests/data/dti/valid.csv"
+  "tests/data/dti/test.csv"
+  "tests/data/alignment_pairs.jsonl"
+  "tests/data/runs_smoke/polaris/SmokeA/summary.json"
+  "tests/data/runs_smoke/tdc/SmokeB/summary.json"
+)
+
+for fixture in "${required_fixtures[@]}"; do
+  if [[ ! -f "$fixture" ]]; then
+    echo "[ci] missing required fixture: $fixture"
+    echo "[ci] available under tests/data:"
+    find tests/data -maxdepth 5 -type f | sort || true
+    exit 1
+  fi
+done
+
 echo "[ci] running unittest suite"
-python -m unittest discover -s tests -p "test_*.py"
+python -m unittest discover -s tests -t . -p "test_*.py"
 
 echo "[ci] running benchmark similarity smoke plot"
 python experiments/plot_trainvalid_test_similarity_by_benchmark.py \
