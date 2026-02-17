@@ -6,9 +6,15 @@ import tempfile
 import unittest
 from pathlib import Path
 
-from experiments import plot_trainvalid_test_similarity_by_benchmark as plot_mod
+try:
+    from experiments import plot_trainvalid_test_similarity_by_benchmark as plot_mod
+    _HAVE_EXPERIMENTS = True
+except Exception:  # pragma: no cover - optional/private module in CI
+    plot_mod = None
+    _HAVE_EXPERIMENTS = False
 
 
+@unittest.skipUnless(_HAVE_EXPERIMENTS, "experiments module not available")
 class SimilarityPlotTests(unittest.TestCase):
     def _write_summary(self, path: Path, payload: dict) -> None:
         path.parent.mkdir(parents=True, exist_ok=True)

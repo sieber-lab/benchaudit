@@ -25,3 +25,14 @@ Fallback with stdlib only:
 ```bash
 python -m unittest discover -s tests -p "test_*.py"
 ```
+
+Core CI suite (experiments excluded):
+
+```bash
+python -m unittest \
+  tests.test_loader \
+  tests.test_run_pipeline \
+  tests.test_utils_logging_writer \
+  tests.test_baselines \
+  tests.test_unittest_helpers
+```
