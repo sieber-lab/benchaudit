@@ -1,0 +1,73 @@
+name: Publish to PyPI
+
+on:
+  push:
+    tags:
+      - "v*"
+  workflow_dispatch:
+
+concurrency:
+  group: publish-pypi-${{ github.ref }}
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+  id-token: write
+
+jobs:
+  publish:
+    if: github.repository_visibility == 'public'
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+    environment:
+      name: pypi
+      url: https://pypi.org/p/benchaudit
+
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.12"
+
+      - name: Setup uv
+        uses: astral-sh/setup-uv@v4
+
+      - name: Verify tag matches package version
+        if: github.event_name == 'push'
+        run: |
+          VERSION="$(python -c 'import pathlib,re; text=pathlib.Path("pyproject.toml").read_text(); m=re.search(r"^version\\s*=\\s*\"([^\"]+)\"", text, re.M); print(m.group(1) if m else "")')"
+          TAG="${GITHUB_REF_NAME#v}"
+
+          if [ -z "${VERSION}" ]; then
+            echo "Could not read project.version from pyproject.toml"
+            exit 1
+          fi
+
+          if [ "${TAG}" != "${VERSION}" ]; then
+            echo "Tag version (${TAG}) does not match project.version (${VERSION})"
+            exit 1
+          fi
+
+      - name: Build distributions
+        run: uv build
+
+      - name: Check distribution metadata
+        run: uvx twine check dist/*
+
+      - name: Publish distributions to PyPI
+        uses: pypa/gh-action-pypi-publish@release/v1
+        with:
+          skip-existing: true
+
+  private-repo-note:
+    if: github.repository_visibility != 'public'
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - name: Skip publishing for private repositories
+        run: |
+          echo "Repository visibility is '${{ github.repository_visibility }}'."
+          echo "PyPI publishing is disabled until the repository is public."

@@ -24,6 +24,27 @@ uv sync
 
 If you need the optional sequence alignment support, install EMBOSS so `stretcher` is available (e.g., `sudo apt install emboss` on Debian/Ubuntu).
 
+## Installation from PyPI
+Once a release is published, you can install directly:
+
+```bash
+pip install benchaudit
+```
+
+or with `uv`:
+
+```bash
+uv pip install benchaudit
+```
+
+## Automated PyPI publishing
+This repo includes `.github/workflows/publish-pypi.yml` for automated releases.
+
+1. In PyPI, configure a Trusted Publisher for this GitHub repository and workflow file (`.github/workflows/publish-pypi.yml`), using environment `pypi`.
+2. Bump `project.version` in `pyproject.toml`.
+3. Create and push a tag `vX.Y.Z` matching that version (for example `v0.1.1`).
+4. GitHub Actions builds with `uv build` and publishes to PyPI automatically when the repository visibility is `public` (publishing is skipped while private).
+
 ## Usage
 The main entry point is `run.py`, which consumes one or more YAML configs and writes results under `runs/` by default. After `uv sync`, you can call it via `uv run python run.py ...` or the installed console scripts:
 - `uv run benchaudit ...` (primary)
