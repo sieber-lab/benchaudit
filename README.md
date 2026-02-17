@@ -56,5 +56,6 @@ Outputs per config:
 ## Development
 - Code style: keep changes simple, PEP 8-ish. Add short docstrings for public functions.
 - Typing: prefer explicit, lightweight type hints when types are clear.
-- Tests: none are included yet; run a small config through `run.py` when making changes.
+- Tests: run `python -m unittest discover -s tests -p "test_*.py"` (or `pytest tests` if pytest is installed).
+- Test data: tiny dummy benchmark datasets live under `tests/data/`.
 - Optional extras: Polaris datasets require `polaris-lib`; sequence alignment requires `pairwise-sequence-alignment` and EMBOSS binaries.
