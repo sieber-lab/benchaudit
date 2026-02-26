@@ -38,6 +38,26 @@ class LoaderTests(unittest.TestCase):
         self.assertEqual(splits["test"]["label_raw"].tolist(), [1, 0])
         self.assertIn("id", splits["valid"].columns)
 
+    def test_tabular_loader_single_file_split_ignores_none_paths_key(self) -> None:
+        cfg = {
+            "type": "tabular",
+            "task": "classification",
+            "path": str(DATA_DIR / "tabular_single.csv"),
+            "paths": None,  # Mirrors pydantic model_dump output when optional field is omitted.
+            "info": {
+                "split_col": "split",
+                "smiles_col": "smiles",
+                "label_col": "label",
+                "id_col": "compound_id",
+                "cleaner": "none",
+            },
+        }
+
+        splits = TabularLoader(cfg).get_splits()
+
+        self.assertEqual(set(splits), {"train", "valid", "test"})
+        self.assertEqual(len(splits["train"]), 2)
+
     def test_tabular_loader_three_paths(self) -> None:
         cfg = {
             "type": "tabular",

@@ -210,10 +210,11 @@ class TabularLoader(BaseLoader):
 
     def get_splits(self) -> Dict[str, pd.DataFrame]:
         # three files
-        if "paths" in self.cfg:
+        paths_cfg = self.cfg.get("paths")
+        if paths_cfg is not None:
             out = {}
             for split in ("train", "valid", "test"):
-                df = self._read_like(Path(self.cfg["paths"][split]))
+                df = self._read_like(Path(paths_cfg[split]))
                 df = self._standardize_cols(df)
                 df_clean = self._maybe_clean(df["smiles"].tolist())
                 df_clean["label_raw"] = df["label_raw"].tolist()
@@ -231,14 +232,15 @@ class TabularLoader(BaseLoader):
             return out
 
         # single file + split column
-        if "path" in self.cfg:
-            df = self._read_like(Path(self.cfg["path"]))
+        path_cfg = self.cfg.get("path")
+        if path_cfg is not None:
+            df = self._read_like(Path(path_cfg))
             df = self._standardize_cols(df)
             split_col = self.info.get("split_col", "split")
             if split_col not in df.columns:
                 split_method = self.info.get("split_method")
                 if not split_method:
-                    raise KeyError(f"missing split_col '{split_col}' in {self.cfg['path']}")
+                    raise KeyError(f"missing split_col '{split_col}' in {path_cfg}")
                 split_fracs = self.info.get("split_fracs", [0.8, 0.1, 0.1])
                 split_seed = self.info.get("split_seed", 123)
                 train_idx, valid_idx, test_idx = split_indices(
@@ -255,7 +257,7 @@ class TabularLoader(BaseLoader):
             for split in ("train", "valid", "test"):
                 part = df[df[split_col] == split]
                 if part.empty:
-                    raise ValueError(f"no rows for split '{split}' in {self.cfg['path']}")
+                    raise ValueError(f"no rows for split '{split}' in {path_cfg}")
                 df_clean = self._maybe_clean(part["smiles"].tolist())
                 df_clean["label_raw"] = part["label_raw"].tolist()
                 if "id" in part.columns:

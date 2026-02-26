@@ -38,12 +38,12 @@ BenchAudit is a reproducible audit framework for molecular property and drug-tar
 
 ## Coverage
 - Benchmarking classes: 7
-- Analysis classes: 6
+- Analysis classes: 4
 
 ## Benchmarking Classes
 
 ### `ResultWriter`
-- Source: `utils/__init__.py:222`
+- Source: `utils/__init__.py:226`
 - Category: `benchmarking`
 - Base classes: None
 - Decorators: None
@@ -56,14 +56,14 @@ Persist analyzer artifacts (summary, tables, drill-down files).
 - Methods (6 total):
   - `__init__`
     - Signature: `__init__(self, out_dir: Path, logger: Optional[logging.Logger]=None)`
-    - Source: `utils/__init__.py:225`
+    - Source: `utils/__init__.py:229`
     - Visibility: `dunder`
     - Method size: 4 lines
     - Intent: Constructs and initializes class state.
     - Internal calls: `self.out_dir.mkdir`
   - `write_summary`
     - Signature: `write_summary(self, summary: Dict[str, Any]) -> Path`
-    - Source: `utils/__init__.py:230`
+    - Source: `utils/__init__.py:234`
     - Visibility: `public`
     - Method size: 5 lines
     - Intent: Writes summary statistics to `summary.json`.
@@ -71,7 +71,7 @@ Persist analyzer artifacts (summary, tables, drill-down files).
     - External calls: `path.write_text`, `json.dumps`
   - `write_performance`
     - Signature: `write_performance(self, payload: Dict[str, Any]) -> Path`
-    - Source: `utils/__init__.py:236`
+    - Source: `utils/__init__.py:240`
     - Visibility: `public`
     - Method size: 5 lines
     - Intent: Writes baseline benchmarking metrics to `performance.json`.
@@ -79,7 +79,7 @@ Persist analyzer artifacts (summary, tables, drill-down files).
     - External calls: `path.write_text`, `json.dumps`
   - `_write_jsonl`
     - Signature: `_write_jsonl(self, rows: Iterable[Dict[str, Any]], filename: str) -> Optional[Path]`
-    - Source: `utils/__init__.py:242`
+    - Source: `utils/__init__.py:246`
     - Visibility: `private`
     - Method size: 12 lines
     - Intent: Writes drill-down records to line-delimited JSON files.
@@ -87,7 +87,7 @@ Persist analyzer artifacts (summary, tables, drill-down files).
     - External calls: `path.open`, `fh.write`, `json.dumps`
   - `write_records`
     - Signature: `write_records(self, df: pd.DataFrame) -> Optional[Path]`
-    - Source: `utils/__init__.py:255`
+    - Source: `utils/__init__.py:259`
     - Visibility: `public`
     - Method size: 8 lines
     - Intent: Writes per-record audit tables to `records.csv`.
@@ -95,7 +95,7 @@ Persist analyzer artifacts (summary, tables, drill-down files).
     - External calls: `df.to_csv`
   - `write_analysis`
     - Signature: `write_analysis(self, result: AnalysisResult) -> Dict[str, Optional[Path]]`
-    - Source: `utils/__init__.py:264`
+    - Source: `utils/__init__.py:268`
     - Visibility: `public`
     - Method size: 19 lines
     - Intent: Persists all generated analysis artifacts and returns file paths.
@@ -123,7 +123,7 @@ Persist analyzer artifacts (summary, tables, drill-down files).
 - Methods: none
 
 ### `BaseLoader`
-- Source: `utils/loader.py:52`
+- Source: `utils/loader.py:53`
 - Category: `benchmarking`
 - Base classes: None
 - Decorators: None
@@ -132,27 +132,28 @@ Persist analyzer artifacts (summary, tables, drill-down files).
 - Methods (4 total):
   - `__init__`
     - Signature: `__init__(self, cfg: Dict[str, Any])`
-    - Source: `utils/loader.py:53`
+    - Source: `utils/loader.py:54`
     - Visibility: `dunder`
     - Method size: 3 lines
     - Intent: Constructs and initializes class state.
-    - External calls: `cfg.get`
+    - Internal calls: `self.cfg.get`
+    - External calls: `normalize_loader_config`
   - `get_splits`
     - Signature: `get_splits(self) -> Dict[str, pd.DataFrame]`
-    - Source: `utils/loader.py:57`
+    - Source: `utils/loader.py:58`
     - Visibility: `public`
     - Method size: 2 lines
     - Intent: Builds and returns standardized benchmark data splits.
   - `_import_from_str`
     - Signature: `_import_from_str(self, dotted: str)`
-    - Source: `utils/loader.py:60`
+    - Source: `utils/loader.py:61`
     - Visibility: `private`
     - Method size: 5 lines
     - Intent: Imports a class or callable from a dotted Python path.
     - External calls: `dotted.rpartition`, `importlib.import_module`
   - `_maybe_clean`
     - Signature: `_maybe_clean(self, smiles: List[str]) -> pd.DataFrame`
-    - Source: `utils/loader.py:66`
+    - Source: `utils/loader.py:67`
     - Visibility: `private`
     - Method size: 14 lines
     - Intent: Applies optional SMILES cleaning and normalizes canonical columns.
@@ -160,7 +161,7 @@ Persist analyzer artifacts (summary, tables, drill-down files).
     - External calls: `Cleaner`, `copy`, `pd.DataFrame`, `df.rename`, `cleaner.get_valid`, `cleaner.get_data`
 
 ### `TDCLoader`
-- Source: `utils/loader.py:82`
+- Source: `utils/loader.py:83`
 - Category: `benchmarking`
 - Base classes: `BaseLoader`
 - Decorators: None
@@ -169,7 +170,7 @@ Persist analyzer artifacts (summary, tables, drill-down files).
 - Methods (3 total):
   - `_init_dataset`
     - Signature: `_init_dataset(self)`
-    - Source: `utils/loader.py:83`
+    - Source: `utils/loader.py:84`
     - Visibility: `private`
     - Method size: 12 lines
     - Intent: Initializes dataset backends and resolves the requested benchmark source.
@@ -177,13 +178,13 @@ Persist analyzer artifacts (summary, tables, drill-down files).
     - External calls: `cls`
   - `_pick`
     - Signature: `_pick(self, cols: List[str], frame: pd.DataFrame) -> str`
-    - Source: `utils/loader.py:96`
+    - Source: `utils/loader.py:97`
     - Visibility: `private`
     - Method size: 5 lines
     - Intent: Selects the first matching column from a list of candidate names.
   - `get_splits`
     - Signature: `get_splits(self) -> Dict[str, pd.DataFrame]`
-    - Source: `utils/loader.py:102`
+    - Source: `utils/loader.py:103`
     - Visibility: `public`
     - Method size: 18 lines
     - Intent: Builds and returns standardized benchmark data splits.
@@ -191,7 +192,7 @@ Persist analyzer artifacts (summary, tables, drill-down files).
     - External calls: `ds.get_split`, `part.tolist`
 
 ### `TabularLoader`
-- Source: `utils/loader.py:122`
+- Source: `utils/loader.py:123`
 - Category: `benchmarking`
 - Base classes: `BaseLoader`
 - Decorators: None
@@ -206,14 +207,14 @@ Persist analyzer artifacts (summary, tables, drill-down files).
 - Methods (4 total):
   - `_read_like`
     - Signature: `_read_like(self, path: Path) -> pd.DataFrame`
-    - Source: `utils/loader.py:144`
+    - Source: `utils/loader.py:145`
     - Visibility: `private`
     - Method size: 7 lines
     - Intent: Reads tabular data from CSV, TSV, or Parquet based on file extension.
     - External calls: `path.suffix.lower`, `pd.read_csv`, `pd.read_parquet`
   - `_resolve_column`
     - Signature: `_resolve_column(self, df: pd.DataFrame, key: str, candidates: List[str]) -> Optional[str]`
-    - Source: `utils/loader.py:152`
+    - Source: `utils/loader.py:153`
     - Visibility: `private`
     - Method size: 12 lines
     - Intent: Resolves a configured or inferred column name from candidate aliases.
@@ -221,7 +222,7 @@ Persist analyzer artifacts (summary, tables, drill-down files).
     - External calls: `col.lower`, `cand.lower`
   - `_standardize_cols`
     - Signature: `_standardize_cols(self, df: pd.DataFrame) -> pd.DataFrame`
-    - Source: `utils/loader.py:165`
+    - Source: `utils/loader.py:166`
     - Visibility: `private`
     - Method size: 44 lines
     - Intent: Renames and normalizes semantic columns required by downstream analysis.
@@ -229,15 +230,15 @@ Persist analyzer artifacts (summary, tables, drill-down files).
     - External calls: `df.rename`, `df.apply`, `_coerce_label_value`
   - `get_splits`
     - Signature: `get_splits(self) -> Dict[str, pd.DataFrame]`
-    - Source: `utils/loader.py:210`
+    - Source: `utils/loader.py:211`
     - Visibility: `public`
     - Method size: 64 lines
     - Intent: Builds and returns standardized benchmark data splits.
     - Internal calls: `self._read_like`, `self._standardize_cols`, `self.info.get`, `self._maybe_clean`
-    - External calls: `df.str.lower.map`, `df.tolist`, `Path`, `split_indices`, `part.tolist`, `df.str.lower`
+    - External calls: `normalize_split_column`, `df.tolist`, `Path`, `split_indices`, `part.tolist`
 
 ### `PolarisLoader`
-- Source: `utils/loader.py:276`
+- Source: `utils/loader.py:277`
 - Category: `benchmarking`
 - Base classes: `BaseLoader`
 - Decorators: None
@@ -252,7 +253,7 @@ Returns only {'train', 'test'} with columns: smiles_clean, label_raw, id.
 - Methods (1 total):
   - `get_splits`
     - Signature: `get_splits(self) -> Dict[str, pd.DataFrame]`
-    - Source: `utils/loader.py:281`
+    - Source: `utils/loader.py:282`
     - Visibility: `public`
     - Method size: 23 lines
     - Intent: Builds and returns standardized benchmark data splits.
@@ -260,7 +261,7 @@ Returns only {'train', 'test'} with columns: smiles_clean, label_raw, id.
     - External calls: `po.load_benchmark`, `bench.get_train_test_split`, `_to_df`, `np.arange`
 
 ### `DTILoader`
-- Source: `utils/loader.py:306`
+- Source: `utils/loader.py:307`
 - Category: `benchmarking`
 - Base classes: `TabularLoader`
 - Decorators: None
@@ -273,100 +274,21 @@ DTI loader built on TabularLoader with sensible defaults.
 - Methods (2 total):
   - `__init__`
     - Signature: `__init__(self, cfg: Dict[str, Any])`
-    - Source: `utils/loader.py:309`
+    - Source: `utils/loader.py:310`
     - Visibility: `dunder`
     - Method size: 5 lines
     - Intent: Constructs and initializes class state.
   - `_standardize_cols`
     - Signature: `_standardize_cols(self, df: pd.DataFrame) -> pd.DataFrame`
-    - Source: `utils/loader.py:315`
+    - Source: `utils/loader.py:316`
     - Visibility: `private`
     - Method size: 9 lines
     - Intent: Renames and normalizes semantic columns required by downstream analysis.
 
 ## Analysis Classes
 
-### `AnalyzerConfig`
-- Source: `utils/analysis.py:185`
-- Category: `analysis`
-- Base classes: None
-- Decorators: `dataclass`
-- Class size: 53 lines
-- Summary: Schema for configuring molecular and DTI audit parameters.
-- Docstring:
-```text
-Minimal, YAML-friendly config for SMILES analysis.
-
-Parameters
-----------
-task_type : Literal['classification', 'regression']
-    Whether labels are classes or real-valued.
-typ : Literal['tdc', 'tabular', 'polaris']
-    Type of the task.
-sim_threshold : float
-    Consensus similarity threshold (based on MoleculeACE): a pair is 'similar'
-    if >= threshold for at least one of:
-      - molecular ECFP Tanimoto
-      - scaffold (generic Murcko) ECFP Tanimoto
-      - normalized SMILES Levenshtein similarity
-fp_radius : int
-    ECFP/Morgan radius.
-fp_nbits : int
-    ECFP/Morgan bit length.
-smiles_col : Optional[str]
-    If input dataframes do NOT already have 'smiles_clean', rename this column to 'smiles_clean'.
-label_col : Optional[str]
-    If input dataframes do NOT already have 'label_raw', rename this column to 'label_raw'.
-id_col : Optional[str]
-    If provided and present, use/rename as 'id'. Otherwise sequential ids will be assigned per split.
-label_cols : Optional[List[str]]
-    Optional list of multi-task label column names. When present, labels are treated as lists.
-sequence_col : Optional[str]
-    Optional column name for amino-acid sequences (renamed to 'sequence_aa' when present).
-target_id_col : Optional[str]
-    Optional column name for target identifiers (renamed to 'target_id' when present).
-name : Optional[str]
-    Logical dataset identifier (used for Foldseek metadata matching).
-unique_sequences_jsonl : Optional[str]
-    Path to metadata that maps sequences to Foldseek sequence IDs.
-foldseek_m8_path : Optional[str]
-    Path to Foldseek `.m8` alignment file for structural similarity checks.
-```
-- Data fields:
-  - `task_type: Literal['classification', 'regression']`
-  - `typ: Literal['tdc', 'tabular', 'polaris']`
-  - `sim_threshold: float` = `0.9`
-  - `fp_radius: int` = `2`
-  - `fp_nbits: int` = `2048`
-  - `smiles_col: Optional[str]` = `None`
-  - `label_col: Optional[str]` = `None`
-  - `id_col: Optional[str]` = `None`
-  - `label_cols: Optional[List[str]]` = `None`
-  - `sequence_col: Optional[str]` = `None`
-  - `target_id_col: Optional[str]` = `None`
-  - `name: Optional[str]` = `None`
-  - `unique_sequences_jsonl: Optional[str]` = `None`
-  - `foldseek_m8_path: Optional[str]` = `None`
-- Methods: none
-
-### `AnalysisResult`
-- Source: `utils/analysis.py:241`
-- Category: `analysis`
-- Base classes: None
-- Decorators: `dataclass`
-- Class size: 7 lines
-- Summary: Structured return object containing summaries and row-level audit outputs.
-- Data fields:
-  - `summary: Dict[str, Any]`
-  - `per_record_df: pd.DataFrame`
-  - `conflicts_rows: List[Dict[str, Any]]`
-  - `cliffs_rows: List[Dict[str, Any]]`
-  - `sequence_alignment_rows: Optional[List[Dict[str, Any]]]` = `None`
-  - `structure_alignment_rows: Optional[List[Dict[str, Any]]]` = `None`
-- Methods: none
-
 ### `StretcherAlignment`
-- Source: `utils/analysis.py:402`
+- Source: `utils/analysis.py:470`
 - Category: `analysis`
 - Base classes: None
 - Decorators: `dataclass(frozen=True)`
@@ -388,7 +310,7 @@ foldseek_m8_path : Optional[str]
 - Methods: none
 
 ### `PSAStretcherAligner`
-- Source: `utils/analysis.py:417`
+- Source: `utils/analysis.py:485`
 - Category: `analysis`
 - Base classes: None
 - Decorators: None
@@ -401,34 +323,34 @@ Thin wrapper around psa.stretcher with caching.
 - Methods (5 total):
   - `__init__`
     - Signature: `__init__(self)`
-    - Source: `utils/analysis.py:420`
+    - Source: `utils/analysis.py:488`
     - Visibility: `dunder`
     - Method size: 9 lines
     - Intent: Constructs and initializes class state.
   - `_normalize_seq`
     - Signature: `_normalize_seq(self, seq: str) -> str`
-    - Source: `utils/analysis.py:430`
+    - Source: `utils/analysis.py:498`
     - Visibility: `private`
     - Method size: 4 lines
     - Intent: Normalizes amino-acid sequence strings for stable alignment behavior.
     - External calls: `join.upper`, `pd.isna`, `join`, `seq.split`
   - `_invert_alignment`
     - Signature: `_invert_alignment(self, aln: StretcherAlignment) -> StretcherAlignment`
-    - Source: `utils/analysis.py:435`
+    - Source: `utils/analysis.py:503`
     - Visibility: `private`
     - Method size: 15 lines
     - Intent: Reorients a sequence alignment object by swapping query and subject fields.
     - External calls: `StretcherAlignment`
   - `_empty_alignment`
     - Signature: `_empty_alignment(self, q: str, s: str) -> StretcherAlignment`
-    - Source: `utils/analysis.py:451`
+    - Source: `utils/analysis.py:519`
     - Visibility: `private`
     - Method size: 16 lines
     - Intent: Builds a placeholder alignment result for missing or invalid sequence pairs.
     - External calls: `StretcherAlignment`
   - `align`
     - Signature: `align(self, query_seq: str, subject_seq: str) -> StretcherAlignment`
-    - Source: `utils/analysis.py:468`
+    - Source: `utils/analysis.py:536`
     - Visibility: `public`
     - Method size: 41 lines
     - Intent: Computes a pairwise sequence alignment with caching and normalization.
@@ -436,7 +358,7 @@ Thin wrapper around psa.stretcher with caching.
     - External calls: `psa.stretcher`, `StretcherAlignment`
 
 ### `SMILESAnalyzer`
-- Source: `utils/analysis.py:781`
+- Source: `utils/analysis.py:849`
 - Category: `analysis`
 - Base classes: None
 - Decorators: None
@@ -449,20 +371,20 @@ Simplified, modular SMILES analyzer (MoleculeACE-style similarity).
 - Methods (3 total):
   - `__init__`
     - Signature: `__init__(self, cfg: AnalyzerConfig, logger: Optional[logging.Logger]=None)`
-    - Source: `utils/analysis.py:784`
+    - Source: `utils/analysis.py:852`
     - Visibility: `dunder`
     - Method size: 3 lines
     - Intent: Constructs and initializes class state.
   - `_featurize_for_similarity`
     - Signature: `_featurize_for_similarity(self, smiles: List[str])`
-    - Source: `utils/analysis.py:788`
+    - Source: `utils/analysis.py:856`
     - Visibility: `private`
     - Method size: 5 lines
     - Intent: Computes molecular and scaffold fingerprints for similarity calculations.
     - External calls: `morgan_fps`, `scaffold_fps`
   - `run`
     - Signature: `run(self, splits_raw: Dict[str, pd.DataFrame]) -> AnalysisResult`
-    - Source: `utils/analysis.py:794`
+    - Source: `utils/analysis.py:862`
     - Visibility: `public`
     - Method size: 216 lines
     - Intent: Executes the class's primary workflow and returns computed outputs.
@@ -470,7 +392,7 @@ Simplified, modular SMILES analyzer (MoleculeACE-style similarity).
     - External calls: `splits_raw.keys`, `_series_has_sequence_labels`, `_nn_tanimoto_stats`, `_intra_conflict_smiles`, `_cross_conflict_smiles`, `_cliff_pairs`, `pd.concat`, `_build_conflict_rows`, `AnalysisResult`, `_normalize_columns`, `tv_df.tolist`, `test_df.tolist`
 
 ### `DTIAnalyzer`
-- Source: `utils/analysis.py:1012`
+- Source: `utils/analysis.py:1080`
 - Category: `analysis`
 - Base classes: None
 - Decorators: None
@@ -485,14 +407,14 @@ Drug–target interaction analysis: combines molecular + sequence hygiene.
 - Methods (6 total):
   - `__init__`
     - Signature: `__init__(self, cfg: AnalyzerConfig, logger: Optional[logging.Logger]=None)`
-    - Source: `utils/analysis.py:1023`
+    - Source: `utils/analysis.py:1091`
     - Visibility: `dunder`
     - Method size: 5 lines
     - Intent: Constructs and initializes class state.
     - External calls: `SMILESAnalyzer`, `PSAStretcherAligner`
   - `_prepare_split`
     - Signature: `_prepare_split(self, split: str, df: pd.DataFrame) -> pd.DataFrame`
-    - Source: `utils/analysis.py:1029`
+    - Source: `utils/analysis.py:1097`
     - Visibility: `private`
     - Method size: 31 lines
     - Intent: Normalizes a split dataframe and enforces valid sequence columns for DTI.
@@ -500,14 +422,14 @@ Drug–target interaction analysis: combines molecular + sequence hygiene.
     - External calls: `df.copy`, `out.map`, `seq_series.str.upper.str.replace`, `candidates.extend`, `out.rename`, `candidates.append`, `pd.isna`, `seq_series.str.upper`
   - `_build_drug_summary`
     - Signature: `_build_drug_summary(self, splits: Dict[str, pd.DataFrame], base_summary: Dict[str, Any]) -> Dict[str, Any]`
-    - Source: `utils/analysis.py:1061`
+    - Source: `utils/analysis.py:1129`
     - Visibility: `private`
     - Method size: 36 lines
     - Intent: Computes drug-level overlap and hygiene summary statistics.
     - External calls: `splits.get`, `base_summary.get`, `train_df.nunique`, `test_df.nunique`, `hygiene_base.get`, `valid_df.nunique`
   - `_analyze_sequences`
     - Signature: `_analyze_sequences(self, splits: Dict[str, pd.DataFrame]) -> Tuple[Dict[str, Any], List[Dict[str, Any]], List[Dict[str, Any]], Dict[str, int]]`
-    - Source: `utils/analysis.py:1098`
+    - Source: `utils/analysis.py:1166`
     - Visibility: `private`
     - Method size: 169 lines
     - Intent: Computes sequence leakage, redundancy, and alignment-based diagnostics.
@@ -515,7 +437,7 @@ Drug–target interaction analysis: combines molecular + sequence hygiene.
     - External calls: `splits.get`, `train_df.tolist`, `all_sequences.extend`, `_nn_sequence_alignment_stats`, `alignment_rows.extend`, `defaultdict`, `splits.items`, `pair_conflicts.items`, `sequence_multi.items`, `test_df.tolist`, `df.iterrows`, `valid_df.tolist`
   - `_analyze_structures_foldseek`
     - Signature: `_analyze_structures_foldseek(self, splits: Dict[str, pd.DataFrame]) -> Tuple[Dict[str, Any], List[Dict[str, Any]]]`
-    - Source: `utils/analysis.py:1268`
+    - Source: `utils/analysis.py:1336`
     - Visibility: `private`
     - Method size: 207 lines
     - Intent: Computes structure-level leakage diagnostics using Foldseek alignments.
@@ -523,7 +445,7 @@ Drug–target interaction analysis: combines molecular + sequence hygiene.
     - External calls: `splits.get`, `to_ids`, `_nn_structure_alignment_stats`, `alignment_rows.extend`, `json.loads`, `seqid_to_seq.get`, `filtered.append`, `line.strip`, `obj.get`, `src.get`, `line.rstrip.split`, `best.values`
   - `run`
     - Signature: `run(self, splits_raw: Dict[str, pd.DataFrame]) -> AnalysisResult`
-    - Source: `utils/analysis.py:1477`
+    - Source: `utils/analysis.py:1545`
     - Visibility: `public`
     - Method size: 38 lines
     - Intent: Executes the class's primary workflow and returns computed outputs.
