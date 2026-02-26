@@ -196,7 +196,7 @@ Persist analyzer artifacts (summary, tables, drill-down files).
 - Category: `benchmarking`
 - Base classes: `BaseLoader`
 - Decorators: None
-- Class size: 152 lines
+- Class size: 154 lines
 - Summary: Flexible file-based benchmark loader with column inference and split normalization.
 - Data fields:
   - `DEFAULT_SMILES_COLS: Any` = `['smiles', 'SMILES', 'drug', 'Drug']`
@@ -232,13 +232,13 @@ Persist analyzer artifacts (summary, tables, drill-down files).
     - Signature: `get_splits(self) -> Dict[str, pd.DataFrame]`
     - Source: `utils/loader.py:211`
     - Visibility: `public`
-    - Method size: 64 lines
+    - Method size: 66 lines
     - Intent: Builds and returns standardized benchmark data splits.
-    - Internal calls: `self._read_like`, `self._standardize_cols`, `self.info.get`, `self._maybe_clean`
+    - Internal calls: `self.cfg.get`, `self._read_like`, `self._standardize_cols`, `self.info.get`, `self._maybe_clean`
     - External calls: `normalize_split_column`, `df.tolist`, `Path`, `split_indices`, `part.tolist`
 
 ### `PolarisLoader`
-- Source: `utils/loader.py:277`
+- Source: `utils/loader.py:279`
 - Category: `benchmarking`
 - Base classes: `BaseLoader`
 - Decorators: None
@@ -253,7 +253,7 @@ Returns only {'train', 'test'} with columns: smiles_clean, label_raw, id.
 - Methods (1 total):
   - `get_splits`
     - Signature: `get_splits(self) -> Dict[str, pd.DataFrame]`
-    - Source: `utils/loader.py:282`
+    - Source: `utils/loader.py:284`
     - Visibility: `public`
     - Method size: 23 lines
     - Intent: Builds and returns standardized benchmark data splits.
@@ -261,7 +261,7 @@ Returns only {'train', 'test'} with columns: smiles_clean, label_raw, id.
     - External calls: `po.load_benchmark`, `bench.get_train_test_split`, `_to_df`, `np.arange`
 
 ### `DTILoader`
-- Source: `utils/loader.py:307`
+- Source: `utils/loader.py:309`
 - Category: `benchmarking`
 - Base classes: `TabularLoader`
 - Decorators: None
@@ -274,13 +274,13 @@ DTI loader built on TabularLoader with sensible defaults.
 - Methods (2 total):
   - `__init__`
     - Signature: `__init__(self, cfg: Dict[str, Any])`
-    - Source: `utils/loader.py:310`
+    - Source: `utils/loader.py:312`
     - Visibility: `dunder`
     - Method size: 5 lines
     - Intent: Constructs and initializes class state.
   - `_standardize_cols`
     - Signature: `_standardize_cols(self, df: pd.DataFrame) -> pd.DataFrame`
-    - Source: `utils/loader.py:316`
+    - Source: `utils/loader.py:318`
     - Visibility: `private`
     - Method size: 9 lines
     - Intent: Renames and normalizes semantic columns required by downstream analysis.
