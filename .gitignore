@@ -2,6 +2,11 @@ data
 docs/*
 !docs/benchmark_and_analysis_class_reference.md
 !docs/publishing_and_installation.md
+!docs/requirements.txt
+!docs/Makefile
+!docs/make.bat
+!docs/source/
+!docs/source/**
 
 experiments
 !tests/data/
