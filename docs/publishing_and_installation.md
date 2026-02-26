@@ -1,6 +1,6 @@
 # Publishing and Installation
 
-This document describes how to install BenchAudit and how maintainers publish releases to PyPI.
+This document describes how to install BenchAudit and how we publish releases to PyPI.
 
 ## Installation
 

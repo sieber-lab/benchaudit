@@ -27,6 +27,8 @@ try:
 except ImportError:  # pragma: no cover - optional dependency
     psa = None
 
+from utils.pydantic_compat import ConfigDict, Field, HAVE_PYDANTIC, PydanticBaseModel
+
 
 def _to_python_scalar(val: Any) -> Any:
     if isinstance(val, (list, tuple, np.ndarray, pd.Series)):
@@ -181,70 +183,136 @@ def _delta_exceeds_threshold(delta: List[Optional[float]], sigma) -> bool:
     return False
 
 
-@dataclass
-class AnalyzerConfig:
-    """Minimal, YAML-friendly config for SMILES analysis.
-
-    Parameters
-    ----------
-    task_type : Literal['classification', 'regression']
-        Whether labels are classes or real-valued.
-    typ : Literal['tdc', 'tabular', 'polaris']
-        Type of the task.
-    sim_threshold : float
-        Consensus similarity threshold (based on MoleculeACE): a pair is 'similar'
-        if >= threshold for at least one of:
-          - molecular ECFP Tanimoto
-          - scaffold (generic Murcko) ECFP Tanimoto
-          - normalized SMILES Levenshtein similarity
-    fp_radius : int
-        ECFP/Morgan radius.
-    fp_nbits : int
-        ECFP/Morgan bit length.
-    smiles_col : Optional[str]
-        If input dataframes do NOT already have 'smiles_clean', rename this column to 'smiles_clean'.
-    label_col : Optional[str]
-        If input dataframes do NOT already have 'label_raw', rename this column to 'label_raw'.
-    id_col : Optional[str]
-        If provided and present, use/rename as 'id'. Otherwise sequential ids will be assigned per split.
-    label_cols : Optional[List[str]]
-        Optional list of multi-task label column names. When present, labels are treated as lists.
-    sequence_col : Optional[str]
-        Optional column name for amino-acid sequences (renamed to 'sequence_aa' when present).
-    target_id_col : Optional[str]
-        Optional column name for target identifiers (renamed to 'target_id' when present).
-    name : Optional[str]
-        Logical dataset identifier (used for Foldseek metadata matching).
-    unique_sequences_jsonl : Optional[str]
-        Path to metadata that maps sequences to Foldseek sequence IDs.
-    foldseek_m8_path : Optional[str]
-        Path to Foldseek `.m8` alignment file for structural similarity checks.
-    """
-
-    task_type: Literal["classification", "regression"]
-    typ: Literal["tdc", "tabular", "polaris"]
-    sim_threshold: float = 0.9
-    fp_radius: int = 2
-    fp_nbits: int = 2048
-    smiles_col: Optional[str] = None
-    label_col: Optional[str] = None
-    id_col: Optional[str] = None
-    label_cols: Optional[List[str]] = None
-    sequence_col: Optional[str] = None
-    target_id_col: Optional[str] = None
-    name: Optional[str] = None
-    unique_sequences_jsonl: Optional[str] = None
-    foldseek_m8_path: Optional[str] = None
+def _validate_analyzer_config_values(cfg: "AnalyzerConfig") -> None:
+    if float(cfg.sim_threshold) < 0 or float(cfg.sim_threshold) > 1:
+        raise ValueError("AnalyzerConfig.sim_threshold must be between 0 and 1")
+    if int(cfg.fp_radius) <= 0:
+        raise ValueError("AnalyzerConfig.fp_radius must be > 0")
+    if int(cfg.fp_nbits) <= 0:
+        raise ValueError("AnalyzerConfig.fp_nbits must be > 0")
+    if cfg.label_cols is not None:
+        if isinstance(cfg.label_cols, tuple):
+            cfg.label_cols = list(cfg.label_cols)
+        if not isinstance(cfg.label_cols, list):
+            raise TypeError("AnalyzerConfig.label_cols must be a list of strings")
+        cfg.label_cols = [str(col) for col in cfg.label_cols]
 
 
-@dataclass
-class AnalysisResult:
-    summary: Dict[str, Any]
-    per_record_df: pd.DataFrame
-    conflicts_rows: List[Dict[str, Any]]
-    cliffs_rows: List[Dict[str, Any]]
-    sequence_alignment_rows: Optional[List[Dict[str, Any]]] = None
-    structure_alignment_rows: Optional[List[Dict[str, Any]]] = None
+if HAVE_PYDANTIC:  # pragma: no cover - exercised when pydantic is installed
+    _ANALYZER_CONFIG_FIELD_ORDER = (
+        "task_type",
+        "typ",
+        "sim_threshold",
+        "fp_radius",
+        "fp_nbits",
+        "smiles_col",
+        "label_col",
+        "id_col",
+        "label_cols",
+        "sequence_col",
+        "target_id_col",
+        "name",
+        "unique_sequences_jsonl",
+        "foldseek_m8_path",
+    )
+    _ANALYSIS_RESULT_FIELD_ORDER = (
+        "summary",
+        "per_record_df",
+        "conflicts_rows",
+        "cliffs_rows",
+        "sequence_alignment_rows",
+        "structure_alignment_rows",
+    )
+
+    def _merge_positional_fields(field_names: tuple[str, ...], args: tuple[Any, ...], data: dict[str, Any]) -> dict[str, Any]:
+        if len(args) > len(field_names):
+            raise TypeError(f"Too many positional arguments (expected at most {len(field_names)})")
+        merged = dict(data)
+        for name, value in zip(field_names, args):
+            if name in merged:
+                raise TypeError(f"Multiple values for argument '{name}'")
+            merged[name] = value
+        return merged
+
+    class AnalyzerConfig(PydanticBaseModel):
+        """Minimal, YAML-friendly config for SMILES analysis."""
+
+        task_type: Literal["classification", "regression"]
+        typ: Literal["tdc", "tabular", "polaris"]
+        sim_threshold: float = Field(default=0.9, ge=0.0, le=1.0) if Field is not None else 0.9
+        fp_radius: int = Field(default=2, gt=0) if Field is not None else 2
+        fp_nbits: int = Field(default=2048, gt=0) if Field is not None else 2048
+        smiles_col: Optional[str] = None
+        label_col: Optional[str] = None
+        id_col: Optional[str] = None
+        label_cols: Optional[List[str]] = None
+        sequence_col: Optional[str] = None
+        target_id_col: Optional[str] = None
+        name: Optional[str] = None
+        unique_sequences_jsonl: Optional[str] = None
+        foldseek_m8_path: Optional[str] = None
+
+        if ConfigDict is not None:  # pydantic v2
+            model_config = ConfigDict(validate_assignment=True)
+        else:  # pydantic v1
+            class Config:
+                validate_assignment = True
+
+        def __init__(self, *args, **data):
+            data = _merge_positional_fields(_ANALYZER_CONFIG_FIELD_ORDER, args, data)
+            super().__init__(**data)
+            _validate_analyzer_config_values(self)
+
+
+    class AnalysisResult(PydanticBaseModel):
+        summary: Dict[str, Any]
+        per_record_df: pd.DataFrame
+        conflicts_rows: List[Dict[str, Any]]
+        cliffs_rows: List[Dict[str, Any]]
+        sequence_alignment_rows: Optional[List[Dict[str, Any]]] = None
+        structure_alignment_rows: Optional[List[Dict[str, Any]]] = None
+
+        if ConfigDict is not None:  # pydantic v2
+            model_config = ConfigDict(arbitrary_types_allowed=True)
+        else:  # pydantic v1
+            class Config:
+                arbitrary_types_allowed = True
+
+        def __init__(self, *args, **data):
+            data = _merge_positional_fields(_ANALYSIS_RESULT_FIELD_ORDER, args, data)
+            super().__init__(**data)
+else:
+    @dataclass
+    class AnalyzerConfig:
+        """Minimal, YAML-friendly config for SMILES analysis."""
+
+        task_type: Literal["classification", "regression"]
+        typ: Literal["tdc", "tabular", "polaris"]
+        sim_threshold: float = 0.9
+        fp_radius: int = 2
+        fp_nbits: int = 2048
+        smiles_col: Optional[str] = None
+        label_col: Optional[str] = None
+        id_col: Optional[str] = None
+        label_cols: Optional[List[str]] = None
+        sequence_col: Optional[str] = None
+        target_id_col: Optional[str] = None
+        name: Optional[str] = None
+        unique_sequences_jsonl: Optional[str] = None
+        foldseek_m8_path: Optional[str] = None
+
+        def __post_init__(self):
+            _validate_analyzer_config_values(self)
+
+
+    @dataclass
+    class AnalysisResult:
+        summary: Dict[str, Any]
+        per_record_df: pd.DataFrame
+        conflicts_rows: List[Dict[str, Any]]
+        cliffs_rows: List[Dict[str, Any]]
+        sequence_alignment_rows: Optional[List[Dict[str, Any]]] = None
+        structure_alignment_rows: Optional[List[Dict[str, Any]]] = None
 
 
 def _normalize_columns(df: pd.DataFrame, cfg: AnalyzerConfig, split: str) -> pd.DataFrame:

@@ -5,6 +5,7 @@ from pathlib import Path
 import pandas as pd
 import numpy as np
 
+from utils.config_models import normalize_loader_config, normalize_split_column
 from utils.splitting import split_indices
 
 try:
@@ -51,8 +52,8 @@ def _coerce_label_value(value):
 
 class BaseLoader:
     def __init__(self, cfg: Dict[str, Any]):
-        self.cfg = cfg
-        self.info = cfg.get("info", {})
+        self.cfg = normalize_loader_config(cfg)
+        self.info = self.cfg.get("info", {})
 
     def get_splits(self) -> Dict[str, pd.DataFrame]:
         raise NotImplementedError
@@ -249,7 +250,7 @@ class TabularLoader(BaseLoader):
                 df[split_col] = "train"
                 df.loc[valid_idx, split_col] = "valid"
                 df.loc[test_idx, split_col] = "test"
-            df[split_col] = df[split_col].str.lower().map({"train": "train", "val": "valid", "valid": "valid", "test": "test"})
+            df[split_col] = normalize_split_column(df[split_col])
             out = {}
             for split in ("train", "valid", "test"):
                 part = df[df[split_col] == split]

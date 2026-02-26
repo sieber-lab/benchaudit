@@ -1,6 +1,7 @@
 from __future__ import annotations
 
 import types
+import tempfile
 import unittest
 from copy import deepcopy
 from pathlib import Path
@@ -60,6 +61,51 @@ class LoaderTests(unittest.TestCase):
         self.assertEqual(len(splits["valid"]), 2)
         self.assertEqual(len(splits["test"]), 2)
         self.assertEqual(splits["test"]["id"].tolist(), [6, 7])
+
+    def test_tabular_loader_does_not_mutate_input_config(self) -> None:
+        cfg = {
+            "type": "tabular",
+            "task": "classification",
+            "path": str(DATA_DIR / "tabular_single.csv"),
+            "info": {
+                "split_col": "split",
+                "smiles_col": "smiles",
+                "label_cols": "label",
+                "id_col": "compound_id",
+                "cleaner": "none",
+            },
+        }
+
+        _ = TabularLoader(cfg).get_splits()
+
+        self.assertEqual(cfg["info"]["label_cols"], "label")
+
+    def test_tabular_loader_rejects_unknown_split_labels(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            csv_path = Path(td) / "bad_split.csv"
+            pd.DataFrame(
+                [
+                    {"smiles": "CCO", "label": 1, "compound_id": "a", "split": "train"},
+                    {"smiles": "CCN", "label": 0, "compound_id": "b", "split": "dev"},
+                    {"smiles": "CCC", "label": 1, "compound_id": "c", "split": "test"},
+                ]
+            ).to_csv(csv_path, index=False)
+
+            cfg = {
+                "type": "tabular",
+                "task": "classification",
+                "path": str(csv_path),
+                "info": {
+                    "split_col": "split",
+                    "smiles_col": "smiles",
+                    "label_col": "label",
+                    "id_col": "compound_id",
+                    "cleaner": "none",
+                },
+            }
+
+            with self.assertRaises(ValueError):
+                TabularLoader(cfg).get_splits()
 
     def test_dti_loader_requires_sequence_column(self) -> None:
         cfg = {

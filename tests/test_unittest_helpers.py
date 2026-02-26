@@ -34,6 +34,20 @@ class HelperFunctionTests(unittest.TestCase):
         self.assertEqual(data["type"], "tabular")
         self.assertEqual(data["name"], "tiny")
 
+    def test_load_yaml_rejects_empty_document(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "empty.yaml"
+            path.write_text("", encoding="utf-8")
+            with self.assertRaises(ValueError):
+                run.load_yaml(path)
+
+    def test_load_yaml_rejects_non_mapping_root(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            path = Path(td) / "list.yaml"
+            path.write_text("- a\n- b\n", encoding="utf-8")
+            with self.assertRaises(TypeError):
+                run.load_yaml(path)
+
 
 if __name__ == "__main__":
     unittest.main()

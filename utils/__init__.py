@@ -10,6 +10,7 @@ import pandas as pd
 
 from .analysis import AnalysisResult, AnalyzerConfig, DTIAnalyzer, SMILESAnalyzer
 from .baselines import run_baselines
+from .config_models import normalize_runtime_config
 from .loader import BaseLoader, DTILoader, PolarisLoader, TabularLoader, TDCLoader
 
 
@@ -151,6 +152,7 @@ def resolve_output_dir(
 
 def build_loader(cfg: Dict[str, Any]) -> BaseLoader:
     """Factory that instantiates the appropriate loader for the config."""
+    cfg = normalize_runtime_config(cfg)
     typ = str(cfg.get("type") or cfg.get("modality") or "").lower()
     modality = str(cfg.get("modality") or "").lower()
 
@@ -182,6 +184,7 @@ def _analyzer_typ(cfg: Dict[str, Any]) -> str:
 
 
 def _build_analyzer_config(cfg: Dict[str, Any]) -> AnalyzerConfig:
+    cfg = normalize_runtime_config(cfg)
     info = cfg.get("info", {}) or {}
     task = str(cfg.get("task") or "").lower()
     if task not in {"classification", "regression"}:
@@ -210,6 +213,7 @@ def _build_analyzer_config(cfg: Dict[str, Any]) -> AnalyzerConfig:
 
 def build_analyzer(cfg: Dict[str, Any], logger: Optional[logging.Logger] = None):
     """Factory that picks the analyzer (SMILES vs DTI) and configures it."""
+    cfg = normalize_runtime_config(cfg)
     modality = str(cfg.get("modality") or cfg.get("type") or "").lower()
     analyzer_cfg = _build_analyzer_config(cfg)
     log = logger or logging.getLogger(LOGGER_NAME)

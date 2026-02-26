@@ -10,17 +10,20 @@ from typing import Any, Dict, List, Optional
 import yaml
 
 from utils import ResultWriter, build_analyzer, build_loader, make_logger, resolve_output_dir
+from utils.config_models import normalize_echo_config, normalize_runtime_config, validate_yaml_mapping
 from utils.baselines import run_baselines
 
 
 def load_yaml(path: Path) -> Dict[str, Any]:
     """Load a YAML file into a dict."""
     with path.open("r", encoding="utf-8") as handle:
-        return yaml.safe_load(handle)
+        data = yaml.safe_load(handle)
+    return validate_yaml_mapping(data, source=path)
 
 
 def echo_config(cfg: Dict[str, Any]) -> Dict[str, Any]:
     """Return a lightweight echo of the config for inclusion in summary.json."""
+    cfg = normalize_echo_config(cfg)
     keys = ["type", "name", "task", "modality", "info", "seed", "out"]
     return {k: cfg.get(k) for k in keys if k in cfg}
 
@@ -68,6 +71,7 @@ def run_one_config(
     force: bool = False,
 ) -> None:
     """Run the loader, analyzer, and optional baselines for a single config."""
+    cfg = normalize_runtime_config(cfg)
     typ = cfg.get("type", "unknown")
     name = cfg.get("name", "unnamed")
     out_dir = resolve_output_dir(cfg, out_root, config_path=config_path, configs_root=configs_root)

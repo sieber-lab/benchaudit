@@ -10,7 +10,7 @@ import numpy as np
 import pandas as pd
 
 from utils import ResultWriter, json_default, make_logger, resolve_output_dir
-from utils.analysis import AnalysisResult
+from utils.analysis import AnalysisResult, AnalyzerConfig
 
 
 class LoggingAndWriterTests(unittest.TestCase):
@@ -86,6 +86,11 @@ class LoggingAndWriterTests(unittest.TestCase):
         with tempfile.TemporaryDirectory() as td:
             writer = ResultWriter(Path(td), make_logger("test.writer.empty", "INFO"))
             self.assertIsNone(writer.write_records(pd.DataFrame()))
+
+    def test_analyzer_config_rejects_invalid_similarity_threshold(self) -> None:
+        with self.assertRaises(Exception) as ctx:
+            AnalyzerConfig(task_type="classification", typ="tabular", sim_threshold=1.5)
+        self.assertIn("sim_threshold", str(ctx.exception))
 
 
 if __name__ == "__main__":
