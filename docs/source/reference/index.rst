@@ -1,7 +1,7 @@
 Reference
 =========
 
-API reference generated with Sphinx autodoc and autosummary.
+API reference generated with Sphinx autodoc.
 
 .. toctree::
    :maxdepth: 2

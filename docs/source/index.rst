@@ -13,7 +13,6 @@ These docs focus on scientific usage, methodology, and pipeline behavior.
    scientific_scope
    methods
    configuration
-   legacy_docs
 
 .. toctree::
    :maxdepth: 2

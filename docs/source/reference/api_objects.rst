@@ -1,55 +1,43 @@
 API Objects
 ===========
 
-This page replaces the old generated markdown class inventory with Sphinx-native
-autosummary pages.
+This page is an object inventory only. Detailed API documentation lives in the
+module pages below to avoid duplicate object descriptions.
 
-Core Orchestration
-------------------
+Core Orchestration (``run`` and ``utils``)
+------------------------------------------
 
-.. autosummary::
-   :toctree: generated
-   :nosignatures:
+- ``run.main``
+- ``utils.build_loader``
+- ``utils.build_analyzer``
+- ``utils.resolve_output_dir``
+- ``utils.ResultWriter``
 
-   run.main
-   utils.build_loader
-   utils.build_analyzer
-   utils.resolve_output_dir
-   utils.ResultWriter
+See :doc:`api_core` for full docs.
 
-Loaders
--------
+Loaders (``utils.loader``)
+--------------------------
 
-.. autosummary::
-   :toctree: generated
-   :nosignatures:
+- ``utils.loader.BaseLoader``
+- ``utils.loader.TabularLoader``
+- ``utils.loader.TDCLoader``
+- ``utils.loader.PolarisLoader``
+- ``utils.loader.DTILoader``
 
-   utils.loader.BaseLoader
-   utils.loader.TabularLoader
-   utils.loader.TDCLoader
-   utils.loader.PolarisLoader
-   utils.loader.DTILoader
+See :doc:`api_loaders` for full docs.
 
-Analysis
---------
+Analysis and Baselines (``utils.analysis`` and ``utils.baselines``)
+-------------------------------------------------------------------
 
-.. autosummary::
-   :toctree: generated
-   :nosignatures:
+- ``utils.analysis.AnalyzerConfig``
+- ``utils.analysis.AnalysisResult``
+- ``utils.analysis.SMILESAnalyzer``
+- ``utils.analysis.DTIAnalyzer``
+- ``utils.analysis.StretcherAlignment``
+- ``utils.analysis.PSAStretcherAligner``
+- ``utils.baselines.BaselineParams``
+- ``utils.baselines.run_baselines``
 
-   utils.analysis.AnalyzerConfig
-   utils.analysis.AnalysisResult
-   utils.analysis.SMILESAnalyzer
-   utils.analysis.DTIAnalyzer
-   utils.analysis.StretcherAlignment
-   utils.analysis.PSAStretcherAligner
+See :doc:`api_analysis` for full docs.
 
-Baselines
----------
-
-.. autosummary::
-   :toctree: generated
-   :nosignatures:
-
-   utils.baselines.BaselineParams
-   utils.baselines.run_baselines
+Support modules are documented in :doc:`api_support`.
