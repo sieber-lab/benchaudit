@@ -13,11 +13,11 @@ authors = [
     { name = "Aleksandra Daniluk" },
     { name = "Stephan A. Sieber" },
 ]
-license = { text = "MIT" }
+license = { file = "LICENSE" }
 keywords = ["chemistry", "benchmarking", "molecular", "smiles", "dti"]
 classifiers = [
     "Programming Language :: Python :: 3",
-    "License :: OSI Approved :: MIT License",
+    "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
     "Operating System :: OS Independent",
 ]
 scripts = { benchaudit = "run:main", bench = "run:main" }

@@ -4,18 +4,6 @@ Getting Started
 Installation
 ------------
 
-Install from PyPI:
-
-.. code-block:: bash
-
-   pip install benchaudit
-
-or:
-
-.. code-block:: bash
-
-   uv pip install benchaudit
-
 Install from source (``uv``):
 
 .. code-block:: bash

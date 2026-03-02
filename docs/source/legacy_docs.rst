@@ -1,23 +1,21 @@
 Legacy Markdown Docs
 ====================
 
-The repository still contains legacy markdown documents under ``docs/`` (including generated artifacts used by CI checks),
-but the published documentation site is now Sphinx + reStructuredText.
+The repository still contains legacy markdown documents under ``docs/`` (including generated artifacts used by CI checks).
+They are retained for compatibility while scientific and pipeline guidance is maintained in the reST pages.
 
 Why this split exists
 ---------------------
 
 * It avoids breaking existing CI checks and generated-file workflows immediately.
-* It lets the project publish a proper browsable docs website now.
-* It supports incremental migration of older markdown files into reST pages.
+* It supports incremental migration of older markdown files into focused reST pages.
 
-Current legacy files (not the primary website source)
------------------------------------------------------
+Current legacy files
+--------------------
 
 * ``docs/benchmark_and_analysis_class_reference.md`` (generated legacy reference)
-* ``docs/pipeline_overview.md``
-* ``docs/scientific_documentation.md``
-* ``docs/publishing_and_installation.md`` (content now mirrored here in reST form)
+* ``docs/pipeline_overview.md`` (if present in your local branch)
+* ``docs/scientific_documentation.md`` (if present in your local branch)
 
 Migration strategy
 ------------------

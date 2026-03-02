@@ -2,7 +2,7 @@ BenchAudit Documentation
 ========================
 
 BenchAudit is a config-driven audit toolkit for molecular property and drug-target interaction (DTI) benchmarks.
-This Sphinx site is the canonical documentation site and replaces markdown-first docs for published documentation.
+These docs focus on scientific usage, methodology, and pipeline behavior.
 
 .. toctree::
    :maxdepth: 2
@@ -11,8 +11,6 @@ This Sphinx site is the canonical documentation site and replaces markdown-first
    getting_started
    pipeline
    configuration
-   publishing
-   hosting
    legacy_docs
 
 .. toctree::

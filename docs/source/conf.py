@@ -35,7 +35,7 @@ autodoc_default_options = {
     "show-inheritance": True,
 }
 
-# Keep the docs build lightweight on GitHub Pages by mocking optional scientific deps.
+# Keep docs builds lightweight by mocking optional scientific deps.
 autodoc_mock_imports = [
     "Levenshtein",
     "chembl_structure_pipeline",

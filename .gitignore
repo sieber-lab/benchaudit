@@ -8,6 +8,8 @@ docs/*
 !docs/source/
 !docs/source/**
 
+/=*
+
 experiments
 !tests/data/
 !tests/data/**
