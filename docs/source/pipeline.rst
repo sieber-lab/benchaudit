@@ -46,3 +46,9 @@ The code path is intentionally config-driven and dataset-agnostic:
 * optional cleaning / canonicalization
 * shared output schema for automated downstream analysis
 * deterministic output directory resolution for CI and reproducibility
+
+See also
+--------
+
+* :doc:`scientific_scope` for definitions, criteria, and benchmark scope.
+* :doc:`methods` for implementation-focused methodology details.

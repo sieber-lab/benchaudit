@@ -179,5 +179,6 @@ dependencies = [
 ]
 
 [tool.setuptools]
+license-files = ["LICENSE"]
 packages = ["utils"]
 py-modules = ["run", "main"]

@@ -10,6 +10,8 @@ These docs focus on scientific usage, methodology, and pipeline behavior.
 
    getting_started
    pipeline
+   scientific_scope
+   methods
    configuration
    legacy_docs
 

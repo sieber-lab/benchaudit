@@ -1,8 +1,8 @@
 # BenchAudit
 
 [![CI](https://github.com/sieber-lab/benchaudit/actions/workflows/ci.yml/badge.svg)](https://github.com/sieber-lab/benchaudit/actions/workflows/ci.yml)
-[![PyPI version](https://img.shields.io/pypi/v/benchaudit.svg)](https://pypi.org/project/benchaudit/)
-[![Python versions](https://img.shields.io/pypi/pyversions/benchaudit.svg)](https://pypi.org/project/benchaudit/)
+[![Publish to PyPI](https://github.com/sieber-lab/benchaudit/actions/workflows/publish-pypi.yml/badge.svg)](https://github.com/sieber-lab/benchaudit/actions/workflows/publish-pypi.yml)
+[![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white)](https://github.com/sieber-lab/benchaudit/blob/main/pyproject.toml)
 [![Docs Website](https://img.shields.io/badge/docs-website-2b6cb0)](https://sieber-lab.github.io/benchaudit/)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 
@@ -64,7 +64,7 @@ Outputs per config:
 ## Development
 - Tests: run `python -m unittest discover -s tests -p "test_*.py"` (or `pytest tests` if pytest is installed).
 - Test data: tiny dummy benchmark datasets live under `tests/data/`.
-- Benchmark/analysis docs: run `python scripts/generate_benchmark_analysis_class_docs.py --output docs/benchmark_and_analysis_class_reference.md` to regenerate the class reference; CI enforces freshness via `.github/workflows/benchmark-analysis-docs.yml`.
+- Docs: build with `sphinx-build -W --keep-going -b html docs/source docs/_build/html` (`docs/source/reference/api_objects.rst` provides autosummary-based API inventory).
 - Optional extras: Polaris datasets require `polaris-lib`; sequence alignment requires `pairwise-sequence-alignment` and EMBOSS binaries.
 
 ## References
