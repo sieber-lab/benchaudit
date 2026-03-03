@@ -4,6 +4,7 @@
 [![Publish to PyPI](https://github.com/sieber-lab/benchaudit/actions/workflows/publish-pypi.yml/badge.svg)](https://github.com/sieber-lab/benchaudit/actions/workflows/publish-pypi.yml)
 [![Python 3.10+](https://img.shields.io/badge/python-3.10%2B-3776AB?logo=python&logoColor=white)](https://github.com/sieber-lab/benchaudit/blob/main/pyproject.toml)
 [![Docs Website](https://img.shields.io/badge/docs-website-2b6cb0)](https://sieber-lab.github.io/benchaudit/)
+[![ChemRxiv preprint](https://img.shields.io/badge/ChemRxiv-preprint-0A7CFF)](https://doi.org/10.26434/chemrxiv.15000559/v1)
 [![License: GPL v3](https://img.shields.io/badge/License-GPLv3-blue.svg)](LICENSE)
 
 BenchAudit is a lightweight pipeline for auditing molecular property and drug–target interaction benchmarks. It standardizes SMILES strings, checks split hygiene, surfaces label conflicts and activity cliffs, and can run simple baseline models. Outputs are machine‑readable summaries and drill‑down tables you can inspect or feed into other tools.
@@ -68,5 +69,6 @@ Outputs per config:
 - Optional extras: Polaris datasets require `polaris-lib`; sequence alignment requires `pairwise-sequence-alignment` and EMBOSS binaries.
 
 ## References
+- BenchAudit preprint: <https://doi.org/10.26434/chemrxiv.15000559/v1>
 - CI workflow: [`.github/workflows/ci.yml`](.github/workflows/ci.yml)
 - `uv` docs: <https://docs.astral.sh/uv/>
