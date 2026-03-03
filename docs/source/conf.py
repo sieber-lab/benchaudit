@@ -11,7 +11,7 @@ sys.path.insert(0, str(ROOT))
 project = "BenchAudit"
 author = "BenchAudit contributors"
 copyright = "2026, BenchAudit contributors"
-release = "0.1.0"
+release = "0.1.1"
 
 extensions = [
     "sphinx.ext.autodoc",
