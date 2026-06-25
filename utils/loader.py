@@ -1,3 +1,5 @@
+"""Dataset loaders for tabular, TDC, Polaris, and DTI benchmark inputs."""
+
 from __future__ import annotations
 from typing import Dict, Any, List, Optional, Sequence
 import importlib
@@ -51,11 +53,15 @@ def _coerce_label_value(value):
 
 
 class BaseLoader:
+    """Base class for config-normalized dataset loaders."""
+
     def __init__(self, cfg: Dict[str, Any]):
+        """Store a normalized loader config and its ``info`` section."""
         self.cfg = normalize_loader_config(cfg)
         self.info = self.cfg.get("info", {})
 
     def get_splits(self) -> Dict[str, pd.DataFrame]:
+        """Return dataframes keyed by canonical split name."""
         raise NotImplementedError
 
     def _import_from_str(self, dotted: str):
@@ -81,6 +87,8 @@ class BaseLoader:
 
     
 class TDCLoader(BaseLoader):
+    """Loader for Therapeutics Data Commons single-prediction datasets."""
+
     def _init_dataset(self):
         name = self.cfg["name"]
         path = self.cfg.get("data_path", "data/tdc/")
@@ -101,6 +109,7 @@ class TDCLoader(BaseLoader):
         raise KeyError(f"none of {cols} in {list(frame.columns)}")
 
     def get_splits(self) -> Dict[str, pd.DataFrame]:
+        """Load TDC train, validation, and test splits as standardized frames."""
         ds = self._init_dataset()
         method = self.info.get("split")
         raw = ds.get_split(method=method) if method else ds.get_split()
@@ -121,6 +130,8 @@ class TDCLoader(BaseLoader):
     
 
 class TabularLoader(BaseLoader):
+    """Loader for local CSV, TSV, or Parquet files with configurable columns."""
+
     DEFAULT_SMILES_COLS = ["smiles", "SMILES", "drug", "Drug"]
     DEFAULT_LABEL_COLS = ["label_raw", "label", "Label", "y", "Y"]
     DEFAULT_ID_COLS = ["id", "ID", "compound_id", "compoundID"]
@@ -209,6 +220,7 @@ class TabularLoader(BaseLoader):
         return df
 
     def get_splits(self) -> Dict[str, pd.DataFrame]:
+        """Load either explicit split files or a single file with a split column."""
         # three files
         paths_cfg = self.cfg.get("paths")
         if paths_cfg is not None:
@@ -282,6 +294,7 @@ class PolarisLoader(BaseLoader):
     Returns only {'train', 'test'} with columns: smiles_clean, label_raw, id.
     """
     def get_splits(self) -> Dict[str, pd.DataFrame]:
+        """Load a Polaris benchmark into standardized train and test frames."""
         if po is None:
             raise ImportError(
                 "polaris-lib is required for Polaris datasets. Install with 'pip install polaris-lib'."
@@ -292,8 +305,8 @@ class PolarisLoader(BaseLoader):
         def _to_df(loader) -> pd.DataFrame:
             smiles = loader.inputs
             try:
-                y = loader.targets      # TODO: Handle multitask labels...
-            except:
+                y = loader.targets
+            except AttributeError:
                 y = [None] * len(smiles)
             if smiles is None or y is None:
                 raise ValueError("Missing SMILES or labels")
@@ -310,6 +323,7 @@ class DTILoader(TabularLoader):
     """DTI loader built on TabularLoader with sensible defaults."""
 
     def __init__(self, cfg: Dict[str, Any]):
+        """Initialize DTI loading with row-preserving cleaning by default."""
         super().__init__(cfg)
         if "keep_invalid" not in self.info:
             # Keep invalid molecules so that auxiliary columns (sequence/target) remain aligned.

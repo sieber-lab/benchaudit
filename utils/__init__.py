@@ -1,3 +1,5 @@
+"""Public builders, logging helpers, and artifact writers for BenchAudit."""
+
 from __future__ import annotations
 
 import json
@@ -265,9 +267,9 @@ class ResultWriter:
         self.log.info("saved %d records -> %s", len(df), path)
         return path
 
-    def write_analysis(self, result: AnalysisResult) -> Dict[str, Optional[Path]]:
+    def write_analysis(self, result: AnalysisResult, write_summary: bool = True) -> Dict[str, Optional[Path]]:
         paths: Dict[str, Optional[Path]] = {}
-        paths["summary"] = self.write_summary(result.summary)
+        paths["summary"] = self.write_summary(result.summary) if write_summary else None
         paths["records"] = self.write_records(result.per_record_df)
         paths["conflicts"] = self._write_jsonl(result.conflicts_rows, "conflicts.jsonl")
         paths["cliffs"] = self._write_jsonl(result.cliffs_rows, "cliffs.jsonl")

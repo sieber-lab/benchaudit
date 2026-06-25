@@ -1,0 +1,5 @@
+mode,original_observed_rate,smallest_target_rate_sota_rank_probability_below_0_5,smallest_target_rate_sota_baseline_ci_includes_zero,smallest_target_rate_fraction_delta_positive_below_0_95,interpretation,interpretation_text
+clean_reference,,0.0,0.0,0.0,rank-fragile,SOTA conclusion is rank-fragile.
+leakage_curve,observed,0.0,0.0,0.0,rank-fragile,SOTA conclusion is rank-fragile.
+observed_composition,observed,,,,stable,SOTA conclusion is stable.
+random_matched_control,observed,0.0,0.0,0.0,rank-fragile,SOTA conclusion is rank-fragile.

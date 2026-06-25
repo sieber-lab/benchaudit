@@ -1,3 +1,5 @@
+"""Analysis engines and chemistry helpers for BenchAudit dataset audits."""
+
 from __future__ import annotations
 import copy
 import json
@@ -373,6 +375,7 @@ def _scaffold_fp_for_mol(mol: Optional[Chem.Mol], radius: int, n_bits: int) -> O
 
 
 def scaffold_fps(smiles_list: List[str], radius: int, n_bits: int) -> List[Optional[DataStructs.ExplicitBitVect]]:
+    """Compute scaffold fingerprints, returning ``None`` for invalid structures."""
     fps: List[Optional[DataStructs.ExplicitBitVect]] = []
     for smi in smiles_list:
         mol = Chem.MolFromSmiles(smi)
@@ -468,6 +471,8 @@ def _pairs_above_thresh(
 
 @dataclass(frozen=True)
 class StretcherAlignment:
+    """Parsed pairwise alignment metrics from EMBOSS ``stretcher``."""
+
     score: float
     identity_pct: float
     similarity_pct: float

@@ -1,3 +1,5 @@
+"""SMILES cleaning and REOS alert utilities."""
+
 import pandas as pd
 import numpy as np
 from rdkit import Chem
@@ -229,6 +231,8 @@ class REOS:
 
 
 class SMILESCleaner:
+    """Clean, canonicalize, deduplicate, standardize, and annotate SMILES strings."""
+
     def __init__(self, smiles: List[str]):
         self.dataframe = pd.DataFrame()
         self.dataframe['smiles'] = smiles

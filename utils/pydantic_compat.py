@@ -1,3 +1,5 @@
+"""Small compatibility layer for pydantic v1 and v2 APIs."""
+
 from __future__ import annotations
 
 from typing import Any, Type, TypeVar

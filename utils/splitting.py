@@ -1,3 +1,5 @@
+"""Split-index helpers for random and scaffold-based dataset partitioning."""
+
 from __future__ import annotations
 
 from typing import Dict, Iterable, List, Optional, Tuple
@@ -37,6 +39,7 @@ def random_split_indices(
     frac_test: float,
     seed: Optional[int] = 123,
 ) -> Tuple[List[int], List[int], List[int]]:
+    """Return shuffled train, validation, and test indices for ``n_items``."""
     rng = _rng(seed)
     indices = np.arange(n_items)
     rng.shuffle(indices)
@@ -103,6 +106,7 @@ def split_indices(
     fracs,
     seed: Optional[int] = 123,
 ) -> Tuple[List[int], List[int], List[int]]:
+    """Dispatch to a supported split strategy and return split indices."""
     frac_train, frac_valid, frac_test = _normalize_fracs(fracs)
     method_norm = method.strip().lower()
     smiles_list = list(smiles_list)

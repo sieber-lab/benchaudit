@@ -1,0 +1,5 @@
+mode,original_observed_rate,smallest_target_rate_sota_rank_probability_below_0_5,smallest_target_rate_sota_baseline_ci_includes_zero,smallest_target_rate_fraction_delta_positive_below_0_95,interpretation,interpretation_text
+clean_reference,,,,,stable,SOTA conclusion is stable.
+leakage_curve,observed,,0.0,0.0,statistically indistinguishable,SOTA conclusion is statistically indistinguishable.
+observed_composition,observed,,,,stable,SOTA conclusion is stable.
+random_matched_control,observed,,0.0,0.0,statistically indistinguishable,SOTA conclusion is statistically indistinguishable.

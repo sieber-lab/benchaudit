@@ -47,10 +47,24 @@ Outputs
 
 Each run directory typically contains:
 
-* ``summary.json``: high-level audit summary
+* ``summary.json``: high-level audit summary, including runtime metadata for new runs
 * ``records.csv``: per-row standardized records
 * ``conflicts.jsonl``: label conflicts among identical molecules
 * ``cliffs.jsonl``: activity cliffs among similar molecules
 * ``sequence_alignments.jsonl``: DTI sequence diagnostics (DTI only)
 * ``structure_alignments.jsonl``: Foldseek-based structure diagnostics (DTI only)
 * ``performance.json``: baseline model metrics and predictions (when ``--benchmark`` is enabled)
+
+Runtime Reporting
+-----------------
+
+Newly generated ``summary.json`` files include a ``runtime`` block with UTC
+start/end timestamps, total elapsed seconds/minutes, and stage-level timings.
+For older artifacts, generate an approximate runtime table with:
+
+.. code-block:: bash
+
+   python experiments/report_runtimes.py --runs-root runs --out-dir experiments/plots
+
+The report marks each row as exact recorded timing, sequential timestamp
+estimate, or artifact-write lower bound.

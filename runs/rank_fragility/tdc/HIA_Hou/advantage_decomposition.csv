@@ -1,0 +1,10 @@
+group_type,group,n,total_advantage,mean_advantage,fraction_of_total_positive_advantage
+audit_group,audit_clean,73,0.0,0.0,
+audit_group,near_train_analogue,1,0.0,0.0,
+audit_group,same_scaffold,42,0.0,0.0,
+clean_vs_nonclean,audit_clean,73,0.0,0.0,
+clean_vs_nonclean,nonclean,43,0.0,0.0,
+max_train_tanimoto_bin,"[0, 0.4)",65,0.0,0.0,
+max_train_tanimoto_bin,"[0.4, 0.6)",29,0.0,0.0,
+max_train_tanimoto_bin,"[0.6, 0.8)",19,0.0,0.0,
+max_train_tanimoto_bin,"[0.8, 0.9)",3,0.0,0.0,

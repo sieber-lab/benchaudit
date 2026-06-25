@@ -10,4 +10,5 @@ API reference generated with Sphinx autodoc.
    api_core
    api_loaders
    api_analysis
+   api_rank_fragility
    api_support

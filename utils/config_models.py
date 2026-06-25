@@ -1,3 +1,5 @@
+"""Configuration validation and normalization helpers."""
+
 from __future__ import annotations
 
 import copy
@@ -124,6 +126,7 @@ if HAVE_PYDANTIC:  # pragma: no cover - exercised when pydantic is installed
 
 
 def validate_yaml_mapping(data: Any, *, source: Optional[Path] = None) -> dict[str, Any]:
+    """Validate that parsed YAML data is a non-empty mapping."""
     label = f"YAML file '{source}'" if source is not None else "YAML payload"
     if data is None:
         raise ValueError(f"{label} is empty; expected a mapping at the document root")
@@ -185,6 +188,7 @@ def normalize_runtime_config(cfg: Any) -> dict[str, Any]:
 
 
 def normalize_echo_config(cfg: Any) -> dict[str, Any]:
+    """Normalize the config payload stored in analysis summaries."""
     cfg_map = _ensure_mapping(cfg, context="cfg")
     if HAVE_PYDANTIC:  # pragma: no cover - exercised when pydantic is installed
         try:

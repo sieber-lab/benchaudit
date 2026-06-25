@@ -75,6 +75,9 @@ class RunPipelineTests(unittest.TestCase):
             self.assertEqual(summary["counts"]["train"], 2)
             self.assertEqual(summary["config"]["name"], "Tiny Tabular")
             self.assertEqual(summary["config"]["type"], "tabular")
+            self.assertGreaterEqual(summary["runtime"]["elapsed_seconds"], 0.0)
+            self.assertIn("load_splits_seconds", summary["runtime"]["stages"])
+            self.assertIn("analysis_seconds", summary["runtime"]["stages"])
 
     def test_run_one_config_skips_when_outputs_exist(self) -> None:
         cfg = _tabular_cfg()

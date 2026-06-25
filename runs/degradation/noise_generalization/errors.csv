@@ -1,0 +1,8 @@
+family,dataset,task_type,model,scenario,fraction,seed,error
+polaris,novartis-adme-novartis-cyp3a4-reg,regression,,,,,empty train/test after filtering finite labels
+polaris,polaris-adme-fang-hclint-1,regression,,,,,empty train/test after filtering finite labels
+polaris,polaris-adme-fang-hppb-1,regression,,,,,empty train/test after filtering finite labels
+polaris,polaris-adme-fang-perm-1,regression,,,,,empty train/test after filtering finite labels
+polaris,polaris-adme-fang-rclint-1,regression,,,,,empty train/test after filtering finite labels
+polaris,polaris-adme-fang-rppb-1,regression,,,,,empty train/test after filtering finite labels
+polaris,polaris-adme-fang-solu-1,regression,,,,,empty train/test after filtering finite labels

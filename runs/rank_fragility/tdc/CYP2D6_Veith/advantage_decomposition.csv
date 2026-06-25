@@ -1,0 +1,13 @@
+group_type,group,n,total_advantage,mean_advantage,fraction_of_total_positive_advantage
+audit_group,audit_clean,1402,0.0,0.0,
+audit_group,exact_leak,15,0.0,0.0,
+audit_group,label_conflict,3,0.0,0.0,
+audit_group,near_train_analogue,226,0.0,0.0,
+audit_group,same_scaffold,980,0.0,0.0,
+clean_vs_nonclean,audit_clean,1402,0.0,0.0,
+clean_vs_nonclean,nonclean,1224,0.0,0.0,
+max_train_tanimoto_bin,"[0, 0.4)",514,0.0,0.0,
+max_train_tanimoto_bin,"[0.4, 0.6)",980,0.0,0.0,
+max_train_tanimoto_bin,"[0.6, 0.8)",677,0.0,0.0,
+max_train_tanimoto_bin,"[0.8, 0.9)",324,0.0,0.0,
+max_train_tanimoto_bin,"[0.9, 1.0]",131,0.0,0.0,

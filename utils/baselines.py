@@ -1,3 +1,5 @@
+"""Baseline model training utilities for BenchAudit runs."""
+
 from __future__ import annotations
 from typing import Dict, Any, Optional, List
 from dataclasses import dataclass
@@ -27,6 +29,8 @@ except Exception:
 
 @dataclass
 class BaselineParams:
+    """Hyperparameters shared by the lightweight baseline models."""
+
     seed: int = 0
     fp_radius: int = 2
     fp_nbits: int = 2048

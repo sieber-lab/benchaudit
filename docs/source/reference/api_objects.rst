@@ -40,4 +40,15 @@ Analysis and Baselines (``utils.analysis`` and ``utils.baselines``)
 
 See :doc:`api_analysis` for full docs.
 
+Rank-Fragility Analysis (``utils.rank_fragility``)
+--------------------------------------------------
+
+- ``utils.rank_fragility.config.RunConfig``
+- ``utils.rank_fragility.audit.audit_dataset``
+- ``utils.rank_fragility.panels.generate_counterfactual_panels``
+- ``utils.rank_fragility.counterfactual.run_counterfactual_evaluation``
+- ``utils.rank_fragility.fragility.compute_fragility_summary``
+
+See :doc:`api_rank_fragility` for full docs.
+
 Support modules are documented in :doc:`api_support`.

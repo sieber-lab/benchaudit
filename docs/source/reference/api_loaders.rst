@@ -6,7 +6,6 @@ Loaders (``utils.loader``)
 
 .. automodule:: utils.loader
    :members:
-   :undoc-members:
    :show-inheritance:
 
 Cleaning (``utils.cleaner``)
@@ -14,7 +13,6 @@ Cleaning (``utils.cleaner``)
 
 .. automodule:: utils.cleaner
    :members:
-   :undoc-members:
    :show-inheritance:
 
 Split helpers (``utils.splitting``)
@@ -22,5 +20,4 @@ Split helpers (``utils.splitting``)
 
 .. automodule:: utils.splitting
    :members:
-   :undoc-members:
    :show-inheritance:

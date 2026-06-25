@@ -1,0 +1,17 @@
+mode,target_rate,mean_kendall_tau,median_kendall_tau,ci_lower,ci_upper
+clean_reference,0.0,0.46666666666666673,0.4666666666666666,0.4666666666666666,0.4666666666666666
+leakage_curve,0.0,,,,
+leakage_curve,0.05,,,,
+leakage_curve,0.1,,,,
+leakage_curve,0.25,,,,
+leakage_curve,0.5,,,,
+leakage_curve,0.75,,,,
+leakage_curve,observed,,,,
+observed_composition,observed,0.9999999999999999,0.9999999999999999,0.9999999999999999,0.9999999999999999
+random_matched_control,0.0,,,,
+random_matched_control,0.05,,,,
+random_matched_control,0.1,,,,
+random_matched_control,0.25,,,,
+random_matched_control,0.5,,,,
+random_matched_control,0.75,,,,
+random_matched_control,observed,,,,

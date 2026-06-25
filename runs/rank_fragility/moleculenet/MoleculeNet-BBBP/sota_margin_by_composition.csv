@@ -1,0 +1,17 @@
+mode,target_rate,mean_delta,median_delta,ci_lower,ci_upper,fraction_delta_positive
+clean_reference,0.0,0.0,0.0,0.0,0.0,0.0
+leakage_curve,0.0,0.0,0.0,0.0,0.0,0.0
+leakage_curve,0.05,0.0,0.0,0.0,0.0,0.0
+leakage_curve,0.1,0.0,0.0,0.0,0.0,0.0
+leakage_curve,0.25,0.0,0.0,0.0,0.0,0.0
+leakage_curve,0.5,0.0,0.0,0.0,0.0,0.0
+leakage_curve,0.75,0.0,0.0,0.0,0.0,0.0
+leakage_curve,observed,0.0,0.0,0.0,0.0,0.0
+observed_composition,observed,0.0,0.0,0.0,0.0,0.0
+random_matched_control,0.0,0.0,0.0,0.0,0.0,0.0
+random_matched_control,0.05,0.0,0.0,0.0,0.0,0.0
+random_matched_control,0.1,0.0,0.0,0.0,0.0,0.0
+random_matched_control,0.25,0.0,0.0,0.0,0.0,0.0
+random_matched_control,0.5,0.0,0.0,0.0,0.0,0.0
+random_matched_control,0.75,0.0,0.0,0.0,0.0,0.0
+random_matched_control,observed,0.0,0.0,0.0,0.0,0.0

@@ -24,6 +24,19 @@ Important CLI flags
 * ``--force``: rerun even if outputs already exist
 * ``--log-level``: logging level (``DEBUG``, ``INFO``, ...)
 
+Runtime reporting
+-----------------
+
+``summary.json`` contains a ``runtime`` block for newly generated runs. To
+summarize recorded runtimes and estimate older runs from artifact timestamps:
+
+.. code-block:: bash
+
+   python experiments/report_runtimes.py --runs-root runs --out-dir experiments/plots
+
+The generated CSV and Markdown report include an ``estimate_type`` column so
+exact timings and approximate/lower-bound values are distinguishable.
+
 Config shape (high level)
 -------------------------
 

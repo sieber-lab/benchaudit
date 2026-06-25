@@ -26,6 +26,11 @@ BenchAudit supports four modalities:
 * ``polaris``: Polaris benchmarks via ``polaris-lib``.
 * ``dti``: ligand-target datasets with SMILES and amino-acid sequences.
 
+The PDBbind v2016 and v2020 DTI regression splits included in the example
+configs are fixed splits from Koh et al. (Nature Machine Intelligence, 2024;
+https://doi.org/10.1038/s42256-024-00847-1) and the associated PSICHIC
+repository (https://github.com/huankoh/PSICHIC).
+
 Primary Outputs
 ---------------
 

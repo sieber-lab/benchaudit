@@ -1,9 +1,11 @@
-from __future__ import annotations
-
 """CLI runner for BenchAudit dataset audits."""
+
+from __future__ import annotations
 
 import argparse
 import logging
+import time
+from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
@@ -26,6 +28,14 @@ def echo_config(cfg: Dict[str, Any]) -> Dict[str, Any]:
     cfg = normalize_echo_config(cfg)
     keys = ["type", "name", "task", "modality", "info", "seed", "out"]
     return {k: cfg.get(k) for k in keys if k in cfg}
+
+
+def _utc_now_iso() -> str:
+    return datetime.now(timezone.utc).isoformat(timespec="seconds")
+
+
+def _elapsed_seconds(start: float) -> float:
+    return round(time.perf_counter() - start, 6)
 
 
 def discover_yaml_files(configs_dir: Optional[Path], single_config: Optional[Path]) -> List[Path]:
@@ -87,28 +97,56 @@ def run_one_config(
 
     log.info("run: %s/%s -> %s", typ, name, out_dir)
 
+    run_started_at = _utc_now_iso()
+    run_timer = time.perf_counter()
+    stage_timings: Dict[str, float] = {}
+
+    stage_timer = time.perf_counter()
     loader = build_loader(cfg)
     splits = loader.get_splits()
+    stage_timings["load_splits_seconds"] = _elapsed_seconds(stage_timer)
     if "train" not in splits or "test" not in splits:
         raise RuntimeError("loader must provide at least 'train' and 'test' splits")
 
     split_sizes = {split_name: len(df) for split_name, df in splits.items()}
     log.info("splits: %s", ", ".join(f"{k}={v}" for k, v in split_sizes.items()))
 
+    stage_timer = time.perf_counter()
     analyzer = build_analyzer(cfg, logger=log)
     analysis_result = analyzer.run(splits)
+    stage_timings["analysis_seconds"] = _elapsed_seconds(stage_timer)
     summary: Dict[str, Any] = dict(getattr(analysis_result, "summary", {}))
     summary["config"] = echo_config(cfg)
     analysis_result.summary = summary
-    writer.write_analysis(analysis_result)
+
+    stage_timer = time.perf_counter()
+    writer.write_analysis(analysis_result, write_summary=False)
+    stage_timings["write_analysis_artifacts_seconds"] = _elapsed_seconds(stage_timer)
 
     if do_benchmark:
+        stage_timer = time.perf_counter()
         try:
             perf = run_baselines(cfg, splits)
         except Exception as exc:  # pragma: no cover - defensive logging
             log.error("benchmark failed: %s", exc)
             perf = {"error": str(exc)}
+        stage_timings["benchmark_seconds"] = _elapsed_seconds(stage_timer)
+
+        stage_timer = time.perf_counter()
         writer.write_performance(perf)
+        stage_timings["write_performance_seconds"] = _elapsed_seconds(stage_timer)
+
+    total_elapsed = _elapsed_seconds(run_timer)
+    summary["runtime"] = {
+        "started_at_utc": run_started_at,
+        "completed_at_utc": _utc_now_iso(),
+        "elapsed_seconds": total_elapsed,
+        "elapsed_minutes": round(total_elapsed / 60.0, 6),
+        "stages": stage_timings,
+    }
+    analysis_result.summary = summary
+    writer.write_summary(summary)
+    log.info("completed %s/%s in %.2f seconds", typ, name, total_elapsed)
 
 
 def main() -> None:
