@@ -180,5 +180,5 @@ dependencies = [
 
 [tool.setuptools]
 license-files = ["LICENSE"]
-packages = ["utils", "utils.rank_fragility", "experiments"]
+packages = ["utils", "utils.rank_fragility"]
 py-modules = ["run", "main"]
