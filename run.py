@@ -5,13 +5,21 @@ from __future__ import annotations
 import argparse
 import logging
 import time
+from collections.abc import Mapping
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Any, Dict, List, Optional
 
 import yaml
 
-from utils import ResultWriter, build_analyzer, build_loader, make_logger, resolve_output_dir
+from utils import (
+    ResultWriter,
+    build_analyzer,
+    build_loader,
+    clean_benchmark_splits,
+    make_logger,
+    resolve_output_dir,
+)
 from utils.config_models import normalize_echo_config, normalize_runtime_config, validate_yaml_mapping
 from utils.baselines import run_baselines
 
@@ -36,6 +44,30 @@ def _utc_now_iso() -> str:
 
 def _elapsed_seconds(start: float) -> float:
     return round(time.perf_counter() - start, 6)
+
+
+def _benchmark_cleaning_options(cfg: Dict[str, Any]) -> Optional[Dict[str, Any]]:
+    setting = (cfg.get("info", {}) or {}).get("clean_benchmark", False)
+    if setting is None or setting is False:
+        return None
+    if setting is True:
+        return {}
+    if isinstance(setting, str):
+        token = setting.strip().lower()
+        if token in {"", "false", "0", "no", "none", "null"}:
+            return None
+        if token in {"true", "1", "yes"}:
+            return {}
+        raise ValueError("info.clean_benchmark string value must be true or false")
+    if not isinstance(setting, Mapping):
+        raise TypeError("info.clean_benchmark must be a boolean or mapping")
+
+    options = dict(setting)
+    allowed = {"reference_splits", "remove_invalid", "remove_conflicts", "remove_contaminants"}
+    unknown = sorted(set(options) - allowed)
+    if unknown:
+        raise ValueError(f"Unsupported info.clean_benchmark option(s): {unknown}")
+    return options
 
 
 def discover_yaml_files(configs_dir: Optional[Path], single_config: Optional[Path]) -> List[Path]:
@@ -108,6 +140,26 @@ def run_one_config(
     if "train" not in splits or "test" not in splits:
         raise RuntimeError("loader must provide at least 'train' and 'test' splits")
 
+    cleaning_report: Optional[Dict[str, Any]] = None
+    cleaning_options = _benchmark_cleaning_options(cfg)
+    if cleaning_options is not None:
+        stage_timer = time.perf_counter()
+        splits, cleaning_report = clean_benchmark_splits(
+            splits,
+            str(cfg.get("task") or ""),
+            **cleaning_options,
+        )
+        stage_timings["clean_benchmark_seconds"] = _elapsed_seconds(stage_timer)
+        removed_total = cleaning_report["totals"]["removed"]
+        log.info(
+            "benchmark cleaning removed %d rows (%s)",
+            removed_total,
+            ", ".join(
+                f"{reason}={cleaning_report['totals'][reason]}"
+                for reason in ("invalid", "conflict", "contaminant")
+            ),
+        )
+
     split_sizes = {split_name: len(df) for split_name, df in splits.items()}
     log.info("splits: %s", ", ".join(f"{k}={v}" for k, v in split_sizes.items()))
 
@@ -116,6 +168,8 @@ def run_one_config(
     analysis_result = analyzer.run(splits)
     stage_timings["analysis_seconds"] = _elapsed_seconds(stage_timer)
     summary: Dict[str, Any] = dict(getattr(analysis_result, "summary", {}))
+    if cleaning_report is not None:
+        summary["benchmark_cleaning"] = cleaning_report
     summary["config"] = echo_config(cfg)
     analysis_result.summary = summary
 

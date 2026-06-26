@@ -8,10 +8,14 @@ Execution flow
 
 1. ``run.py`` loads one or more YAML configs.
 2. ``utils.build_loader()`` selects a loader (tabular, TDC, Polaris, or DTI).
-3. ``utils.build_analyzer()`` selects a SMILES or DTI analyzer.
-4. The analyzer computes hygiene, similarity, conflict, and cliff diagnostics.
-5. ``utils.ResultWriter`` persists artifacts to a run directory.
-6. Optional baseline benchmarking writes ``performance.json``.
+3. Loaders return standardized split dataframes.
+4. If ``info.clean_benchmark`` is enabled, benchmark cleaning removes invalid
+   molecules, label-conflicting samples, and exact contaminants from
+   non-reference splits.
+5. ``utils.build_analyzer()`` selects a SMILES or DTI analyzer.
+6. The analyzer computes hygiene, similarity, conflict, and cliff diagnostics.
+7. ``utils.ResultWriter`` persists artifacts to a run directory.
+8. Optional baseline benchmarking writes ``performance.json``.
 
 Supported modalities
 --------------------
@@ -44,6 +48,7 @@ The code path is intentionally config-driven and dataset-agnostic:
 
 * column inference with explicit override hooks
 * optional cleaning / canonicalization
+* opt-in benchmark curation before analysis and baselines
 * shared output schema for automated downstream analysis
 * deterministic output directory resolution for CI and reproducibility
 

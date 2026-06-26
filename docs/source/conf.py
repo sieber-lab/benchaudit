@@ -11,7 +11,7 @@ sys.path.insert(0, str(ROOT))
 project = "BenchAudit"
 author = "BenchAudit contributors"
 copyright = "2026, BenchAudit contributors"
-release = "0.1.1"
+release = "2.1"
 
 extensions = [
     "sphinx.ext.autodoc",
@@ -44,7 +44,6 @@ autodoc_mock_imports = [
     "numpy",
     "pandas",
     "polaris",
-    "psa",
     "pystow",
     "rdkit",
     "rdkit.Chem",

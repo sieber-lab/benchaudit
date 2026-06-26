@@ -219,6 +219,39 @@ class TabularLoader(BaseLoader):
             df = df.rename(columns={target_col: "target_id"})
         return df
 
+    def _configured_keep_cols(self) -> List[str]:
+        keep_cols = self.info.get("keep_cols") or []
+        if isinstance(keep_cols, str):
+            return [keep_cols]
+        if isinstance(keep_cols, Sequence):
+            return [str(col) for col in keep_cols if str(col)]
+        raise TypeError("info.keep_cols must be a string or a list of strings")
+
+    def _attach_columns_after_cleaning(self, df_clean: pd.DataFrame, source_df: pd.DataFrame) -> pd.DataFrame:
+        df_clean["label_raw"] = source_df["label_raw"].tolist()
+        if "id" in source_df.columns:
+            df_clean["id"] = source_df["id"].tolist()
+        if "sequence_aa" in source_df.columns:
+            if len(df_clean) != len(source_df):
+                raise ValueError("Sequence-aware tabular loader expects keep_invalid=True to retain row alignment.")
+            df_clean["sequence_aa"] = source_df["sequence_aa"].tolist()
+        if "target_id" in source_df.columns:
+            if len(df_clean) != len(source_df):
+                raise ValueError("Sequence-aware tabular loader expects keep_invalid=True to retain row alignment.")
+            df_clean["target_id"] = source_df["target_id"].tolist()
+
+        keep_cols = self._configured_keep_cols()
+        missing = [col for col in keep_cols if col not in source_df.columns]
+        if missing:
+            raise KeyError(f"Missing keep_cols {missing} in dataframe.")
+        if keep_cols and len(df_clean) != len(source_df):
+            raise ValueError("Configured keep_cols expects keep_invalid=True to retain row alignment.")
+        for col in keep_cols:
+            if col in df_clean.columns:
+                raise ValueError(f"Cannot preserve keep_col {col!r}; column already exists after cleaning.")
+            df_clean[col] = source_df[col].tolist()
+        return df_clean
+
     def get_splits(self) -> Dict[str, pd.DataFrame]:
         """Load either explicit split files or a single file with a split column."""
         # three files
@@ -229,17 +262,7 @@ class TabularLoader(BaseLoader):
                 df = self._read_like(Path(paths_cfg[split]))
                 df = self._standardize_cols(df)
                 df_clean = self._maybe_clean(df["smiles"].tolist())
-                df_clean["label_raw"] = df["label_raw"].tolist()
-                if "id" in df.columns:
-                    df_clean["id"] = df["id"].tolist()
-                if "sequence_aa" in df.columns:
-                    if len(df_clean) != len(df):
-                        raise ValueError("Sequence-aware tabular loader expects keep_invalid=True to retain row alignment.")
-                    df_clean["sequence_aa"] = df["sequence_aa"].tolist()
-                if "target_id" in df.columns:
-                    if len(df_clean) != len(df):
-                        raise ValueError("Sequence-aware tabular loader expects keep_invalid=True to retain row alignment.")
-                    df_clean["target_id"] = df["target_id"].tolist()
+                df_clean = self._attach_columns_after_cleaning(df_clean, df)
                 out[split] = df_clean
             return out
 
@@ -271,17 +294,7 @@ class TabularLoader(BaseLoader):
                 if part.empty:
                     raise ValueError(f"no rows for split '{split}' in {path_cfg}")
                 df_clean = self._maybe_clean(part["smiles"].tolist())
-                df_clean["label_raw"] = part["label_raw"].tolist()
-                if "id" in part.columns:
-                    df_clean["id"] = part["id"].tolist()
-                if "sequence_aa" in part.columns:
-                    if len(df_clean) != len(part):
-                        raise ValueError("Sequence-aware tabular loader expects keep_invalid=True to retain row alignment.")
-                    df_clean["sequence_aa"] = part["sequence_aa"].tolist()
-                if "target_id" in part.columns:
-                    if len(df_clean) != len(part):
-                        raise ValueError("Sequence-aware tabular loader expects keep_invalid=True to retain row alignment.")
-                    df_clean["target_id"] = part["target_id"].tolist()
+                df_clean = self._attach_columns_after_cleaning(df_clean, part)
                 out[split] = df_clean
             return out
 

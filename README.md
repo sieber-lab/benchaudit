@@ -223,7 +223,7 @@ architecture is intrinsically invalid.
 - Tests: run `python -m unittest discover -s tests -p "test_*.py"` (or `pytest tests` if pytest is installed).
 - Test data: tiny dummy benchmark datasets live under `tests/data/`.
 - Docs: build with `sphinx-build -W --keep-going -b html docs/source docs/_build/html` (`docs/source/reference/api_objects.rst` provides autosummary-based API inventory).
-- Optional extras: Polaris datasets require `polaris-lib`; sequence alignment requires `pairwise-sequence-alignment` and EMBOSS binaries.
+- Optional extras: Polaris datasets require `polaris-lib`; sequence alignment requires EMBOSS `stretcher`.
 
 ## References
 - BenchAudit preprint: <https://doi.org/10.26434/chemrxiv.15000559/v1>

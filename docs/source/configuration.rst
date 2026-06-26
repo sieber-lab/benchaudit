@@ -102,8 +102,61 @@ DTI example
      label_col: classification_label
      sequence_col: Protein
      target_id_col: Target_ID
+     sequence_alignment_workers: 4
      cleaner: none
      keep_invalid: true
+
+``info.sequence_alignment_workers`` controls how many independent EMBOSS
+``stretcher`` jobs are run at once for DTI nearest-neighbor sequence alignment.
+The default is ``1``, which preserves the previous serial behavior.
+
+Opt-in benchmark cleaning
+-------------------------
+
+By default, BenchAudit reports invalid molecules, exact contamination, and
+label conflicts without changing the loaded benchmark. To curate the in-memory
+benchmark used by analysis and optional baselines, enable ``info.clean_benchmark``:
+
+.. code-block:: yaml
+
+   type: tabular
+   name: Cleaned Example
+   task: classification
+   path: data/example.csv
+   info:
+     split_col: split
+     smiles_col: smiles
+     label_col: label
+     clean_benchmark: true
+
+With ``true``, BenchAudit applies the default policy after loading and before
+analysis:
+
+* invalid molecules are removed
+* all rows for a molecule with conflicting labels are removed from every split
+* exact contaminants are kept only in reference splits
+
+The default reference splits are ``train`` and ``valid``. If ``valid`` is not
+present, ``train`` is used. Exact contamination is defined by exact overlap of
+the cleaned SMILES string; near-neighbor and scaffold similarity are still audit
+signals, not automatic removal criteria. REOS alerts remain annotations unless a
+row is otherwise invalid.
+
+The policy can be customized:
+
+.. code-block:: yaml
+
+   info:
+     clean_benchmark:
+       reference_splits: [train, valid]
+       remove_invalid: true
+       remove_conflicts: true
+       remove_contaminants: true
+
+The source files are never overwritten. Cleaned rows flow into ``records.csv``,
+``summary.json``, and ``performance.json`` when ``--benchmark`` is used. The
+summary contains a ``benchmark_cleaning`` block with original counts, cleaned
+counts, per-split removal counts, and the effective options.
 
 Validation behavior
 -------------------

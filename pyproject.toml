@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "benchaudit"
-version = "0.2"
+version = "2.1"
 description = "BenchAudit -- data hygiene and similarity audits for molecular and DTI benchmarks."
 readme = "README.md"
 requires-python = ">=3.10"
@@ -113,7 +113,6 @@ dependencies = [
     "optuna==3.6.1",
     "overrides==7.7.0",
     "packaging==24.0",
-    "pairwise-sequence-alignment>=1.0.3",
     "pandas==2.2.2",
     "pandocfilters==1.5.1",
     "parso==0.8.4",

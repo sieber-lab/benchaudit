@@ -1,0 +1,30 @@
+type: dti
+name: LeakProofPDBBind_CL1_reg
+task: regression
+modality: dti
+paths:
+  train: data/LeakProofPDBBind/CL1_non_covalent/train.csv
+  valid: data/LeakProofPDBBind/CL1_non_covalent/valid.csv
+  test: data/LeakProofPDBBind/CL1_non_covalent/test.csv
+info:
+  smiles_col: Ligand
+  sequence_col: Protein
+  label_col: regression_label
+  id_col: ID
+  keep_invalid: True
+  sequence_alignment_workers: 64
+  keep_cols:
+    - pdbid
+    - lp_header
+    - lp_category
+    - resolution
+    - date
+    - lp_type
+    - new_split
+    - CL1
+    - CL2
+    - CL3
+    - remove_for_balancing_val
+    - binding_measure
+    - covalent
+out: runs/dti

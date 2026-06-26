@@ -12,6 +12,7 @@ import pandas as pd
 
 from .analysis import AnalysisResult, AnalyzerConfig, DTIAnalyzer, SMILESAnalyzer
 from .baselines import run_baselines
+from .benchmark_cleaning import clean_benchmark_splits
 from .config_models import normalize_runtime_config
 from .loader import BaseLoader, DTILoader, PolarisLoader, TabularLoader, TDCLoader
 
@@ -28,6 +29,7 @@ __all__ = [
     "ResultWriter",
     "json_default",
     "run_baselines",
+    "clean_benchmark_splits",
 ]
 
 
@@ -194,6 +196,9 @@ def _build_analyzer_config(cfg: Dict[str, Any]) -> AnalyzerConfig:
 
     unique_sequences_jsonl = info.get("unique_sequences_jsonl") or cfg.get("unique_sequences_jsonl")
     foldseek_m8_path = info.get("foldseek_m8_path") or cfg.get("foldseek_m8_path")
+    sequence_alignment_workers = info.get("sequence_alignment_workers")
+    if sequence_alignment_workers is None:
+        sequence_alignment_workers = cfg.get("sequence_alignment_workers", 1)
 
     return AnalyzerConfig(
         task_type="classification" if task == "classification" else "regression",
@@ -210,6 +215,7 @@ def _build_analyzer_config(cfg: Dict[str, Any]) -> AnalyzerConfig:
         name=str(cfg.get("name") or cfg.get("id") or "") or None,
         unique_sequences_jsonl=str(unique_sequences_jsonl) if unique_sequences_jsonl else None,
         foldseek_m8_path=str(foldseek_m8_path) if foldseek_m8_path else None,
+        sequence_alignment_workers=int(sequence_alignment_workers),
     )
 
 

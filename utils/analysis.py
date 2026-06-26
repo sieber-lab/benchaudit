@@ -1,10 +1,17 @@
 """Analysis engines and chemistry helpers for BenchAudit dataset audits."""
 
 from __future__ import annotations
+import concurrent.futures
 import copy
 import json
+import re
+import shutil
+import subprocess
+import tempfile
+import threading
 from collections import defaultdict
 from dataclasses import dataclass
+from pathlib import Path
 from typing import Dict, Any, List, Optional, Set, Tuple, Literal
 import logging
 import numpy as np
@@ -24,12 +31,10 @@ from rdkit.Chem.Scaffolds.MurckoScaffold import (
     GetScaffoldForMol as _GetScaffoldForMol,
 )
 
-try:
-    import psa
-except ImportError:  # pragma: no cover - optional dependency
-    psa = None
-
 from utils.pydantic_compat import ConfigDict, Field, HAVE_PYDANTIC, PydanticBaseModel
+
+
+_MAX_INLINE_EMBOSS_SEQUENCE_CHARS = 100_000
 
 
 def _to_python_scalar(val: Any) -> Any:
@@ -192,6 +197,9 @@ def _validate_analyzer_config_values(cfg: "AnalyzerConfig") -> None:
         raise ValueError("AnalyzerConfig.fp_radius must be > 0")
     if int(cfg.fp_nbits) <= 0:
         raise ValueError("AnalyzerConfig.fp_nbits must be > 0")
+    if int(cfg.sequence_alignment_workers) <= 0:
+        raise ValueError("AnalyzerConfig.sequence_alignment_workers must be > 0")
+    cfg.sequence_alignment_workers = int(cfg.sequence_alignment_workers)
     if cfg.label_cols is not None:
         if isinstance(cfg.label_cols, tuple):
             cfg.label_cols = list(cfg.label_cols)
@@ -216,6 +224,7 @@ if HAVE_PYDANTIC:  # pragma: no cover - exercised when pydantic is installed
         "name",
         "unique_sequences_jsonl",
         "foldseek_m8_path",
+        "sequence_alignment_workers",
     )
     _ANALYSIS_RESULT_FIELD_ORDER = (
         "summary",
@@ -253,6 +262,7 @@ if HAVE_PYDANTIC:  # pragma: no cover - exercised when pydantic is installed
         name: Optional[str] = None
         unique_sequences_jsonl: Optional[str] = None
         foldseek_m8_path: Optional[str] = None
+        sequence_alignment_workers: int = Field(default=1, gt=0) if Field is not None else 1
 
         if ConfigDict is not None:  # pydantic v2
             model_config = ConfigDict(validate_assignment=True)
@@ -302,6 +312,7 @@ else:
         name: Optional[str] = None
         unique_sequences_jsonl: Optional[str] = None
         foldseek_m8_path: Optional[str] = None
+        sequence_alignment_workers: int = 1
 
         def __post_init__(self):
             _validate_analyzer_config_values(self)
@@ -488,17 +499,18 @@ class StretcherAlignment:
 
 
 class PSAStretcherAligner:
-    """Thin wrapper around psa.stretcher with caching."""
+    """Thin direct EMBOSS ``stretcher`` wrapper with symmetric caching."""
 
-    def __init__(self):
-        if psa is None:
+    def __init__(self, stretcher_executable: Optional[str] = None):
+        self.stretcher_executable = stretcher_executable or shutil.which("stretcher")
+        if not self.stretcher_executable:
             raise ImportError(
-                "pairwise-sequence-alignment is required. "
-                "Install EMBOSS (`sudo apt install emboss`) and the Python wrapper "
-                "(`pip install pairwise-sequence-alignment`) before running DTI analysis."
+                "EMBOSS `stretcher` is required for DTI sequence alignment. "
+                "Install EMBOSS (`sudo apt install emboss`) before running DTI analysis."
             )
         self.moltype = "prot"
         self._cache: Dict[Tuple[str, str], StretcherAlignment] = {}
+        self._cache_lock = threading.RLock()
 
     def _normalize_seq(self, seq: str) -> str:
         if not isinstance(seq, str):
@@ -538,47 +550,166 @@ class PSAStretcherAligner:
             subject_end=len(s),
         )
 
+    def _write_fasta(self, path: Path, name: str, sequence: str) -> None:
+        wrapped = "\n".join(sequence[i : i + 80] for i in range(0, len(sequence), 80))
+        path.write_text(f">{name}\n{wrapped}\n", encoding="utf-8")
+
+    def _parse_fraction_pct(self, raw: str, label: str) -> Tuple[int, int, float]:
+        pattern = rf"^# {re.escape(label)}:\s+(\d+)/(\d+)\s+\(\s*([0-9.]+)%\)"
+        match = re.search(pattern, raw, flags=re.MULTILINE)
+        if not match:
+            raise RuntimeError(f"Could not parse EMBOSS {label.lower()} from stretcher output.")
+        return int(match.group(1)), int(match.group(2)), float(match.group(3))
+
+    def _parse_stretcher_output(self, raw: str, q: str, s: str) -> StretcherAlignment:
+        length_match = re.search(r"^# Length:\s+(\d+)\s*$", raw, flags=re.MULTILINE)
+        score_match = re.search(r"^# Score:\s+([-+]?\d+(?:\.\d+)?)\s*$", raw, flags=re.MULTILINE)
+        if not length_match or not score_match:
+            raise RuntimeError("Could not parse EMBOSS stretcher length/score output.")
+
+        _, _, identity_pct = self._parse_fraction_pct(raw, "Identity")
+        _, _, similarity_pct = self._parse_fraction_pct(raw, "Similarity")
+        n_gaps, _, gaps_pct = self._parse_fraction_pct(raw, "Gaps")
+
+        aligned_chunks: List[str] = []
+        separator_count = 0
+        for line in raw.splitlines():
+            if line.startswith("#======================================="):
+                separator_count += 1
+                continue
+            if separator_count < 2:
+                continue
+            if line.startswith("#---------------------------------------"):
+                break
+            match = re.match(r"^\s*\S+\s+([A-Za-z*.-]+)\s*$", line)
+            if match:
+                aligned_chunks.append(match.group(1))
+
+        query_chunks = aligned_chunks[0::2]
+        subject_chunks = aligned_chunks[1::2]
+
+        return StretcherAlignment(
+            score=float(score_match.group(1)),
+            identity_pct=float(identity_pct),
+            similarity_pct=float(similarity_pct),
+            length=int(length_match.group(1)),
+            gaps_pct=float(gaps_pct),
+            n_gaps=int(n_gaps),
+            aligned_query="".join(query_chunks) or q,
+            aligned_subject="".join(subject_chunks) or s,
+            query_start=1 if q else 0,
+            query_end=len(q),
+            subject_start=1 if s else 0,
+            subject_end=len(s),
+        )
+
+    def _run_stretcher_command(self, command: List[str], q: str, s: str) -> StretcherAlignment:
+        completed = subprocess.run(
+            command,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+            check=False,
+        )
+        if completed.returncode != 0:
+            raise RuntimeError(
+                "EMBOSS stretcher failed with exit code "
+                f"{completed.returncode}:\n{completed.stderr}"
+            )
+        return self._parse_stretcher_output(completed.stdout, q, s)
+
+    def _run_stretcher_with_tempfiles(self, q: str, s: str, moltype_flags: List[str]) -> StretcherAlignment:
+        with tempfile.TemporaryDirectory(prefix="benchaudit_stretcher_") as td:
+            temp_dir = Path(td)
+            query_fasta = temp_dir / "query.fasta"
+            subject_fasta = temp_dir / "subject.fasta"
+            self._write_fasta(query_fasta, "query", q)
+            self._write_fasta(subject_fasta, "subject", s)
+
+            command = [
+                self.stretcher_executable,
+                *moltype_flags,
+                "-asequence",
+                str(query_fasta),
+                "-bsequence",
+                str(subject_fasta),
+                "-outfile",
+                "stdout",
+                "-auto",
+            ]
+            return self._run_stretcher_command(command, q, s)
+
+    def _run_stretcher(self, q: str, s: str) -> StretcherAlignment:
+        moltype_flags = ["-sprotein1", "-sprotein2"]
+        if self.moltype != "prot":
+            moltype_flags = ["-snucleotide1", "-snucleotide2"]
+
+        if len(q) + len(s) > _MAX_INLINE_EMBOSS_SEQUENCE_CHARS:
+            return self._run_stretcher_with_tempfiles(q, s, moltype_flags)
+
+        command = [
+            self.stretcher_executable,
+            *moltype_flags,
+            "-asequence",
+            f"asis::{q}",
+            "-bsequence",
+            f"asis::{s}",
+            "-outfile",
+            "stdout",
+            "-auto",
+        ]
+        return self._run_stretcher_command(command, q, s)
+
     def align(self, query_seq: str, subject_seq: str) -> StretcherAlignment:
         q = self._normalize_seq(query_seq)
         s = self._normalize_seq(subject_seq)
         key = (q, s)
-        if key in self._cache:
-            return self._cache[key]
+        with self._cache_lock:
+            if key in self._cache:
+                return self._cache[key]
 
-        rev_key = (s, q)
-        if rev_key in self._cache:
-            flipped = self._invert_alignment(self._cache[rev_key])
-            self._cache[key] = flipped
-            return flipped
+            rev_key = (s, q)
+            if rev_key in self._cache:
+                flipped = self._invert_alignment(self._cache[rev_key])
+                self._cache[key] = flipped
+                return flipped
 
         if not q or not s:
             empty_aln = self._empty_alignment(q, s)
-            self._cache[key] = empty_aln
-            self._cache[rev_key] = self._invert_alignment(empty_aln)
+            with self._cache_lock:
+                self._cache[key] = empty_aln
+                self._cache[(s, q)] = self._invert_alignment(empty_aln)
             return empty_aln
 
-        aln = psa.stretcher(
-            moltype=self.moltype,
-            qseq=q,
-            sseq=s,
-        )
-        result = StretcherAlignment(
-            score=float(aln.score),
-            identity_pct=float(aln.pidentity),
-            similarity_pct=float(getattr(aln, "psimilarity", float("nan"))),
-            length=int(aln.length),
-            gaps_pct=float(aln.pgaps),
-            n_gaps=int(aln.ngaps),
-            aligned_query=str(aln.qseq),
-            aligned_subject=str(aln.sseq),
-            query_start=int(aln.qstart),
-            query_end=int(aln.qend),
-            subject_start=int(aln.sstart),
-            subject_end=int(aln.send),
-        )
-        self._cache[key] = result
-        self._cache[rev_key] = self._invert_alignment(result)
+        result = self._run_stretcher(q, s)
+        with self._cache_lock:
+            self._cache[key] = result
+            self._cache[(s, q)] = self._invert_alignment(result)
         return result
+
+
+def _best_sequence_alignment_for_query(
+    seq_q: str,
+    ref_list: List[str],
+    aligner: PSAStretcherAligner,
+) -> Tuple[str, Optional[str], Optional[StretcherAlignment]]:
+    best_alignment: Optional[StretcherAlignment] = None
+    best_seq = None
+    for seq_r in ref_list:
+        aln = aligner.align(seq_q, seq_r)
+        if (
+            best_alignment is None
+            or aln.identity_pct > best_alignment.identity_pct
+            or (
+                aln.identity_pct == best_alignment.identity_pct
+                and aln.score > best_alignment.score
+            )
+        ):
+            best_alignment = aln
+            best_seq = seq_r
+        if best_alignment is not None and best_alignment.identity_pct >= 99.99:
+            break
+    return seq_q, best_seq, best_alignment
 
 
 def _nn_sequence_alignment_stats(
@@ -587,6 +718,8 @@ def _nn_sequence_alignment_stats(
     aligner: PSAStretcherAligner,
     ref_split: str,
     qry_split: str,
+    workers: int = 1,
+    progress_logger: Optional[logging.Logger] = None,
 ) -> Tuple[Optional[Dict[str, Any]], List[Dict[str, Any]]]:
     if not ref_sequences or not qry_sequences:
         return (
@@ -609,25 +742,63 @@ def _nn_sequence_alignment_stats(
     scores: List[float] = []
     similarities: List[float] = []
     details: List[Dict[str, Any]] = []
+    workers = max(1, int(workers))
+    max_workers = min(workers, len(qry_list))
 
-    for seq_q in qry_list:
-        best_alignment: Optional[StretcherAlignment] = None
-        best_seq = None
-        for seq_r in ref_list:
-            aln = aligner.align(seq_q, seq_r)
-            if (
-                best_alignment is None
-                or aln.identity_pct > best_alignment.identity_pct
-                or (
-                    aln.identity_pct == best_alignment.identity_pct
-                    and aln.score > best_alignment.score
-                )
-            ):
-                best_alignment = aln
-                best_seq = seq_r
-            if best_alignment is not None and best_alignment.identity_pct >= 99.99:
-                break
+    if progress_logger is not None:
+        progress_logger.info(
+            "Sequence alignment %s -> %s: %d query sequences x %d reference sequences "
+            "(up to %d EMBOSS stretcher runs), workers=%d.",
+            qry_split,
+            ref_split,
+            len(qry_list),
+            len(ref_list),
+            len(qry_list) * len(ref_list),
+            max_workers,
+        )
 
+    progress_interval = 1 if len(qry_list) <= 20 else max(1, len(qry_list) // 20)
+
+    def _report_progress(completed: int) -> None:
+        if progress_logger is None:
+            return
+        if completed == 1 or completed == len(qry_list) or completed % progress_interval == 0:
+            progress_logger.info(
+                "Sequence alignment %s -> %s progress: %d/%d query sequences complete.",
+                qry_split,
+                ref_split,
+                completed,
+                len(qry_list),
+            )
+
+    if workers == 1 or len(qry_list) < 2:
+        best_results = []
+        for completed, seq_q in enumerate(qry_list, start=1):
+            best_results.append(_best_sequence_alignment_for_query(seq_q, ref_list, aligner))
+            _report_progress(completed)
+    else:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=max_workers) as executor:
+            future_to_index = {
+                executor.submit(_best_sequence_alignment_for_query, seq_q, ref_list, aligner): index
+                for index, seq_q in enumerate(qry_list)
+            }
+            ordered_results: List[Optional[Tuple[str, Optional[str], Optional[StretcherAlignment]]]] = [
+                None
+            ] * len(qry_list)
+            for completed, future in enumerate(concurrent.futures.as_completed(future_to_index), start=1):
+                ordered_results[future_to_index[future]] = future.result()
+                _report_progress(completed)
+        best_results = [result for result in ordered_results if result is not None]
+
+    if progress_logger is not None:
+        progress_logger.info(
+            "Sequence alignment %s -> %s complete: %d query sequences processed.",
+            qry_split,
+            ref_split,
+            len(best_results),
+        )
+
+    for seq_q, best_seq, best_alignment in best_results:
         if best_alignment is None or best_seq is None:
             continue
 
@@ -1218,19 +1389,44 @@ class DTIAnalyzer:
 
         similarity: Dict[str, Optional[Dict[str, Any]]] = {}
         alignment_rows: List[Dict[str, Any]] = []
+        alignment_workers = int(self.cfg.sequence_alignment_workers)
 
         if valid_df is not None and seq_valid:
-            stats_vt, details_vt = _nn_sequence_alignment_stats(seq_train, seq_valid, self._aligner, "train", "valid")
+            stats_vt, details_vt = _nn_sequence_alignment_stats(
+                seq_train,
+                seq_valid,
+                self._aligner,
+                "train",
+                "valid",
+                workers=alignment_workers,
+                progress_logger=self.log,
+            )
             similarity["valid_to_train"] = stats_vt
             alignment_rows.extend(details_vt)
         else:
             similarity["valid_to_train"] = None
 
-        stats_tt, details_tt = _nn_sequence_alignment_stats(seq_train, seq_test, self._aligner, "train", "test")
+        stats_tt, details_tt = _nn_sequence_alignment_stats(
+            seq_train,
+            seq_test,
+            self._aligner,
+            "train",
+            "test",
+            workers=alignment_workers,
+            progress_logger=self.log,
+        )
         similarity["test_to_train"] = stats_tt
         alignment_rows.extend(details_tt)
 
-        stats_ttv, details_ttv = _nn_sequence_alignment_stats(seq_train_valid, seq_test, self._aligner, "train_valid", "test")
+        stats_ttv, details_ttv = _nn_sequence_alignment_stats(
+            seq_train_valid,
+            seq_test,
+            self._aligner,
+            "train_valid",
+            "test",
+            workers=alignment_workers,
+            progress_logger=self.log,
+        )
         similarity["test_to_trainvalid"] = stats_ttv
         alignment_rows.extend(details_ttv)
 
@@ -1311,6 +1507,7 @@ class DTIAnalyzer:
             "unique_counts": unique_counts,
             "shared_counts": shared_counts,
             "hygiene": hygiene,
+            "alignment_workers": alignment_workers,
             "similarity": similarity,
             "conflicts": {
                 "cross_split_pairs": int(len(pair_conflicts)),

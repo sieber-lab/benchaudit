@@ -176,6 +176,49 @@ class LoaderTests(unittest.TestCase):
         self.assertEqual(splits["train"]["sequence_aa"].tolist(), ["AAAA", "BBBB", "CCCC"])
         self.assertEqual(len(splits["test"]), 2)
 
+    def test_dti_loader_preserves_configured_keep_cols(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            for split, idx in [("train", 1), ("valid", 2), ("test", 3)]:
+                pd.DataFrame(
+                    [
+                        {
+                            "ID": f"id_{idx}",
+                            "Ligand": "CCO",
+                            "Protein": "AAAA",
+                            "regression_label": float(idx),
+                            "pdbid": f"{idx}abc",
+                            "lp_category": "refined",
+                        }
+                    ]
+                ).to_csv(root / f"{split}.csv", index=False)
+
+            cfg = {
+                "type": "dti",
+                "modality": "dti",
+                "task": "regression",
+                "paths": {
+                    "train": str(root / "train.csv"),
+                    "valid": str(root / "valid.csv"),
+                    "test": str(root / "test.csv"),
+                },
+                "info": {
+                    "smiles_col": "Ligand",
+                    "label_col": "regression_label",
+                    "id_col": "ID",
+                    "sequence_col": "Protein",
+                    "cleaner": "none",
+                    "keep_invalid": True,
+                    "keep_cols": ["pdbid", "lp_category"],
+                },
+            }
+
+            splits = DTILoader(cfg).get_splits()
+
+        self.assertEqual(splits["valid"]["pdbid"].tolist(), ["2abc"])
+        self.assertEqual(splits["test"]["lp_category"].tolist(), ["refined"])
+        self.assertIn("sequence_aa", splits["train"].columns)
+
     def test_tdc_loader_with_stub_dataset(self) -> None:
         class _StubDataset:
             def get_split(self, method=None):

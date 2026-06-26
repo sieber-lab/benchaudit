@@ -8,6 +8,13 @@ Configuration models (``utils.config_models``)
    :members:
    :show-inheritance:
 
+Benchmark cleaning (``utils.benchmark_cleaning``)
+-------------------------------------------------
+
+.. automodule:: utils.benchmark_cleaning
+   :members:
+   :show-inheritance:
+
 Pydantic compatibility layer (``utils.pydantic_compat``)
 --------------------------------------------------------
 

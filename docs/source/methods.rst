@@ -11,6 +11,25 @@ Data Ingestion and Standardization
 * Tabular data supports CSV/TSV/Parquet with configurable column mapping.
 * DTI loading additionally normalizes sequence and target-ID columns.
 * Optional SMILES cleaning can canonicalize structures, deduplicate, and annotate quality flags.
+* Optional benchmark cleaning can remove invalid structures, exact
+  contaminants, and label-conflicting molecule samples before downstream
+  analysis and baselines.
+
+Benchmark Cleaning
+------------------
+
+``info.clean_benchmark`` is an opt-in curation step over the standardized split
+frames. It runs after loading and before analyzers or baseline models see the
+data. Removal precedence is:
+
+1. invalid molecules
+2. molecules with conflicting labels
+3. exact contaminants in non-reference splits
+
+Conflict rules match the audit logic: classification labels must agree for
+identical cleaned SMILES, while regression conflicts use the 3-sigma threshold
+estimated from reference labels. The default reference splits are ``train`` and
+``valid``; contaminants are retained there and removed from other splits.
 
 Similarity Computation
 ----------------------
@@ -39,6 +58,7 @@ DTI mode extends molecule-level auditing with target-level checks:
 * target sequence overlap and duplication statistics across splits
 * cross-split ligand-target pair reuse checks
 * nearest-neighbor sequence alignment diagnostics via EMBOSS ``stretcher``
+  with configurable per-query worker parallelism
 * optional structure-level leakage diagnostics when Foldseek alignments are provided
 
 Baseline Benchmarking
