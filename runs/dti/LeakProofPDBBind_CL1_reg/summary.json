@@ -233,14 +233,14 @@
     "out": "runs/dti"
   },
   "runtime": {
-    "started_at_utc": "2026-06-26T08:26:14+00:00",
-    "completed_at_utc": "2026-06-26T18:40:53+00:00",
-    "elapsed_seconds": 36879.186405,
-    "elapsed_minutes": 614.653107,
+    "started_at_utc": "2026-06-29T23:37:51+00:00",
+    "completed_at_utc": "2026-06-30T09:37:05+00:00",
+    "elapsed_seconds": 35954.513695,
+    "elapsed_minutes": 599.241895,
     "stages": {
-      "load_splits_seconds": 283.225937,
-      "analysis_seconds": 36595.803535,
-      "write_analysis_artifacts_seconds": 0.156706
+      "load_splits_seconds": 196.63979,
+      "analysis_seconds": 35757.693658,
+      "write_analysis_artifacts_seconds": 0.180039
     }
   }
 }

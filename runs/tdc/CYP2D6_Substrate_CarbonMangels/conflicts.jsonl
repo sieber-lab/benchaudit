@@ -1,2 +1,0 @@
-{"kind": "intra_train", "split": "train", "id": 58, "smiles_clean": "CCCCN1CCCCC1C(=O)Nc1c(C)cccc1C", "label_raw": 1}
-{"kind": "intra_train", "split": "train", "id": 226, "smiles_clean": "CCCCN1CCCCC1C(=O)Nc1c(C)cccc1C", "label_raw": 0}

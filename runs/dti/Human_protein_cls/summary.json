@@ -114,32 +114,33 @@
         "test": 975
       }
     },
+    "alignment_workers": 64,
     "similarity": {
       "valid_to_train": {
-        "mean_identity_pct": 31.14860528554047,
-        "std_identity_pct": 17.836227627864286,
-        "mean_similarity_pct": 44.20288472744895,
-        "std_similarity_pct": 17.75665785162781,
-        "mean_score": 413.975,
-        "std_score": 1136.3499172240035,
+        "mean_identity_pct": 31.1465,
+        "std_identity_pct": 17.83584278216199,
+        "mean_similarity_pct": 44.2145,
+        "std_similarity_pct": 17.74973914597057,
+        "mean_score": 416.095,
+        "std_score": 1134.9483054196785,
         "n": 200
       },
       "test_to_train": {
-        "mean_identity_pct": 32.053818516412264,
-        "std_identity_pct": 17.959906710494884,
-        "mean_similarity_pct": 44.88828160680723,
-        "std_similarity_pct": 17.817466627053832,
-        "mean_score": 450.375,
-        "std_score": 1193.5247690663984,
+        "mean_identity_pct": 32.05350000000001,
+        "std_identity_pct": 17.96091695181513,
+        "mean_similarity_pct": 44.94225,
+        "std_similarity_pct": 17.77780048086658,
+        "mean_score": 453.59,
+        "std_score": 1190.7542050734064,
         "n": 400
       },
       "test_to_trainvalid": {
-        "mean_identity_pct": 33.119278802775796,
-        "std_identity_pct": 18.54754767764463,
-        "mean_similarity_pct": 46.05817338986736,
-        "std_similarity_pct": 18.27928789514026,
-        "mean_score": 501.5525,
-        "std_score": 1211.7002320061467,
+        "mean_identity_pct": 33.11775,
+        "std_identity_pct": 18.549186233835165,
+        "mean_similarity_pct": 46.08599999999999,
+        "std_similarity_pct": 18.25583205444222,
+        "mean_score": 503.815,
+        "std_score": 1209.6552053271214,
         "n": 400
       }
     },
@@ -198,9 +199,22 @@
       "sequence_col": "Protein",
       "label_col": "classification_label",
       "keep_invalid": true,
+      "sequence_alignment_workers": 64,
       "unique_sequences_jsonl": "helpers/dti_unique_sequences.jsonl",
       "foldseek_m8_path": "helpers/dti_all_vs_all.m8"
     },
+    "seed": null,
     "out": "runs/dti"
+  },
+  "runtime": {
+    "started_at_utc": "2026-06-29T22:02:00+00:00",
+    "completed_at_utc": "2026-06-29T22:28:56+00:00",
+    "elapsed_seconds": 1616.592003,
+    "elapsed_minutes": 26.9432,
+    "stages": {
+      "load_splits_seconds": 89.455805,
+      "analysis_seconds": 1526.442342,
+      "write_analysis_artifacts_seconds": 0.693612
+    }
   }
 }

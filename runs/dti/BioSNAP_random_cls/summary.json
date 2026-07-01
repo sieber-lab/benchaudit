@@ -114,30 +114,31 @@
         "test": 3671
       }
     },
+    "alignment_workers": 64,
     "similarity": {
       "valid_to_train": {
-        "mean_identity_pct": 99.66174909508213,
-        "std_identity_pct": 4.873437621887952,
-        "mean_similarity_pct": 99.71860486595256,
-        "std_similarity_pct": 4.168809211660189,
-        "mean_score": 2924.0359327217125,
-        "std_score": 2445.7635180077627,
+        "mean_identity_pct": 99.6618501529052,
+        "std_identity_pct": 4.872765411376198,
+        "mean_similarity_pct": 99.71987767584098,
+        "std_similarity_pct": 4.1493416430397385,
+        "mean_score": 2924.1085626911313,
+        "std_score": 2445.6829931940997,
         "n": 1308
       },
       "test_to_train": {
-        "mean_identity_pct": 99.75328372103016,
-        "std_identity_pct": 4.1871934889941365,
-        "mean_similarity_pct": 99.79502148490472,
-        "std_similarity_pct": 3.571921908065989,
+        "mean_identity_pct": 99.7532930845225,
+        "std_identity_pct": 4.186216683542048,
+        "mean_similarity_pct": 99.79495060373216,
+        "std_similarity_pct": 3.5715958934180296,
         "mean_score": 2913.6042810098793,
         "std_score": 2501.2085791830355,
         "n": 1822
       },
       "test_to_trainvalid": {
-        "mean_identity_pct": 99.95422950053039,
-        "std_identity_pct": 1.9021358502947907,
-        "mean_similarity_pct": 99.96135101068344,
-        "std_similarity_pct": 1.598273572257449,
+        "mean_identity_pct": 99.95417124039517,
+        "std_identity_pct": 1.9019608719378398,
+        "mean_similarity_pct": 99.9613062568606,
+        "std_similarity_pct": 1.5975252010209995,
         "mean_score": 2921.2151481888036,
         "std_score": 2500.0092954450583,
         "n": 1822
@@ -244,9 +245,22 @@
       "sequence_col": "Protein",
       "label_col": "classification_label",
       "keep_invalid": true,
+      "sequence_alignment_workers": 64,
       "unique_sequences_jsonl": "helpers/dti_unique_sequences.jsonl",
       "foldseek_m8_path": "helpers/dti_all_vs_all.m8"
     },
+    "seed": null,
     "out": "runs/dti"
+  },
+  "runtime": {
+    "started_at_utc": "2026-06-29T18:56:43+00:00",
+    "completed_at_utc": "2026-06-29T20:34:14+00:00",
+    "elapsed_seconds": 5850.300833,
+    "elapsed_minutes": 97.505014,
+    "stages": {
+      "load_splits_seconds": 555.262374,
+      "analysis_seconds": 5293.940777,
+      "write_analysis_artifacts_seconds": 1.097447
+    }
   }
 }

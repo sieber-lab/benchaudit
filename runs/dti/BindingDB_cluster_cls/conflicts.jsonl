@@ -594,6 +594,7 @@
 {"kind": "intra_train", "split": "train", "id": 971, "smiles_clean": "CCOc1ccc(-c2ccc(Cn3c(CC(C)(C)C(=O)O)c(SC(C)(C)C)c4cc(OCc5ccc(C)cn5)ccc43)cc2)cn1", "label_raw": 1}
 {"kind": "intra_train", "split": "train", "id": 973, "smiles_clean": "COc1cccc2c1CC1(CCCN1CCCCN1C(=O)CC3(CCCC3)CC1=O)CO2", "label_raw": 1}
 {"kind": "intra_train", "split": "train", "id": 974, "smiles_clean": "CN[C@@H]1C[C@H]2O[C@@](C)([C@@H]1OC)n1c3ccccc3c3c4c(c5c6ccccc6n2c5c31)C(=O)NC4", "label_raw": 1}
+{"kind": "intra_train", "split": "train", "id": 976, "smiles_clean": "CC1(C)SSC(C)(C)C(NC(=O)C(N)Cc2ccc(O)cc2)C(=O)NCC(=O)NC(Cc2ccccc2)C(=O)NC1C(=O)O", "label_raw": 0}
 {"kind": "intra_train", "split": "train", "id": 978, "smiles_clean": "COc1ccc2c(c1)c1c(n2C(=O)c2ccc(Cl)cc2)CCC(C(=O)O)C1", "label_raw": 0}
 {"kind": "intra_train", "split": "train", "id": 980, "smiles_clean": "CC1=C(/C=C/C(C)=C/C=C/C(C)=C/C(=O)O)C(C)(C)CCC1", "label_raw": 1}
 {"kind": "intra_train", "split": "train", "id": 981, "smiles_clean": "O=C(CCCN1CCC(O)(c2ccc(Cl)cc2)CC1)c1ccc(F)cc1", "label_raw": 1}
@@ -1358,6 +1359,7 @@
 {"kind": "intra_train", "split": "train", "id": 2293, "smiles_clean": "N#C[C@H]1C[C@@H](N2CCC2)CC[C@@H]1n1cc(C(N)=O)c(Nc2ccc([C@H](O)C(F)(F)F)cc2)n1", "label_raw": 0}
 {"kind": "intra_train", "split": "train", "id": 2295, "smiles_clean": "O=c1n(C[C@@H](O)CO)c2ccccc2n1C1CCN(C[C@H]2[C@H]3CC[C@H](C3)C23CC3)CC1", "label_raw": 0}
 {"kind": "intra_train", "split": "train", "id": 2296, "smiles_clean": "Cc1cccc(C(=O)NC(CO)C(=O)NC(C)C(=O)NC(Cc2ccc(N=C(N)N)cc2)P(=O)(Oc2ccccc2)Oc2ccccc2)c1", "label_raw": 0}
+{"kind": "intra_train", "split": "train", "id": 2297, "smiles_clean": "CC(=O)C1CSSCC(C(=O)N2CCCC2C(=O)CN2CCCC2C(=O)CNC(CCCCN)C(=O)CNC(CC(=O)O)C(N)=O)NC(=O)C(Cc2c[nH]c3ccccc23)NC(=O)C(CCCN=C(N)N)NC(=O)C(Cc2ccc3ccccc3c2)NC(=O)C2CCCN2C(=O)C(CCC(=O)O)NC1=O", "label_raw": 0}
 {"kind": "intra_train", "split": "train", "id": 2298, "smiles_clean": "CCCCCCC1(c2ccc(Oc3ccccc3)cc2)C(=O)NC(=O)NC1=O", "label_raw": 0}
 {"kind": "intra_train", "split": "train", "id": 2300, "smiles_clean": "Cn1c(C#N)ccc1-c1ccc(O)cc1F", "label_raw": 0}
 {"kind": "intra_train", "split": "train", "id": 2301, "smiles_clean": "CN1C(=O)N(c2cccc(C(F)(F)F)c2)C2=C(C(=O)CC2)[C@H]1c1ccc(C#N)cc1[S+](C)[O-]", "label_raw": 1}

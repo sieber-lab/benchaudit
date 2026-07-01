@@ -71,6 +71,18 @@
       "id_col": "iupac",
       "keep_invalid": true
     },
+    "seed": null,
     "out": "runs/moleculenet"
+  },
+  "runtime": {
+    "started_at_utc": "2026-06-28T02:12:42+00:00",
+    "completed_at_utc": "2026-06-28T02:12:46+00:00",
+    "elapsed_seconds": 3.825337,
+    "elapsed_minutes": 0.063756,
+    "stages": {
+      "load_splits_seconds": 2.677378,
+      "analysis_seconds": 1.130035,
+      "write_analysis_artifacts_seconds": 0.017764
+    }
   }
 }

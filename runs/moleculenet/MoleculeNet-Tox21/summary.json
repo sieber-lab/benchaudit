@@ -110,6 +110,18 @@
       "id_col": "mol_id",
       "keep_invalid": true
     },
+    "seed": null,
     "out": "runs/moleculenet"
+  },
+  "runtime": {
+    "started_at_utc": "2026-06-28T03:17:59+00:00",
+    "completed_at_utc": "2026-06-28T03:21:20+00:00",
+    "elapsed_seconds": 200.695493,
+    "elapsed_minutes": 3.344925,
+    "stages": {
+      "load_splits_seconds": 88.875766,
+      "analysis_seconds": 111.481902,
+      "write_analysis_artifacts_seconds": 0.337582
+    }
   }
 }

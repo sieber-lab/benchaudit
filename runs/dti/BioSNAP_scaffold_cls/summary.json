@@ -114,30 +114,31 @@
         "test": 3744
       }
     },
+    "alignment_workers": 64,
     "similarity": {
       "valid_to_train": {
-        "mean_identity_pct": 99.88375474773821,
-        "std_identity_pct": 2.9681803346755,
-        "mean_similarity_pct": 99.9091678003192,
-        "std_similarity_pct": 2.338264661324463,
+        "mean_identity_pct": 99.88365671641789,
+        "std_identity_pct": 2.9678440944098705,
+        "mean_similarity_pct": 99.90902985074628,
+        "std_similarity_pct": 2.3389244783718097,
         "mean_score": 2839.300746268657,
         "std_score": 2164.2780137370783,
         "n": 1340
       },
       "test_to_train": {
-        "mean_identity_pct": 99.82741907657264,
-        "std_identity_pct": 3.5989440106645563,
-        "mean_similarity_pct": 99.8646318948211,
-        "std_similarity_pct": 2.8495091788726326,
+        "mean_identity_pct": 99.82742857142857,
+        "std_identity_pct": 3.5982935184470377,
+        "mean_similarity_pct": 99.86462857142857,
+        "std_similarity_pct": 2.8491503002596037,
         "mean_score": 2910.8537142857144,
         "std_score": 2508.8664370930387,
         "n": 1750
       },
       "test_to_trainvalid": {
-        "mean_identity_pct": 99.9151999603672,
-        "std_identity_pct": 2.4938611718518753,
-        "mean_similarity_pct": 99.9329536412108,
-        "std_similarity_pct": 1.985296016010519,
+        "mean_identity_pct": 99.91519999999998,
+        "std_identity_pct": 2.493240654249004,
+        "mean_similarity_pct": 99.93297142857143,
+        "std_similarity_pct": 1.9842015376571036,
         "mean_score": 2915.2342857142858,
         "std_score": 2507.4684868485933,
         "n": 1750
@@ -244,9 +245,22 @@
       "sequence_col": "Protein",
       "label_col": "classification_label",
       "keep_invalid": true,
+      "sequence_alignment_workers": 64,
       "unique_sequences_jsonl": "helpers/dti_unique_sequences.jsonl",
       "foldseek_m8_path": "helpers/dti_all_vs_all.m8"
     },
+    "seed": null,
     "out": "runs/dti"
+  },
+  "runtime": {
+    "started_at_utc": "2026-06-29T20:34:16+00:00",
+    "completed_at_utc": "2026-06-29T22:01:57+00:00",
+    "elapsed_seconds": 5261.448853,
+    "elapsed_minutes": 87.690814,
+    "stages": {
+      "load_splits_seconds": 552.99383,
+      "analysis_seconds": 4707.562237,
+      "write_analysis_artifacts_seconds": 0.89254
+    }
   }
 }

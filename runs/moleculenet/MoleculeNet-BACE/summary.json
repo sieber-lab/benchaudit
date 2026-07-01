@@ -71,6 +71,18 @@
       "id_col": "CID",
       "keep_invalid": true
     },
+    "seed": null,
     "out": "runs/moleculenet"
+  },
+  "runtime": {
+    "started_at_utc": "2026-06-28T02:10:26+00:00",
+    "completed_at_utc": "2026-06-28T02:10:53+00:00",
+    "elapsed_seconds": 26.417244,
+    "elapsed_minutes": 0.440287,
+    "stages": {
+      "load_splits_seconds": 20.093074,
+      "analysis_seconds": 6.284723,
+      "write_analysis_artifacts_seconds": 0.039269
+    }
   }
 }

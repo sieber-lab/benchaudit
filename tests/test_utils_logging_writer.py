@@ -54,6 +54,34 @@ class LoggingAndWriterTests(unittest.TestCase):
             self.assertEqual(out_dir.name, "My-Dataset")
             self.assertIn(str(root / "runs" / "nested"), str(out_dir))
 
+    def test_resolve_output_dir_uses_variant_config_stem(self) -> None:
+        with tempfile.TemporaryDirectory() as td:
+            root = Path(td)
+            configs_root = root / "configs" / "tdc"
+            configs_root.mkdir(parents=True)
+            random_config = configs_root / "BBB_Martins_random.yaml"
+            scaffold_config = configs_root / "BBB_Martins_scaffold.yaml"
+            random_config.write_text("name: BBB_Martins\n", encoding="utf-8")
+            scaffold_config.write_text("name: BBB_Martins\n", encoding="utf-8")
+            cfg = {"type": "tdc", "name": "BBB_Martins", "out": "runs/tdc"}
+
+            random_out = resolve_output_dir(
+                cfg,
+                cli_out_root=root / "runs",
+                config_path=random_config,
+                configs_root=configs_root,
+            )
+            scaffold_out = resolve_output_dir(
+                cfg,
+                cli_out_root=root / "runs",
+                config_path=scaffold_config,
+                configs_root=configs_root,
+            )
+
+            self.assertEqual(random_out.name, "BBB_Martins_random")
+            self.assertEqual(scaffold_out.name, "BBB_Martins_scaffold")
+            self.assertNotEqual(random_out, scaffold_out)
+
     def test_result_writer_writes_expected_artifacts(self) -> None:
         with tempfile.TemporaryDirectory() as td:
             out_dir = Path(td)

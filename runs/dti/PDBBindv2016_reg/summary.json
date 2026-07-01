@@ -114,32 +114,33 @@
         "test": 69
       }
     },
+    "alignment_workers": 64,
     "similarity": {
       "valid_to_train": {
-        "mean_identity_pct": 86.26745536491795,
-        "std_identity_pct": 27.100092695915038,
-        "mean_similarity_pct": 88.78145419781636,
-        "std_similarity_pct": 22.53614384004868,
-        "mean_score": 2091.1540880503144,
-        "std_score": 2703.636032644111,
+        "mean_identity_pct": 86.26855345911949,
+        "std_identity_pct": 27.100303180937193,
+        "mean_similarity_pct": 88.78144654088051,
+        "std_similarity_pct": 22.537728014843054,
+        "mean_score": 2091.3427672955977,
+        "std_score": 2703.49652566294,
         "n": 318
       },
       "test_to_train": {
-        "mean_identity_pct": 96.39201592757298,
-        "std_identity_pct": 11.195318404190065,
-        "mean_similarity_pct": 96.48224316149964,
-        "std_similarity_pct": 10.913515061427336,
-        "mean_score": 2172.339366515837,
-        "std_score": 1569.087084420596,
+        "mean_identity_pct": 96.39095022624436,
+        "std_identity_pct": 11.194447941186281,
+        "mean_similarity_pct": 96.48325791855203,
+        "std_similarity_pct": 10.913860184971124,
+        "mean_score": 2172.524886877828,
+        "std_score": 1569.0633184624653,
         "n": 221
       },
       "test_to_trainvalid": {
-        "mean_identity_pct": 96.64561719200591,
-        "std_identity_pct": 10.757976956503017,
-        "mean_similarity_pct": 96.7345698299688,
-        "std_similarity_pct": 10.461733688572357,
-        "mean_score": 2183.701357466063,
-        "std_score": 1569.111732882541,
+        "mean_identity_pct": 96.64389140271494,
+        "std_identity_pct": 10.75694961164561,
+        "mean_similarity_pct": 96.73484162895929,
+        "std_similarity_pct": 10.461898489162618,
+        "mean_score": 2183.8868778280544,
+        "std_score": 1569.0866239176282,
         "n": 221
       }
     },
@@ -246,9 +247,22 @@
       "label_col": "regression_label",
       "id_col": "ID",
       "keep_invalid": true,
+      "sequence_alignment_workers": 64,
       "unique_sequences_jsonl": "helpers/dti_unique_sequences.jsonl",
       "foldseek_m8_path": "helpers/dti_all_vs_all.m8"
     },
+    "seed": null,
     "out": "runs/dti"
+  },
+  "runtime": {
+    "started_at_utc": "2026-06-30T09:37:30+00:00",
+    "completed_at_utc": "2026-06-30T10:06:14+00:00",
+    "elapsed_seconds": 1723.761295,
+    "elapsed_minutes": 28.729355,
+    "stages": {
+      "load_splits_seconds": 125.727054,
+      "analysis_seconds": 1597.948687,
+      "write_analysis_artifacts_seconds": 0.085344
+    }
   }
 }

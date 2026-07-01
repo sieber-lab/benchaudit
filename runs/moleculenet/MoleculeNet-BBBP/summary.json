@@ -71,6 +71,18 @@
       "id_col": "num",
       "keep_invalid": true
     },
+    "seed": null,
     "out": "runs/moleculenet"
+  },
+  "runtime": {
+    "started_at_utc": "2026-06-28T02:10:53+00:00",
+    "completed_at_utc": "2026-06-28T02:11:39+00:00",
+    "elapsed_seconds": 45.815763,
+    "elapsed_minutes": 0.763596,
+    "stages": {
+      "load_splits_seconds": 36.969597,
+      "analysis_seconds": 8.815369,
+      "write_analysis_artifacts_seconds": 0.030607
+    }
   }
 }

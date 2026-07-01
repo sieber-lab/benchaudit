@@ -114,32 +114,33 @@
         "test": 10529
       }
     },
+    "alignment_workers": 64,
     "similarity": {
       "valid_to_train": {
-        "mean_identity_pct": 59.778316010319976,
-        "std_identity_pct": 28.790029721408544,
-        "mean_similarity_pct": 69.03756677745005,
-        "std_similarity_pct": 24.54905036023466,
-        "mean_score": 1800.4656488549617,
-        "std_score": 2068.4444400301777,
+        "mean_identity_pct": 59.77709923664122,
+        "std_identity_pct": 28.78718190388304,
+        "mean_similarity_pct": 69.04541984732825,
+        "std_similarity_pct": 24.54036163652054,
+        "mean_score": 1801.2404580152672,
+        "std_score": 2067.725364413262,
         "n": 262
       },
       "test_to_train": {
-        "mean_identity_pct": 58.50753563589629,
-        "std_identity_pct": 29.18490266071553,
-        "mean_similarity_pct": 67.98959725873551,
-        "std_similarity_pct": 25.101387398622663,
-        "mean_score": 1691.6590476190477,
-        "std_score": 1952.4285097427346,
+        "mean_identity_pct": 58.507428571428576,
+        "std_identity_pct": 29.183583807749613,
+        "mean_similarity_pct": 67.99695238095238,
+        "std_similarity_pct": 25.091706659630997,
+        "mean_score": 1691.7561904761906,
+        "std_score": 1952.3460743142466,
         "n": 525
       },
       "test_to_trainvalid": {
-        "mean_identity_pct": 60.91208987025769,
-        "std_identity_pct": 29.22554283271914,
-        "mean_similarity_pct": 70.03423889175475,
-        "std_similarity_pct": 25.026387122780207,
-        "mean_score": 1835.0857142857142,
-        "std_score": 2093.9534170207944,
+        "mean_identity_pct": 60.912190476190474,
+        "std_identity_pct": 29.224370195045303,
+        "mean_similarity_pct": 70.04380952380953,
+        "std_similarity_pct": 25.01210268501278,
+        "mean_score": 1835.272380952381,
+        "std_score": 2093.7845570934232,
         "n": 525
       }
     },
@@ -198,9 +199,22 @@
       "sequence_col": "Protein",
       "label_col": "classification_label",
       "keep_invalid": true,
+      "sequence_alignment_workers": 64,
       "unique_sequences_jsonl": "helpers/dti_unique_sequences.jsonl",
       "foldseek_m8_path": "helpers/dti_all_vs_all.m8"
     },
+    "seed": null,
     "out": "runs/dti"
+  },
+  "runtime": {
+    "started_at_utc": "2026-06-29T09:46:10+00:00",
+    "completed_at_utc": "2026-06-29T12:04:18+00:00",
+    "elapsed_seconds": 8287.774167,
+    "elapsed_minutes": 138.129569,
+    "stages": {
+      "load_splits_seconds": 1092.419335,
+      "analysis_seconds": 7192.657539,
+      "write_analysis_artifacts_seconds": 2.697053
+    }
   }
 }

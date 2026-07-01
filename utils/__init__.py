@@ -77,14 +77,33 @@ def _slugify(text: Optional[str]) -> Optional[str]:
     return slug or None
 
 
+def _variant_stem_slug(base_slug: Optional[str], config_path: Optional[Path]) -> Optional[str]:
+    if not base_slug or not config_path:
+        return None
+    stem_slug = _slugify(config_path.stem)
+    if not stem_slug:
+        return None
+
+    base_lower = base_slug.lower()
+    stem_lower = stem_slug.lower()
+    if stem_lower == base_lower:
+        return None
+    for separator in ("-", "_", "."):
+        if stem_lower.startswith(f"{base_lower}{separator}"):
+            return stem_slug
+    return None
+
+
 def _preferred_name(cfg: Dict[str, Any], config_path: Optional[Path]) -> str:
-    for candidate in (
-        cfg.get("name"),
-        cfg.get("id"),
-        cfg.get("task"),
-        config_path.stem if config_path else None,
-    ):
+    for candidate in (cfg.get("name"), cfg.get("id"), cfg.get("task")):
         slug = _slugify(candidate)
+        if slug:
+            variant_slug = _variant_stem_slug(slug, config_path)
+            if variant_slug:
+                return variant_slug
+            return slug
+    if config_path:
+        slug = _slugify(config_path.stem)
         if slug:
             return slug
     return "run"

@@ -6,8 +6,8 @@
   },
   "hygiene": {
     "n_all_valid_smiles": 23821,
-    "n_unique_valid_smiles": 12086,
-    "n_duplicate_valid_smiles": 11735,
+    "n_unique_valid_smiles": 12084,
+    "n_duplicate_valid_smiles": 11737,
     "n_contaminated_tv_vs_test": 964,
     "reos_mean": 0.5161509844841666,
     "reos_std": 0.8528808563696976
@@ -49,14 +49,14 @@
     "sequence_cross_split_multi_smiles": 314
   },
   "cliffs": {
-    "intra_train_valid": 29332,
+    "intra_train_valid": 29331,
     "intra_test": 787,
     "cross_tv_test": 7935,
     "sim_threshold": 0.9
   },
   "drugs": {
     "unique_counts": {
-      "train": 7443,
+      "train": 7441,
       "valid": 4121,
       "test": 1487
     },
@@ -68,8 +68,8 @@
     },
     "hygiene": {
       "n_all_smiles": 23821,
-      "n_unique_smiles": 12086,
-      "n_duplicate_smiles": 11735,
+      "n_unique_smiles": 12084,
+      "n_duplicate_smiles": 11737,
       "n_contaminated_trainvalid_vs_test": 964
     },
     "similarity": {
@@ -114,32 +114,33 @@
         "test": 1423
       }
     },
+    "alignment_workers": 64,
     "similarity": {
       "valid_to_train": {
-        "mean_identity_pct": 34.425223642179674,
-        "std_identity_pct": 14.742403365201074,
-        "mean_similarity_pct": 48.75873401068777,
-        "std_similarity_pct": 15.59992570000454,
-        "mean_score": 636.8639143730887,
-        "std_score": 958.8725069261326,
+        "mean_identity_pct": 34.42782874617737,
+        "std_identity_pct": 14.741913945757783,
+        "mean_similarity_pct": 48.78012232415903,
+        "std_similarity_pct": 15.56543756109083,
+        "mean_score": 638.0993883792049,
+        "std_score": 957.6199556288424,
         "n": 654
       },
       "test_to_train": {
-        "mean_identity_pct": 35.36700478725459,
-        "std_identity_pct": 15.463500044982128,
-        "mean_similarity_pct": 49.71189000862026,
-        "std_similarity_pct": 16.210528640545384,
-        "mean_score": 697.1179775280899,
-        "std_score": 1004.8071018479117,
+        "mean_identity_pct": 35.367134831460675,
+        "std_identity_pct": 15.461689287106825,
+        "mean_similarity_pct": 49.73988764044944,
+        "std_similarity_pct": 16.157211629109298,
+        "mean_score": 698.5898876404494,
+        "std_score": 1003.2112710091343,
         "n": 356
       },
       "test_to_trainvalid": {
-        "mean_identity_pct": 94.8743643376387,
-        "std_identity_pct": 18.24398195456395,
-        "mean_similarity_pct": 95.88626117055938,
-        "std_similarity_pct": 15.158625904898106,
-        "mean_score": 3261.941011235955,
-        "std_score": 2503.6218639266517,
+        "mean_identity_pct": 94.8744382022472,
+        "std_identity_pct": 18.24473430172561,
+        "mean_similarity_pct": 95.88764044943821,
+        "std_similarity_pct": 15.14974557745887,
+        "mean_score": 3261.9859550561796,
+        "std_score": 2503.55754345656,
         "n": 356
       }
     },
@@ -239,9 +240,22 @@
       "sequence_col": "Protein",
       "label_col": "classification_label",
       "keep_invalid": true,
+      "sequence_alignment_workers": 64,
       "unique_sequences_jsonl": "helpers/dti_unique_sequences.jsonl",
       "foldseek_m8_path": "helpers/dti_all_vs_all.m8"
     },
+    "seed": null,
     "out": "runs/dti"
+  },
+  "runtime": {
+    "started_at_utc": "2026-06-29T08:56:18+00:00",
+    "completed_at_utc": "2026-06-29T09:46:09+00:00",
+    "elapsed_seconds": 2991.357808,
+    "elapsed_minutes": 49.855963,
+    "stages": {
+      "load_splits_seconds": 519.291191,
+      "analysis_seconds": 2471.475298,
+      "write_analysis_artifacts_seconds": 0.591063
+    }
   }
 }
